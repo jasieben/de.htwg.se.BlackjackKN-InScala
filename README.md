@@ -1,2 +1,2 @@
-# de.htwg.se.BlackjackKNInScala
+# BlackjackKNInScala
 BlackjackKN, project for SE
