@@ -24,4 +24,17 @@ println("Ist das eine Kartenhand?")
 if(field2.card(0).x == 42) {
   println("Ja das ist es!")
 }
+var z:Array[String] = new Array[String](3)
+
+z(0) = "1"
+z(1) = "Benni"
+z(2) = "Hallo"
+
+for ( x <- z ) {
+  println( x )
+}
+
+
+
+
 

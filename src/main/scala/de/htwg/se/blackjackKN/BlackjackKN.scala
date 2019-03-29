@@ -1,6 +1,6 @@
-package de.htwg.se.BlackjackKN
+package de.htwg.se.blackjackKN
 
-import de.htwg.se.BlackjackKN.model.Player
+import de.htwg.se.blackjackKN.model.Player
 
 object BlackjackKN {
   def main(args: Array[String]): Unit = {
