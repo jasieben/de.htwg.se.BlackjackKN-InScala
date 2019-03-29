@@ -4,7 +4,7 @@ import de.htwg.se.BlackjackKN.model.Player
 
 object BlackjackKN {
   def main(args: Array[String]): Unit = {
-    val student = Player("there")
+    val student = Player("Benni und Jana")
     println("Hello, " + student.name)
   }
 }
