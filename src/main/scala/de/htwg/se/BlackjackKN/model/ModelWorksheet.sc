@@ -20,3 +20,8 @@ field2.card(0)=cell2
 field2.card(0).x
 field2.card(0).y
 
+println("Ist das eine Kartenhand?")
+if(field2.card(0).x == 42) {
+  println("Ja das ist es!")
+}
+
