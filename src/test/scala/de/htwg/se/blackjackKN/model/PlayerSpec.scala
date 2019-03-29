@@ -1,4 +1,4 @@
-package de.htwg.se.BlackjackKN.model
+package de.htwg.se.blackjackKN.model
 
 import org.scalatest._
 import org.junit.runner.RunWith
