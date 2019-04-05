@@ -34,6 +34,25 @@ for ( x <- z ) {
   println( x )
 }
 
+import scala.math.sqrt
+
+case class Cell(value:Int) {
+  def isSet:Boolean = value != 0
+}
+
+val cell3= Cell(5)
+cell3.isSet
+
+val cell4= Cell(0)
+cell4.isSet
+
+case class House(cells:Vector[Cell])
+
+val house = House(Vector(cell3,cell4))
+
+house.cells(0).value
+house.cells(0).isSet
+
 
 
 
