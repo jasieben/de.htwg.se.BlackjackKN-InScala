@@ -1,6 +1,6 @@
 package de.htwg.se.blackjackKN.model
 
-import de.htwg.se.blackjackKN.model.Player
+
 import org.scalatest._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
