@@ -30,7 +30,7 @@ class CardSpec extends WordSpec with Matchers {
       numbersTestCard.rank should be ("9")
     }
     "have corresponding values" in {
-      numbersTestCard.rank.toInt should equal (numbersTestCard.value)
+      numbersTestCard.rank.toInt should be (numbersTestCard.value)
     }
   }
 }

@@ -14,7 +14,8 @@ class PlayerSpec extends WordSpec with Matchers {
     "have a nice String representation" in {
       player.toString should be("Your Name")
     }
+    "have a balance of 0$" in {
+      player.balance should be (0)
+    }
   }}
-
-
 }
