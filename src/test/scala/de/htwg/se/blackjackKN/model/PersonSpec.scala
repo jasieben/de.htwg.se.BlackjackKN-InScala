@@ -10,7 +10,7 @@ class PersonSpec extends WordSpec with Matchers {
     "have a name" in {
       Person("Player1", 1000).name should be ("Player1")
     }
-    "have Balance" in {
+    "have a balance" in {
       Person("Player1", 1000).balance should be (1000)
     }
   }

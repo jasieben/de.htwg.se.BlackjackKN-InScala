@@ -1,6 +1,6 @@
 package de.htwg.se.blackjackKN.model
 
-case class Card(color : String, wert: Int) {
-  override def toString:String = color
+case class Card(suit : String, value: Int, rank : String) {
+  override def toString:String = suit
 
 }
