@@ -4,10 +4,12 @@ class Tui {
   def processInput(input: String): Unit = {
     input match {
       case "n" =>
-        println("Neues Spiel gestartet!")
+        println("Started a new game!")
       case "q" =>
-        println("BlackjackKN wird beendet...")
+        println("Exiting Blackjack...")
         System.exit(0)
+      case _ =>
+        println("Input not recognized!")
     }
   }
 
