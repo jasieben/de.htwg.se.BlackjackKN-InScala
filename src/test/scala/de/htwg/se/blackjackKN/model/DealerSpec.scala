@@ -12,7 +12,7 @@ class DealerSpec extends WordSpec with Matchers {
       "have a name" in {
         dealer.name should be("Dealer")
       }
-      "have a nice name" in {
+      "have a nice String representation" in {
         dealer.toString should be("Dealer")
       }
     }
