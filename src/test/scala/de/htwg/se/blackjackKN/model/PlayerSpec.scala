@@ -18,6 +18,7 @@ class PlayerSpec extends WordSpec with Matchers {
       "have a balance of 0$" in {
         player.balance should be(0)
       }
+
     }
   }
 }

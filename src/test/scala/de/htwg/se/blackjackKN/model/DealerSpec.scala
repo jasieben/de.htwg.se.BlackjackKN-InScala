@@ -8,12 +8,12 @@ import org.scalatest._
 class DealerSpec extends WordSpec with Matchers {
   "A Dealer" when {
     "new" should {
-      val dealer = Dealer("Dealer", 1000000)
+      val dealer = Dealer("Dealer")
       "have a name" in {
         dealer.name should be("Dealer")
       }
-      "have a balance" in {
-        dealer.balance should be(1000000)
+      "have a nice name" in {
+        dealer.toString should be("Dealer")
       }
     }
   }
