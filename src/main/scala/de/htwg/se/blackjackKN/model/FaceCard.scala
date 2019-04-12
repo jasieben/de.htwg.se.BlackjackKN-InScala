@@ -2,7 +2,7 @@ package de.htwg.se.blackjackKN.model
 
 case class FaceCard(suit: String = "hearts", rank : String = "ace") extends Card{
 
-  private val suits : List[String] = List("hearts","tiles", "clovers", "pikes")
+  private val suits : List[String] = List("hearts","diamonds", "clubs", "spades")
   private val ranks: List[(String, Int)] = List(("king", 10),("queen",10), ("jack",10), ("ace",11))
 
   require(suits.contains(suit))
