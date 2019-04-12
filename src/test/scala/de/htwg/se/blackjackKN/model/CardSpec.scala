@@ -1,4 +1,4 @@
-package de.htwg.se.blackjackKN.model
+/*package de.htwg.se.blackjackKN.model
 
 import org.scalatest._
 import org.junit.runner.RunWith
@@ -43,5 +43,5 @@ class CardSpec extends WordSpec with Matchers {
       }
     }
   }
-}
+}*/
 

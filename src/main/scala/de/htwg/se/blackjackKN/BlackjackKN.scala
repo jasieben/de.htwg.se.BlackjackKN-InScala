@@ -9,6 +9,7 @@ object BlackjackKN {
     val student = Player("Benni und Jana")
     println("Hello, " + student.name + "!")
     println("Ich bin das Spiel Blackjack!")
+
     val tui = new Tui
     var input: String = ""
     do {
