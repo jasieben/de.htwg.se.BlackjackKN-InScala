@@ -1,4 +1,4 @@
-/*package de.htwg.se.blackjackKN.model
+package de.htwg.se.blackjackKN.model
 
 import org.scalatest._
 import org.junit.runner.RunWith
@@ -8,9 +8,9 @@ import org.scalatest.junit.JUnitRunner
 class CardSpec extends WordSpec with Matchers {
   "A face card" when {
     "new" should {
-      val testCard = Card("spades", 10, "king")
+      val testCard = FaceCard("clovers", "king")
       "have a suit" in {
-        testCard.suit should be("spades")
+        testCard.suit should be("clovers")
       }
       "have a value" in {
         testCard.value should be(10)
@@ -18,14 +18,11 @@ class CardSpec extends WordSpec with Matchers {
       "have a rank" in {
         testCard.rank should be("king")
       }
-      "have a nice String representation" in {
-        testCard.toString should be("king of spades")
-      }
     }
   }
   "Another numbers card" when {
     "new" should {
-      val numbersTestCard = Card("hearts", 9, "9")
+      val numbersTestCard = NumberCard("hearts","9")
       "have a suit" in {
         numbersTestCard.suit should be("hearts")
       }
@@ -38,10 +35,7 @@ class CardSpec extends WordSpec with Matchers {
       "have corresponding values" in {
         numbersTestCard.rank.toInt should be(numbersTestCard.value)
       }
-      "have a nice String representation" in {
-        numbersTestCard.toString should be("9 of hearts")
-      }
     }
   }
-}*/
+}
 

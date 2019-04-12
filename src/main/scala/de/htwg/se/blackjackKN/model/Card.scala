@@ -2,5 +2,7 @@ package de.htwg.se.blackjackKN.model
 
 trait Card {
   def suit : String
-  def value: Int
+  def rank: String
+  def value : Int
+  def getCards: List[Any]
 }

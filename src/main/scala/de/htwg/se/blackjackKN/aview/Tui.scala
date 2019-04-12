@@ -1,6 +1,6 @@
 package de.htwg.se.blackjackKN.aview
 
-import de.htwg.se.blackjackKN.model.CardDeck
+import de.htwg.se.blackjackKN.model.{CardDeck, FaceCard}
 
 class Tui {
   def processInput(input: String): Unit = {
@@ -13,10 +13,11 @@ class Tui {
       case "Scala ist toll!" =>
         println("Sag mir was neues\n (☞ﾟヮﾟ)☞ ")
       case "t" =>
-        println(CardDeck().cardDeck)
+        for {
+          card <- CardDeck().cardDeck
+        } yield println(card)
       case _ =>
         println("Input not recognized!")
     }
   }
-
 }
