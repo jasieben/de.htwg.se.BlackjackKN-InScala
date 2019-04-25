@@ -18,6 +18,10 @@ case class Player(name: String, balance: Int = 0) extends Person{
   def getCard(index : Int): Card = {
     playerHand(index)
   }
+
+  def getHandSize : Int = {
+    playerHand.size
+  }
   override def toString:String = name
 
 }

@@ -18,6 +18,9 @@ class CardSpec extends WordSpec with Matchers {
       "have a rank" in {
         testCard.rank should be("king")
       }
+      "have a nice String representation" in {
+        testCard.toString should be("King of diamonds")
+      }
     }
   }
   "Another numbers card" when {
@@ -38,10 +41,13 @@ class CardSpec extends WordSpec with Matchers {
     }
   }
   "A CardDeck" when {
-    val cardDeck = CardDeck().cardDeck
+    val cardDeck = CardDeck()
     "new" should {
       "be a List of Cards" in {
-        cardDeck should be (a [List[_]])
+        cardDeck.cardDeck should be (a [List[_]])
+      }
+      "a String representation" in {
+        cardDeck.toString should be("CardDeck has 52 cards")
       }
     }
   }
