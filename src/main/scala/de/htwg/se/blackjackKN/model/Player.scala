@@ -19,4 +19,5 @@ case class Player(name: String, balance: Int = 0) extends Person{
     playerHand(index)
   }
   override def toString:String = name
+
 }
