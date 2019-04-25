@@ -3,12 +3,12 @@ package de.htwg.se.blackjackKN.aview
 import de.htwg.se.blackjackKN.model.{CardDeck, Dealer}
 
 class Tui {
+  val dealer = Dealer()
   def processInput(input: String): Unit = {
-    val dealer = Dealer()
     input match {
       case "n" =>
         println("Started a new game!")
-        println(dealer.generateDealerCards.size)
+        println("Generated " + dealer.generateDealerCards.size + " Cards")
       case "q" =>
         println("Exiting Blackjack...")
         System.exit(0)
@@ -18,6 +18,10 @@ class Tui {
         for {
           card <- CardDeck().cardDeck
         } yield println(card)
+      case "td" =>
+        println("Draw Card:")
+        println(dealer.drawCard().getClass)
+
       case _ =>
         println("Input not recognized!")
     }
