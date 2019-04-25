@@ -4,7 +4,7 @@ import scala.collection.mutable.ListBuffer
 
 case class Player(name: String, balance: Int = 0) extends Person{
 
-  private var playerHand : ListBuffer[Card] = ListBuffer.empty
+  private var playerHand : ListBuffer[Card] = ListBuffer.empty[Card]
 
   def addCardToHand(card: Card): Card = {
     playerHand += card

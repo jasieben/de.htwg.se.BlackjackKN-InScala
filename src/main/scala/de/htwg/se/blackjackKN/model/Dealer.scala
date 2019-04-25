@@ -3,10 +3,12 @@ package de.htwg.se.blackjackKN.model
 import scala.collection.mutable.ListBuffer
 
 case class Dealer(name: String = "Dealer") extends Person {
-  var availCards : List[Card] = CardDeck().cardDeck
-  var buffer : ListBuffer[Card] = ListBuffer.empty[Card]
+  private var buffer : ListBuffer[Card] = ListBuffer.empty[Card]
+
+  var dealerHand : ListBuffer[Card] = ListBuffer.empty[Card]
 
   def generateDealerCards: ListBuffer[Card] = {
+    buffer.clear()
     for {
       i <- 0 to 5
     } buffer ++= CardDeck().cardDeck
