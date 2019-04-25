@@ -20,7 +20,7 @@ class Tui {
         } yield println(card)
       case "td" =>
         println("Draw Card:")
-        println(dealer.drawCard().getClass)
+        println(dealer.drawCard())
 
       case _ =>
         println("Input not recognized!")

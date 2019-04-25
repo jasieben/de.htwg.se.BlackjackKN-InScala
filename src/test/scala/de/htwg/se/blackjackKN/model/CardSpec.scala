@@ -41,7 +41,7 @@ class CardSpec extends WordSpec with Matchers {
     val cardDeck = CardDeck().cardDeck
     "new" should {
       "be a List of Cards" in {
-        cardDeck should be (a [List[Card]])
+        cardDeck should be (a [List[_]])
       }
     }
   }
