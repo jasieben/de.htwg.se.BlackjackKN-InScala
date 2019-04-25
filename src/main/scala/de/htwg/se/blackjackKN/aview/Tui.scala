@@ -31,7 +31,7 @@ class Tui {
         //valueP += playerHand(1).value
         println(dealerHand.head)
         println(valueD)
-      case "q" =>
+      case "exit" =>
         println("Exiting Blackjack...")
         System.exit(0)
       case "Scala ist toll!" =>
