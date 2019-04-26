@@ -1,10 +1,11 @@
 package de.htwg.se.blackjackKN.aview
 
-import de.htwg.se.blackjackKN.model.{Card, CardDeck, Dealer}
+import de.htwg.se.blackjackKN.model.{Card, CardDeck, Dealer, NumberCard}
+import de.htwg.se.blackjackKN.util.Observer
 
 import scala.collection.mutable.ListBuffer
 
-class Tui {
+class Tui extends Observer {
   val dealer = Dealer()
   var valueP = 0
   var valueD = 0
@@ -85,5 +86,6 @@ class Tui {
       case _ =>
         println("Input not recognized!")
     }
+    def update = println("Test")
   }
 }
