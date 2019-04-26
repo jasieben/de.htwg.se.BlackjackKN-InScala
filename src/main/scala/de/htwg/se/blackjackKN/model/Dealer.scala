@@ -23,6 +23,11 @@ case class Dealer(name: String = "Dealer") extends Person {
     tmp
   }
 
+  def addCardToDealerHand(card: Card): Card = {
+    dealerHand += card
+    card
+  }
+
 
   override def toString: String = name
 }

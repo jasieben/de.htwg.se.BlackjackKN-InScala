@@ -14,4 +14,3 @@ class Observable {
 
   def notifyObservers: Unit = subscribers.foreach(o => o.update)
 }
-
