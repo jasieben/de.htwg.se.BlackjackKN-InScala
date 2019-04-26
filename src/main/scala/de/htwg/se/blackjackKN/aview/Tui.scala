@@ -16,21 +16,22 @@ class Tui {
     input match {
       case "n" =>
         println("Started a new game!")
-        println("Generated " + dealer.generateDealerCards.size + " Cards")
+        dealer.generateDealerCards
+        //println("Generated " + dealer.generateDealerCards.size + " Cards")
         println("Cards Player: ")
         playerHand += dealer.drawCard()
         playerHand += dealer.drawCard()
         valueP += playerHand.head.value
         valueP += playerHand(1).value
-        println(playerHand)
-        println(valueP)
+        println(playerHand.head.toString +" and "+ playerHand(1).toString)
+        println("Value: " + valueP)
         println("Cards Dealer: ")
         dealerHand += dealer.drawCard()
         dealerHand += dealer.drawCard()
         valueD += playerHand.head.value
         //valueP += playerHand(1).value
         println(dealerHand.head)
-        println(valueD)
+        println("Value: " + valueD)
       case "exit" =>
         println("Exiting Blackjack...")
         System.exit(0)
@@ -42,30 +43,44 @@ class Tui {
         } yield println(card)
       case "p" =>
         valueD += dealerHand(1).value
+        println("No new Card for the Player, Dealers turn:")
+        println(dealerHand(1).toString)
         println("Dealer Value: " + valueD)
         while(valueD < 17) {
           dealerHand += dealer.drawCard()
           valueD += dealerHand(j).value
           println(dealerHand(j))
           j += 1
-          println("New Value: " + valueD)
+          println("New Value Dealer: " + valueD)
+        }
+        if(valueD == valueP){
+          println("No one wins.\nDraw!")
+          System.exit(0)
         }
         if(valueD > 21 || valueD < valueP) {
           println("You WIN!")
+          System.exit(0)
         } else {
-          println("You LOSE!")}
+          println("You LOSE!")
+          System.exit(0)
+        }
       case "td" =>
         println("Draw Card:")
         if(valueP <= 21) {
           playerHand += dealer.drawCard()
           valueP += playerHand(i).value
           println(playerHand(i))
-          println("Value: " + valueP)
+          println("New Value: " + valueP)
           i += 1
           //println(i)
         }
+        if(valueP == 21) {
+          println("Blackjack!\nYou WIN!")
+          System.exit(0)
+        }
         if(valueP > 21) {
           println("You loose!")
+          System.exit(0)
         }
       case _ =>
         println("Input not recognized!")
