@@ -17,9 +17,7 @@ case class Dealer(name: String = "Dealer") extends Person {
 
   def drawCard(): Card = {
     val rand = new scala.util.Random()
-    var randInt : Int = rand.nextInt() % buffer.size
-    if (randInt < 0)
-      randInt = randInt * -1
+    val randInt : Int = rand.nextInt(buffer.size)
     val tmp = buffer(randInt)
     buffer.remove(randInt)
     tmp
