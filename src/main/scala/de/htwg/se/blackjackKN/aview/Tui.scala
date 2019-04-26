@@ -7,7 +7,7 @@ import de.htwg.se.blackjackKN.util.Observer
 import scala.collection.mutable.ListBuffer
 
 class Tui (controller : Controller) extends Observer {
-  def update = println(output)
+  def update = println(controller.display)
   controller.add(this)
 
 
@@ -22,8 +22,7 @@ class Tui (controller : Controller) extends Observer {
     input match {
       case "n" =>
         controller.startGame()
-        output = controller.startNewRound()
-        update
+        controller.startNewRound()
       case "exit" =>
         println("Exiting Blackjack...")
         System.exit(0)
