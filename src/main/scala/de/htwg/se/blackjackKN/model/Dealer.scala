@@ -5,8 +5,6 @@ import scala.collection.mutable.ListBuffer
 case class Dealer(name: String = "Dealer") extends Person {
   private var buffer : ListBuffer[Card] = ListBuffer.empty[Card]
 
-  var dealerHand : ListBuffer[Card] = ListBuffer.empty[Card]
-
   def generateDealerCards: ListBuffer[Card] = {
     buffer.clear()
     for {
@@ -22,28 +20,6 @@ case class Dealer(name: String = "Dealer") extends Person {
     buffer.remove(randInt)
     tmp
   }
-
-  def getCard(index : Int): Card = {
-    dealerHand(index)
-  }
-
-  def addCardToHand(card: Card): Card = {
-    dealerHand += card
-    card
-  }
-
-  def getHandSize: Int = dealerHand.size
-
-  def clearHand() : Unit = dealerHand.clear()
-
-  def getHandValue : Int = {
-    var v : Int = 0
-    for {
-      i <- dealerHand.indices
-    } v += dealerHand(i).value
-    v
-  }
-
 
   override def toString: String = name
 }
