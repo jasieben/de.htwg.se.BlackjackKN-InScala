@@ -26,14 +26,7 @@ class Controller extends Observable {
     output += "\nThe dealer has a " + dealer.getCard(0)
     output += "\nYou also have a " + player.getCard(1)
     output += "\nThe combined value of your cards is " + player.getHandValue
-    if (player.getHandValue == 21) {
-      output += "\nYou have a blackjack!"
-      revealDealer()
-      evaluate()
-      notifyObservers
-      return
-    }
-    output += "\nWould you like to hit(h) or stand(s)?"
+    evaluate()
     notifyObservers
   }
   def display : String = output
@@ -70,10 +63,16 @@ class Controller extends Observable {
     } else if (dealer.getHandValue > 21) {
       output += "\nThe dealer busts, you win!"
       return
-    }
-    //when revealed
-    if (!revealed)
+    } else if (player.getHandValue == 21) {
+      output += "\nYou have a blackjack!"
+      revealDealer()
       return
+    } else if (!revealed){  //when revealed
+      output += "\nWould you like to hit(h) or stand(s)?"
+      return
+    }
+
+
     if (dealer.getHandValue < player.getHandValue) {
       output += "\nYou win!"
     } else if (dealer.getHandValue > player.getHandValue) {
