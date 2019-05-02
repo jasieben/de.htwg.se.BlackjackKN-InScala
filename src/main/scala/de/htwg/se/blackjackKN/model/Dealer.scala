@@ -27,10 +27,12 @@ case class Dealer(name: String = "Dealer") extends Person {
     dealerHand(index)
   }
 
-  def addCardToDealerHand(card: Card): Card = {
+  def addCardToHand(card: Card): Card = {
     dealerHand += card
     card
   }
+
+  def getHandSize: Int = dealerHand.size
 
   def clearHand() : Unit = dealerHand.clear()
 

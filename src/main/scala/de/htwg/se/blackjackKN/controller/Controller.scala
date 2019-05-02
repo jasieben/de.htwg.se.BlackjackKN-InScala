@@ -12,6 +12,7 @@ class Controller extends Observable {
   def startGame() : Unit = {
     dealer.generateDealerCards
     output = "BLACKJACK"
+    output += "\nPress n to start a new game!"
     notifyObservers
   }
   def startNewRound() : Unit = {
@@ -19,9 +20,9 @@ class Controller extends Observable {
     player.clearHand()
     dealer.clearHand()
     player.addCardToHand(dealer.drawCard())
-    dealer.addCardToDealerHand(dealer.drawCard())
+    dealer.addCardToHand(dealer.drawCard())
     player.addCardToHand(dealer.drawCard())
-    dealer.addCardToDealerHand(dealer.drawCard())
+    dealer.addCardToHand(dealer.drawCard())
     output = "You have a " + player.getCard(0)
     output += "\nThe dealer has a " + dealer.getCard(0)
     output += "\nYou also have a " + player.getCard(1)
@@ -37,7 +38,7 @@ class Controller extends Observable {
   }
   def hit() : Unit = {
     if (player.getHandValue > 21) { //aka Player already busted
-      output = "You cannot hit"
+      output = "You cannot hit!"
       notifyObservers
       return
     }
@@ -46,16 +47,16 @@ class Controller extends Observable {
     evaluate()
     notifyObservers
   }
-  private def revealDealer() : Unit = {
+  def revealDealer() : Unit = {
     output += "\nThe dealer has a " + dealer.getCard(1)
     while (dealer.getHandValue < 17) {
-      output += "\nThe dealer drew a " + dealer.addCardToDealerHand(dealer.drawCard())
+      output += "\nThe dealer drew a " + dealer.addCardToHand(dealer.drawCard())
     }
     output += "\nThe dealers combined value of cards is " + dealer.getHandValue
     revealed = true
     evaluate()
   }
-  private def evaluate() : Unit = {
+  def evaluate() : Unit = {
     // evaluation result doesn't matter
     if (player.getHandValue > 21) {
       output += "\nYou bust!"
@@ -63,7 +64,7 @@ class Controller extends Observable {
     } else if (dealer.getHandValue > 21) {
       output += "\nThe dealer busts, you win!"
       return
-    } else if (player.getHandValue == 21) {
+    } else if (player.getHandValue == 21 && !revealed) {
       output += "\nYou have a blackjack!"
       revealDealer()
       return
@@ -79,8 +80,6 @@ class Controller extends Observable {
       output += "\nYou loose!"
     } else if (dealer.getHandValue == player.getHandValue) {
       output += "\nPush! You and the dealer have a combined card value of " + dealer.getHandValue
-    } else {
-      output += "\nWould you like to hit(h) or stand(s)?"
     }
   }
 }
