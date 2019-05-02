@@ -11,7 +11,11 @@ class Controller extends Observable {
 
   def startGame() : Unit = {
     dealer.generateDealerCards
-    output = "BLACKJACK"
+    output = "\n.------..------..------..------..------..------..------..------..------.\n|B.--. ||L.--. ||A.--. |" +
+      "|C.--. ||K.--. ||J.--. ||A.--. ||C.--. ||K.--. |\n| :(): || :/\\: || (\\/) || :/\\: || :/\\: || :(): || (\\" +
+      "/) || :/\\: || :/\\: |\n| ()() || (__) || :\\/: || :\\/: || :\\/: || ()() || :\\/: || :\\/: || :\\/: |\n| '" +
+      "--'B|| '--'L|| '--'A|| '--'C|| '--'K|| '--'J|| '--'A|| '--'C|| '--'K|\n`------'`------'`------'`------'`---" +
+      "---'`------'`------'`------'`------'"
     output += "\nPress n to start a new game!"
     notifyObservers
   }
@@ -42,7 +46,7 @@ class Controller extends Observable {
       notifyObservers
       return
     }
-    output = "You hit and drew a " +  player.addCardToHand(dealer.drawCard())
+    output = "You hit and draw a " +  player.addCardToHand(dealer.drawCard())
     output += "\nThe combined value of your cards is " + player.getHandValue
     evaluate()
     notifyObservers
@@ -50,7 +54,7 @@ class Controller extends Observable {
   def revealDealer() : Unit = {
     output += "\nThe dealer has a " + dealer.getCard(1)
     while (dealer.getHandValue < 17) {
-      output += "\nThe dealer drew a " + dealer.addCardToHand(dealer.drawCard())
+      output += "\nThe dealer draw a " + dealer.addCardToHand(dealer.drawCard())
     }
     output += "\nThe dealers combined value of cards is " + dealer.getHandValue
     revealed = true
