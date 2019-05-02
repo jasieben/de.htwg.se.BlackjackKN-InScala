@@ -54,7 +54,7 @@ class Controller extends Observable {
   def revealDealer() : Unit = {
     output += "\nThe dealer has a " + dealer.getCard(1)
     while (dealer.getHandValue < 17) {
-      output += "\nThe dealer draw a " + dealer.addCardToHand(dealer.drawCard())
+      output += "\nThe dealer draws a " + dealer.addCardToHand(dealer.drawCard())
     }
     output += "\nThe dealers combined value of cards is " + dealer.getHandValue
     revealed = true
@@ -77,7 +77,7 @@ class Controller extends Observable {
       return
     }
 
-
+    //nobody busted
     if (dealer.getHandValue < player.getHandValue) {
       output += "\nYou win!"
     } else if (dealer.getHandValue > player.getHandValue) {

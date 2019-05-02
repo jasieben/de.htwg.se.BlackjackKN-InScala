@@ -155,7 +155,7 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.player.addCardToHand(NumberCard("hearts", "9"))
         controller.player.addCardToHand(NumberCard("clubs"))
         controller.revealDealer()
-        controller.output.contains("The dealer drew a") should be(true)
+        controller.output.contains("The dealer draws a") should be(true)
       }
       "not draw a card for the dealer" in {
         controller.startNewRound()
