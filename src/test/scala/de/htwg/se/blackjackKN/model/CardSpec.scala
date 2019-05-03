@@ -7,10 +7,10 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class CardSpec extends WordSpec with Matchers {
   "A face card" when {
+    val testCard = FaceCard("diamonds", "king")
     "new" should {
-      val testCard = Card("spades", 10, "king")
       "have a suit" in {
-        testCard.suit should be("spades")
+        testCard.suit should be("diamonds")
       }
       "have a value" in {
         testCard.value should be(10)
@@ -19,13 +19,13 @@ class CardSpec extends WordSpec with Matchers {
         testCard.rank should be("king")
       }
       "have a nice String representation" in {
-        testCard.toString should be("king of spades")
+        testCard.toString should be("King of diamonds")
       }
     }
   }
   "Another numbers card" when {
+    val numbersTestCard = NumberCard("hearts","9")
     "new" should {
-      val numbersTestCard = Card("hearts", 9, "9")
       "have a suit" in {
         numbersTestCard.suit should be("hearts")
       }
@@ -38,8 +38,16 @@ class CardSpec extends WordSpec with Matchers {
       "have corresponding values" in {
         numbersTestCard.rank.toInt should be(numbersTestCard.value)
       }
-      "have a nice String representation" in {
-        numbersTestCard.toString should be("9 of hearts")
+    }
+  }
+  "A CardDeck" when {
+    val cardDeck = CardDeck()
+    "new" should {
+      "be a List of Cards" in {
+        cardDeck.cardDeck should be (a [List[_]])
+      }
+      "a String representation" in {
+        cardDeck.toString should be("CardDeck has 52 cards")
       }
     }
   }
