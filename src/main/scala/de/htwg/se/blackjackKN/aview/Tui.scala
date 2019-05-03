@@ -13,9 +13,6 @@ class Tui (controller : Controller) extends Observer {
     input match {
       case "n" =>
         controller.startNewRound()
-      case "exit" =>
-        println("Exiting Blackjack...")
-        System.exit(0)
       case "Scala ist toll!" =>
         println("Sag mir was neues\n (☞ﾟヮﾟ)☞ ")
       case "h" =>
