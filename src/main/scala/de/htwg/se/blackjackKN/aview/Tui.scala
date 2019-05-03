@@ -7,7 +7,6 @@ import de.htwg.se.blackjackKN.util.Observer
 class Tui (controller : Controller) extends Observer {
   def update : Unit = println(controller.display)
   controller.add(this)
-  controller.startGame()
 
 
   def processInput(input: String): Unit = {

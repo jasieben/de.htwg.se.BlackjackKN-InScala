@@ -2,7 +2,6 @@ package de.htwg.se.blackjackKN
 
 import de.htwg.se.blackjackKN.aview.Tui
 import de.htwg.se.blackjackKN.controller.Controller
-import de.htwg.se.blackjackKN.model.Player
 
 import scala.io.StdIn.readLine
 
@@ -11,6 +10,7 @@ object BlackjackKN {
 
     val controller : Controller = new Controller
     val tui = new Tui(controller)
+    controller.startGame()
     var input: String = ""
     do {
       input = readLine()
