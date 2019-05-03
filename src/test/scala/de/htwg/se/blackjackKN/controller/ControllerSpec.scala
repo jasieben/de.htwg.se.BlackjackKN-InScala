@@ -1,9 +1,9 @@
-package de.htwg.se.blackjackKN.model
+package de.htwg.se.blackjackKN.controller
 
-import de.htwg.se.blackjackKN.controller.Controller
+import de.htwg.se.blackjackKN.model.{FaceCard, NumberCard}
 import de.htwg.se.blackjackKN.util.Observer
-import org.scalatest._
 import org.junit.runner.RunWith
+import org.scalatest._
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
