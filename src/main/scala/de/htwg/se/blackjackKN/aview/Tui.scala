@@ -5,7 +5,7 @@ import de.htwg.se.blackjackKN.util.Observer
 
 
 class Tui (controller : Controller) extends Observer {
-  def update : Unit = println(controller.display)
+  override def update : Boolean = {println(controller.display); true}
   controller.add(this)
 
 
