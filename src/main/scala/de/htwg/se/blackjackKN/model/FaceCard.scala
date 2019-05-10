@@ -9,7 +9,3 @@ case class FaceCard(suit: Suits.Value = Suits.Clubs, rank : Ranks.Value = Ranks.
   val value: Int = ranks.find(_._1 == rank).get._2
 
 }
-
-object Ranks extends Enumeration {
-  val King, Queen, Jack, Ace = Value
-}

@@ -8,7 +8,3 @@ trait Card {
 
   val suits: List[Suits.Value] = List(Suits.Hearts, Suits.Clubs, Suits.Diamonds, Suits.Spades)
 }
-
-object Suits extends Enumeration {
-  val Hearts, Clubs, Spades, Diamonds = Value
-}
