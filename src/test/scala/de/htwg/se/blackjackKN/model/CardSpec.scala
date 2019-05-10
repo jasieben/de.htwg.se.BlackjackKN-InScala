@@ -24,7 +24,7 @@ class CardSpec extends WordSpec with Matchers {
     }
   }
   "Another numbers card" when {
-    val numbersTestCard = NumberCard("hearts","9")
+    val numbersTestCard = NumberCard("hearts",9)
     "new" should {
       "have a suit" in {
         numbersTestCard.suit should be("hearts")
@@ -33,7 +33,7 @@ class CardSpec extends WordSpec with Matchers {
         numbersTestCard.value should be(9)
       }
       "have a rank" in {
-        numbersTestCard.rank should be("9")
+        numbersTestCard.rank should be(9)
       }
       "have corresponding values" in {
         numbersTestCard.rank.toInt should be(numbersTestCard.value)
