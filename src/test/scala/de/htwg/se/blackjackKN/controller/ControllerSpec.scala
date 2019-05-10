@@ -142,6 +142,14 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.evaluate()
         controller.output.contains("blackjack") should be(true)
       }
+      "renew the Card Deck if necessary" in {
+        controller.startNewRound()
+        while (controller.dealer.getCardDeckSize > 52) {
+          controller.startNewRound()
+        }
+        controller.startNewRound()
+        controller.dealer.getCardDeckSize should be >= 306
+      }
     }
     "revealing cards" should {
       val controller = new Controller()
