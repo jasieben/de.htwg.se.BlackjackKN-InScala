@@ -21,8 +21,8 @@ class PlayerSpec extends WordSpec with Matchers {
     }
     "adding Card" should {
       "have added card in hand" in {
-        player.addCardToHand(NumberCard("diamonds", 9))
-        player.getCard(0) should be (NumberCard("diamonds",9))
+        player.addCardToHand(NumberCard(Suits.Diamonds, 9))
+        player.getCard(0) should be (NumberCard(Suits.Diamonds,9))
       }
     }
     "clearing hand" should {
