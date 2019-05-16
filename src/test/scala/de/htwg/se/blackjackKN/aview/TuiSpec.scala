@@ -67,5 +67,17 @@ class TuiSpec extends WordSpec with Matchers{
       controller.notifyObservers
       tui.output.contains("Push") should be(true)
     }
+    "display when player busts" in {
+      controller.startNewRound()
+      controller.gameStates = controller.gameStates :+ GameState.PLAYER_BUST
+      controller.notifyObservers
+      tui.output.contains("bust") should be(true)
+    }
+    "display when player wins" in {
+      controller.startNewRound()
+      controller.gameStates = controller.gameStates :+ GameState.PLAYER_WINS
+      controller.notifyObservers
+      tui.output.contains("win") should be(true)
+    }
   }
 }
