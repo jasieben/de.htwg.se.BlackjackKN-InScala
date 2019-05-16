@@ -30,4 +30,8 @@ trait Person {
     } v += hand(i).value
     v
   }
+
+  def getLastHandCard : Card = {
+    hand.last
+  }
 }
