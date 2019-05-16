@@ -24,7 +24,7 @@ class Controller extends Observable {
     player.clearHand()
     dealer.clearHand()
     if (dealer.getCardDeckSize <= 52) {
-      output += "Card Deck ist being changed and shuffled"
+      output += "Card Deck is being changed and shuffled"
       dealer.renewCardDeck()
     }
 
