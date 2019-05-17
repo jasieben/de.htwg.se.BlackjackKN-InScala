@@ -16,7 +16,7 @@ class PlayerSpec extends WordSpec with Matchers {
         player.toString should be("Your Name")
       }
       "have a balance of 0$" in {
-        player.balance should be(0)
+        player.balance > 0 should be (true)
       }
     }
     "adding Card" should {
@@ -30,6 +30,25 @@ class PlayerSpec extends WordSpec with Matchers {
         player.clearHand()
         player.getHandSize should be(0)
       }
+    }
+  }
+  "adding a bet" should {
+    "substract the bet amount" in {
+      player.addBet(Bet(500))
+      player.balance should be (500)
+    }
+  }
+  "clearing the bets" should {
+    "zero out all bets" in {
+      player.addBet(Bet(500))
+      player.clearBets()
+      player.bet.value should be(0)
+    }
+  }
+  "wanting to bet amount above balance" should {
+    player.addBet(Bet(player.balance.toInt + 500))
+    "not continue" in {
+      player.bet.value should be (0)
     }
   }
 
