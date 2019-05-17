@@ -7,7 +7,7 @@ case class NumberCard(suit: Suits.Value = Suits.Spades ,rank: Int = 10) extends 
   require(suits.contains(suit))
   require(ranks.contains(rank))
 
-  val value: Int = rank
+  var value: Int = rank
 
 
 }

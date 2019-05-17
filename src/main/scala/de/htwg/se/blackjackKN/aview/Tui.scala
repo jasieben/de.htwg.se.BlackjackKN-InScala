@@ -8,6 +8,7 @@ class Tui (controller : Controller) extends Observer {
 
   controller.add(this)
   var output : String = ""
+  var firstAceMessage = false
 
   //Show Splashscreen
   output = "\n.------..------..------..------..------..------..------..------..------.\n|B.--. ||L.--. ||A.--. |" +
@@ -57,6 +58,15 @@ class Tui (controller : Controller) extends Observer {
           output += "\nYou loose!"
         case GameState.PUSH =>
           output += "\nPush! You and the dealer have a combined card value of " + controller.dealer.getHandValue
+        case GameState.ACE =>
+          if (!firstAceMessage)
+            output += "\nor your cards can value " + (controller.player.getHandValue - 10)
+            firstAceMessage = true
+        case GameState.BET_FAILED =>
+          output += "\nBet failed. Not enough money!"
+        case GameState.BET_SET => {
+          output += "\nBet of " + controller.player.bet.value + "$ set"
+        }
       }
     }
     print()
@@ -64,6 +74,7 @@ class Tui (controller : Controller) extends Observer {
   }
 
   def processInput(input: String): Unit = {
+    val betRegEx = "bet \\d+".r
     input match {
       case "n" =>
         controller.startNewRound()
@@ -73,6 +84,11 @@ class Tui (controller : Controller) extends Observer {
         controller.hit()
       case "s" =>
         controller.stand()
+      case betRegEx(_*) =>
+        val intPattern = "\\d+".r
+        val intPattern(value) = input
+        controller.setBet(value.toInt)
+
       case _ =>
         println("Input not recognized!")
     }

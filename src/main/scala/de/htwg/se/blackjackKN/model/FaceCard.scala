@@ -6,6 +6,6 @@ case class FaceCard(suit: Suits.Value = Suits.Clubs, rank : Ranks.Value = Ranks.
   require(suits.contains(suit))
   require(ranks.exists(_._1 == rank))
 
-  val value: Int = ranks.find(_._1 == rank).get._2
+  override var value: Int = ranks.find(_._1 == rank).get._2
 
 }
