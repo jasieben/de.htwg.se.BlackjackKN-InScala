@@ -30,4 +30,17 @@ trait Person {
     } v += hand(i).value
     v
   }
+
+  def getLastHandCard : Card = {
+    hand.last
+  }
+
+  def containsCardType(rank: Ranks.Value) : Integer = {
+    for (i <- hand.indices) {
+      if (hand(i).rank == rank) {
+        return i
+      }
+    }
+    -1
+  }
 }

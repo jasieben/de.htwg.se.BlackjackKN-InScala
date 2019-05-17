@@ -1,6 +1,6 @@
 package de.htwg.se.blackjackKN.controller
 
-import de.htwg.se.blackjackKN.model.{FaceCard, NumberCard}
+import de.htwg.se.blackjackKN.model.{FaceCard, NumberCard, Suits, Ranks}
 import de.htwg.se.blackjackKN.util.Observer
 import org.junit.runner.RunWith
 import org.scalatest._
@@ -19,11 +19,6 @@ class ControllerSpec extends WordSpec with Matchers {
         override def update: Boolean = {updated = true; updated}
       }
       controller.add(observer)
-      "notify its Observer after game initialized" in {
-        controller.startGame()
-        observer.updated should be(true)
-        controller.dealer.generateDealerCards.nonEmpty
-      }
       "notify its Observer after starting new round" in {
         controller.startNewRound()
         observer.updated should be(true)
@@ -34,41 +29,27 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.startNewRound()
         controller.dealer.clearHand()
         controller.player.clearHand()
-        controller.dealer.addCardToHand(NumberCard("hearts", "7"))
-        controller.dealer.addCardToHand(NumberCard("clubs"))
-        controller.player.addCardToHand(NumberCard("hearts", "9"))
-        controller.player.addCardToHand(NumberCard("clubs"))
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts, 7))
+        controller.dealer.addCardToHand(NumberCard(Suits.Clubs))
+        controller.player.addCardToHand(NumberCard(Suits.Hearts, 9))
+        controller.player.addCardToHand(NumberCard(Suits.Clubs))
         controller.stand()
-        controller.output.contains("You win!") should be(true)
+        controller.gameStates.contains(GameState.STAND) should be(true)
+        controller.gameStates.contains(GameState.PLAYER_WINS) should be(true)
         observer.updated should be(true)
       }
       "notify its Observer after hitting" in {
         controller.startNewRound()
         controller.dealer.clearHand()
         controller.player.clearHand()
-        controller.dealer.addCardToHand(NumberCard("hearts", "7"))
-        controller.dealer.addCardToHand(NumberCard("clubs"))
-        controller.player.addCardToHand(NumberCard("hearts", "9"))
-        controller.player.addCardToHand(NumberCard("clubs"))
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts, 7))
+        controller.dealer.addCardToHand(NumberCard(Suits.Clubs))
+        controller.player.addCardToHand(NumberCard(Suits.Hearts, 9))
+        controller.player.addCardToHand(NumberCard(Suits.Clubs))
 
         controller.hit()
         controller.player.getHandSize should be(3)
         observer.updated should be(true)
-      }
-      "output the correct value" in {
-        controller.display should be(controller.output)
-      }
-      "not be able to hit when already bust" in {
-        controller.startNewRound()
-        controller.dealer.clearHand()
-        controller.player.clearHand()
-        controller.dealer.addCardToHand(NumberCard("hearts", "7"))
-        controller.dealer.addCardToHand(NumberCard("clubs"))
-        controller.player.addCardToHand(NumberCard("hearts", "9"))
-        controller.player.addCardToHand(NumberCard("clubs"))
-        controller.player.addCardToHand(NumberCard("spades", "9"))
-        controller.hit()
-        controller.output.contains("You cannot hit!") should be(true)
       }
     }
 
@@ -79,68 +60,75 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.startNewRound()
         controller.dealer.clearHand()
         controller.player.clearHand()
-        controller.dealer.addCardToHand(NumberCard("hearts", "7"))
-        controller.dealer.addCardToHand(NumberCard("clubs"))
-        controller.player.addCardToHand(NumberCard("hearts", "9"))
-        controller.player.addCardToHand(NumberCard("clubs"))
-        controller.player.addCardToHand(FaceCard("clubs", "jack"))
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts, 7))
+        controller.dealer.addCardToHand(NumberCard(Suits.Clubs))
+        controller.player.addCardToHand(NumberCard(Suits.Hearts, 9))
+        controller.player.addCardToHand(NumberCard(Suits.Clubs))
+        controller.player.addCardToHand(FaceCard(Suits.Clubs, Ranks.Jack))
         controller.evaluate()
-        controller.output.contains("You bust!") should be(true)
+        controller.gameStates.contains(GameState.PLAYER_BUST) should be(true)
 
       }
       "display when the dealer busts" in {
         controller.startNewRound()
         controller.dealer.clearHand()
         controller.player.clearHand()
-        controller.dealer.addCardToHand(NumberCard("hearts", "7"))
-        controller.dealer.addCardToHand(NumberCard("clubs"))
-        controller.player.addCardToHand(NumberCard("hearts", "9"))
-        controller.player.addCardToHand(NumberCard("clubs"))
-        controller.dealer.addCardToHand(FaceCard("clubs", "jack"))
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts, 7))
+        controller.dealer.addCardToHand(NumberCard(Suits.Clubs))
+        controller.player.addCardToHand(NumberCard(Suits.Hearts, 9))
+        controller.player.addCardToHand(NumberCard(Suits.Clubs))
+        controller.dealer.addCardToHand(FaceCard(Suits.Clubs, Ranks.Jack))
         controller.evaluate()
 
-        controller.output.contains("The dealer busts") should be(true)
+        controller.gameStates.contains(GameState.DEALER_BUST) should be(true)
       }
       "display when there is a push" in {
         controller.startNewRound()
         controller.dealer.clearHand()
         controller.player.clearHand()
-        controller.dealer.addCardToHand(NumberCard("hearts", "9"))
-        controller.dealer.addCardToHand(NumberCard("clubs"))
-        controller.player.addCardToHand(NumberCard("hearts", "9"))
-        controller.player.addCardToHand(NumberCard("clubs"))
-        controller.dealer.getHandValue should be(19)
-        controller.player.getHandValue should be(19)
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts, 9))
+        controller.dealer.addCardToHand(NumberCard(Suits.Clubs))
+        controller.player.addCardToHand(NumberCard(Suits.Hearts, 9))
+        controller.player.addCardToHand(NumberCard(Suits.Clubs))
+        controller.dealer.getHandValue should equal(controller.player.getHandValue)
         controller.revealDealer()
         controller.evaluate()
-        controller.output.contains("Push") should be(true)
+        controller.gameStates.contains(GameState.PUSH) should be(true)
       }
       "display when the player looses" in {
         controller.startNewRound()
         controller.dealer.clearHand()
         controller.player.clearHand()
-        controller.dealer.addCardToHand(NumberCard("hearts", "9"))
-        controller.dealer.addCardToHand(NumberCard("clubs"))
-        controller.player.addCardToHand(NumberCard("hearts", "4"))
-        controller.player.addCardToHand(NumberCard("clubs"))
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts, 9))
+        controller.dealer.addCardToHand(NumberCard(Suits.Clubs))
+        controller.player.addCardToHand(NumberCard(Suits.Hearts, 4))
+        controller.player.addCardToHand(NumberCard(Suits.Clubs))
         controller.dealer.getHandValue should be(19)
         controller.player.getHandValue should be(14)
         controller.revealDealer()
         controller.evaluate()
-        controller.output.contains("loose") should be(true)
+        controller.gameStates.contains(GameState.PLAYER_LOOSE) should be(true)
       }
       "display when the player has a Blackjack" in {
         controller.startNewRound()
         controller.dealer.clearHand()
         controller.player.clearHand()
-        controller.dealer.addCardToHand(NumberCard("hearts", "7"))
-        controller.dealer.addCardToHand(NumberCard("clubs"))
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts, 7))
+        controller.dealer.addCardToHand(NumberCard(Suits.Clubs))
         controller.player.addCardToHand(FaceCard())
-        controller.player.addCardToHand(NumberCard("clubs"))
+        controller.player.addCardToHand(NumberCard(Suits.Clubs))
         controller.dealer.getHandValue should be(17)
         controller.player.getHandValue should be(21)
         controller.evaluate()
-        controller.output.contains("blackjack") should be(true)
+        controller.gameStates.contains(GameState.PLAYER_BLACKJACK) should be(true)
+      }
+      "renew the Card Deck if necessary" in {
+        controller.startNewRound()
+        while (controller.dealer.getCardDeckSize > 52) {
+          controller.startNewRound()
+        }
+        controller.startNewRound()
+        controller.dealer.getCardDeckSize should be >= 306
       }
     }
     "revealing cards" should {
@@ -150,21 +138,21 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.startNewRound()
         controller.dealer.clearHand()
         controller.player.clearHand()
-        controller.dealer.addCardToHand(NumberCard("hearts", "4"))
-        controller.dealer.addCardToHand(NumberCard("clubs"))
-        controller.player.addCardToHand(NumberCard("hearts", "9"))
-        controller.player.addCardToHand(NumberCard("clubs"))
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts, 4))
+        controller.dealer.addCardToHand(NumberCard(Suits.Clubs))
+        controller.player.addCardToHand(NumberCard(Suits.Hearts, 9))
+        controller.player.addCardToHand(NumberCard(Suits.Clubs))
         controller.revealDealer()
-        controller.output.contains("The dealer draws a") should be(true)
+        controller.gameStates.contains(GameState.DEALER_DRAWS) should be(true)
       }
       "not draw a card for the dealer" in {
         controller.startNewRound()
         controller.dealer.clearHand()
         controller.player.clearHand()
-        controller.dealer.addCardToHand(NumberCard("hearts", "7"))
-        controller.dealer.addCardToHand(NumberCard("clubs"))
-        controller.player.addCardToHand(NumberCard("hearts", "9"))
-        controller.player.addCardToHand(NumberCard("clubs"))
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts, 7))
+        controller.dealer.addCardToHand(NumberCard(Suits.Clubs))
+        controller.player.addCardToHand(NumberCard(Suits.Hearts, 9))
+        controller.player.addCardToHand(NumberCard(Suits.Clubs))
         controller.revealDealer()
         controller.dealer.getHandValue should be(17)
       }
