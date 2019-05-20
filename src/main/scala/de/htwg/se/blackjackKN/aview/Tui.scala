@@ -58,10 +58,10 @@ class Tui (controller : Controller) extends Observer {
           output += "Your new balance is " + controller.player.balance + "$\n"
         case GameState.PLAYER_LOOSE =>
           output += "You loose!\n"
-          output += "Your current balance is " + controller.player.balance + "$"
+          output += "Your current balance is " + controller.player.balance + "$\n"
         case GameState.PUSH =>
           output += "Push! You and the dealer have a combined card value of " + controller.dealer.getHandValue + "\n"
-          output += "Your balance stays at " + controller.player.balance + "$"
+          output += "Your balance stays at " + controller.player.balance + "$\n"
         case GameState.ACE =>
           if (!firstAceMessage && !controller.gameStates.contains(GameState.PLAYER_BLACKJACK))
             output += "or your cards can value " + (controller.player.getHandValue - 10) + "\n"
