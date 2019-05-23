@@ -1,7 +1,7 @@
 package de.htwg.se.blackjackKN.controller
 
 import de.htwg.se.blackjackKN.model.{Bet, Dealer, FaceCard, Player, Ranks}
-import de.htwg.se.blackjackKN.util.Observable
+import de.htwg.se.blackjackKN.util.{Observable, UndoManager}
 
 
 class Controller extends Observable {
@@ -10,6 +10,7 @@ class Controller extends Observable {
   var gameStates : List[GameState.Value] = List(GameState.IDLE)
   var revealed : Boolean = false
   var aceStrategy : AceStrategy = new AceStrategy11
+  private val undoManager = new UndoManager
 
   trait AceStrategy {
     def execute()
@@ -19,6 +20,11 @@ class Controller extends Observable {
       val i : Int = player.containsCardType(Ranks.Ace)
       player.getCard(i).value = 1
     }
+  }
+
+  def set(player: Player, dealer: Dealer): Unit = {
+    undoManager.doStep(new SetCommand(player, dealer, this))
+    notifyObservers()
   }
   class AceStrategy11 extends AceStrategy {
     override def execute() : Unit = gameStates = gameStates :+ GameState.ACE
