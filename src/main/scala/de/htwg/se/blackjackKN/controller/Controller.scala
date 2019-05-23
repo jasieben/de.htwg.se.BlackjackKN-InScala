@@ -83,6 +83,17 @@ class Controller extends Observable {
     undoManager.doStep(new StandCommand(this))
     notifyObservers()
   }
+
+  def undo() : Unit = {
+    undoManager.undoStep
+    notifyObservers()
+  }
+
+  def redo() : Unit = {
+    undoManager.redoStep
+    notifyObservers()
+  }
+
   def revealDealer() : Unit = {
     gameStates = gameStates :+ GameState.REVEAL
     drawDealerCards()

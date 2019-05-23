@@ -85,6 +85,10 @@ class Tui (controller : Controller) extends Observer {
         controller.hitCommand()
       case "s" =>
         controller.standCommand()
+      case "z" =>
+        controller.undo()
+      case "y" =>
+        controller.redo()
       case "b" =>
         println("Your current balance is " + controller.player.balance + "$")
       case betRegEx(_*) =>
