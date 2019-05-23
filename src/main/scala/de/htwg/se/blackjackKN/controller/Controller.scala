@@ -45,20 +45,20 @@ class Controller extends Observable {
       gameStates = gameStates :+ GameState.ACE
     }
     evaluate()
-    notifyObservers
+    notifyObservers()
   }
   def setBet(value : Int): Unit = {
     if (player.addBet(Bet(value)))
       gameStates = gameStates :+ GameState.BET_SET
     else
       gameStates = gameStates :+ GameState.BET_FAILED
-    notifyObservers
+    notifyObservers()
   }
 
   def stand() : Unit = {
     gameStates = gameStates :+ GameState.STAND
     revealDealer()
-    notifyObservers
+    notifyObservers()
   }
   def hit() : Unit = {
     player.addCardToHand(dealer.drawCard())
@@ -67,7 +67,7 @@ class Controller extends Observable {
       gameStates = gameStates :+ GameState.ACE
     }
     evaluate()
-    notifyObservers
+    notifyObservers()
   }
   def revealDealer() : Unit = {
     gameStates = gameStates :+ GameState.REVEAL
