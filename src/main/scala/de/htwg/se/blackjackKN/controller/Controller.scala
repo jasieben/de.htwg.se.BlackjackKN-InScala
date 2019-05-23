@@ -5,8 +5,8 @@ import de.htwg.se.blackjackKN.util.{Observable, UndoManager}
 
 
 class Controller extends Observable {
-  val dealer = Dealer()
-  val player = Player()
+  var dealer = Dealer()
+  var player = Player()
   var gameStates : List[GameState.Value] = List(GameState.IDLE)
   var revealed : Boolean = false
   var aceStrategy : AceStrategy = new AceStrategy11

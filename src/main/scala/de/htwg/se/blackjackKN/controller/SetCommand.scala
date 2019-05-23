@@ -4,12 +4,15 @@ import de.htwg.se.blackjackKN.util.Command
 import de.htwg.se.blackjackKN.controller.Controller
 import de.htwg.se.blackjackKN.model.{Dealer, Player}
 
-class SetCommand(player: Player, dealer: Dealer, controller: Unit) extends Command {
+class SetCommand(player: Player, dealer: Dealer, controller: Controller) extends Command {
   override def doStep: Unit = {
 
   }
 
   override def redoStep: Unit = {}
 
-  override def undoStep: Unit = controller = controller.set
+  override def undoStep: Unit = {
+    controller.dealer = dealer
+    controller.player = player
+  }
 }
