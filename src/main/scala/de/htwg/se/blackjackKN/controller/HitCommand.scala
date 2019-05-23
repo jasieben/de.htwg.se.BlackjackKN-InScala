@@ -32,5 +32,6 @@ class HitCommand(controller: Controller) extends Command {
 
     dealerMemento = newDealerMemento
     playerMemento = newPlayerMemento
+    controller.evaluate()
   }
 }
