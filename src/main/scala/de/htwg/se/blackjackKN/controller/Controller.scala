@@ -64,7 +64,6 @@ class Controller extends Observable {
   def stand() : Unit = {
     gameStates = gameStates :+ GameState.STAND
     revealDealer()
-    notifyObservers()
   }
   def hit() : Unit = {
     player.addCardToHand(dealer.drawCard())
@@ -73,6 +72,15 @@ class Controller extends Observable {
       gameStates = gameStates :+ GameState.ACE
     }
     evaluate()
+  }
+
+  def hitCommand() : Unit = {
+    undoManager.doStep(new HitCommand(this))
+    notifyObservers()
+  }
+
+  def standCommand() : Unit = {
+    undoManager.doStep(new StandCommand(this))
     notifyObservers()
   }
   def revealDealer() : Unit = {

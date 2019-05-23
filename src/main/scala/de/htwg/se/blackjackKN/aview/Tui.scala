@@ -82,9 +82,9 @@ class Tui (controller : Controller) extends Observer {
       case "Scala ist toll!" =>
         println("Sag mir was neues\n (☞ﾟヮﾟ)☞ ")
       case "h" =>
-        controller.hit()
+        controller.hitCommand()
       case "s" =>
-        controller.stand()
+        controller.standCommand()
       case "b" =>
         println("Your current balance is " + controller.player.balance + "$")
       case betRegEx(_*) =>
