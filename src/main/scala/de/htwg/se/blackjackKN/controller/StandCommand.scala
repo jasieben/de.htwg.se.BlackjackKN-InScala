@@ -7,14 +7,14 @@ class StandCommand(controller: Controller) extends Command {
   var dealerMemento : Dealer = controller.dealer
   var playerMemento : Player = controller.player
   override def doStep: Unit = {
-    dealerMemento = controller.dealer
-    playerMemento = controller.player
+    dealerMemento = controller.dealer.copy()
+    playerMemento = controller.player.copy()
     controller.stand()
   }
 
   override def redoStep: Unit = {
-    val newDealerMemento : Dealer = controller.dealer
-    val newPlayerMemento : Player = controller.player
+    val newDealerMemento : Dealer = controller.dealer.copy()
+    val newPlayerMemento : Player = controller.player.copy()
 
     controller.dealer = dealerMemento
     controller.player = playerMemento
@@ -24,8 +24,8 @@ class StandCommand(controller: Controller) extends Command {
   }
 
   override def undoStep: Unit = {
-    val newDealerMemento : Dealer = controller.dealer
-    val newPlayerMemento : Player = controller.player
+    val newDealerMemento : Dealer = controller.dealer.copy()
+    val newPlayerMemento : Player = controller.player.copy()
 
     controller.dealer = dealerMemento
     controller.player = playerMemento
