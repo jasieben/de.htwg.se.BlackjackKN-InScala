@@ -99,6 +99,9 @@ class Tui (controller : Controller) extends Observer {
         val number = input.replaceAll("n ", "")
         controller.setBet(number.toInt)
         controller.startNewRound()
+      case "exit" =>
+        output = "Exiting game..."
+        print()
       case _ =>
         println("Input not recognized!")
     }
