@@ -70,6 +70,10 @@ class Tui (controller : Controller) extends Observer {
           output += "Bet failed. Not enough money or no bet set"
         case GameState.BET_SET =>
           output += "Bet of " + controller.player.bet.value + "$ set"
+        case GameState.UNDO =>
+          output += "Undo last input operation\n"
+        case GameState.REDO =>
+          output += "Redo last input operation\n"
       }
     }
     print()

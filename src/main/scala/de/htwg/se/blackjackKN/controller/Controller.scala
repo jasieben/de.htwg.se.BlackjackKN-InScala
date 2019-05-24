@@ -22,10 +22,6 @@ class Controller extends Observable {
     }
   }
 
-  def set(player: Player, dealer: Dealer): Unit = {
-    undoManager.doStep(new SetCommand(player, dealer, this))
-    notifyObservers()
-  }
   class AceStrategy11 extends AceStrategy {
     override def execute() : Unit = gameStates = gameStates :+ GameState.ACE
   }
@@ -85,11 +81,13 @@ class Controller extends Observable {
   }
 
   def undo() : Unit = {
+    gameStates = gameStates :+ GameState.UNDO
     undoManager.undoStep
     notifyObservers()
   }
 
   def redo() : Unit = {
+    gameStates = gameStates :+ GameState.REDO
     undoManager.redoStep
     notifyObservers()
   }
