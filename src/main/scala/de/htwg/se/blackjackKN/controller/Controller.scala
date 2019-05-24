@@ -12,6 +12,11 @@ class Controller extends Observable {
   var aceStrategy : AceStrategy = new AceStrategy11
   private val undoManager = new UndoManager
 
+  val win = new WinningHandler(null)
+  val loose = new LoosingHandler(win)
+  val blackjack = new BlackjackHandler(loose)
+  val push = new PushHandler(blackjack)
+
   trait AceStrategy {
     def execute()
   }
@@ -50,6 +55,10 @@ class Controller extends Observable {
     gameStates = gameStates :+ GameState.FIRST_ROUND
     if (player.containsCardType(Ranks.Ace) != -1) {
       gameStates = gameStates :+ GameState.ACE
+      if (player.getCard(0).rank == Ranks.Ace && player.getCard(1).rank == Ranks.Ace) {
+        aceStrategy = new AceStrategy1
+        aceStrategy.execute()
+      }
     }
     evaluate()
     notifyObservers()
@@ -110,10 +119,7 @@ class Controller extends Observable {
     }
   }
   def evaluate() : Unit = {
-    val win = new WinningHandler(null)
-    val loose = new LoosingHandler(win)
-    val blackjack = new BlackjackHandler(loose)
-    val push = new PushHandler(blackjack)
+
 
     if (player.containsCardType(Ranks.Ace) != -1 && player.getHandValue != 21) {
       if (player.getHandValue > 21) {
