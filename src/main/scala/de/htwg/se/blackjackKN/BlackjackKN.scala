@@ -12,9 +12,10 @@ object BlackjackKN {
     val tui = new Tui(controller)
     controller.startGame()
     var input: String = ""
-    do {
+    if (!args.isEmpty) tui.processInput(args(0))
+    else do {
       input = readLine()
       tui.processInput(input)
-    } while (true)
+    } while (input != "exit")
   }
 }

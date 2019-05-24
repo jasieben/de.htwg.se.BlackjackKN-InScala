@@ -1,9 +1,10 @@
 package de.htwg.se.blackjackKN.model
 
 trait Card {
-  def suit : String
-  def rank: String
-  def value : Int
-  def getCards: List[Any]
-  override def toString: String = {rank.capitalize + " of " + suit}
+  def suit : Suits.Value
+  def rank: Any
+  var value : Int
+  override def toString: String = {rank + " of " + suit}
+
+  val suits: List[Suits.Value] = List(Suits.Hearts, Suits.Clubs, Suits.Diamonds, Suits.Spades)
 }
