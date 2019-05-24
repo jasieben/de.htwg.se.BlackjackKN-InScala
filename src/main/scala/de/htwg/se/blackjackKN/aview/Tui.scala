@@ -16,6 +16,7 @@ class Tui (controller : Controller) extends Observer {
     "/) || :/\\: || :/\\: |\n| ()() || (__) || :\\/: || :\\/: || :\\/: || ()() || :\\/: || :\\/: || :\\/: |\n| '" +
     "--'B|| '--'L|| '--'A|| '--'C|| '--'K|| '--'J|| '--'A|| '--'C|| '--'K|\n`------'`------'`------'`------'`---" +
     "---'`------'`------'`------'`------'\n"
+  output += "Create a new Player by entering \"create (Your Name)\"\n"
   output += "Enter n *dollars* to set a bet and start a new game!\n"
   output += "Your current balance is " + controller.player.balance + "$"
   print()
@@ -29,7 +30,7 @@ class Tui (controller : Controller) extends Observer {
         case GameState.SHUFFLING =>
           output += "Card Deck is being changed and shuffled" + "\n"
         case GameState.FIRST_ROUND =>
-          output += "You have a " + controller.player.getCard(0) + "\n"
+          output += controller.player.name + " has a " + controller.player.getCard(0) + "\n"
           output += "The dealer has a " + controller.dealer.getCard(0) + "\n"
           output += "You also have a " + controller.player.getCard(1) + "\n"
           output += "The combined value of your cards is " + controller.player.getHandValue +"\n"
@@ -74,6 +75,8 @@ class Tui (controller : Controller) extends Observer {
           output += "Undo last input operation\n"
         case GameState.REDO =>
           output += "Redo last input operation\n"
+        case GameState.NEW_NAME =>
+          output += "Player name is set to " + controller.player.name + "\n"
       }
     }
     print()
@@ -81,6 +84,7 @@ class Tui (controller : Controller) extends Observer {
   }
 
   def processInput(input: String): Unit = {
+    val createNameRegEx = "create \\w+".r
     val betRegEx = "n \\d+".r
     input match {
       case "Scala ist toll!" =>
@@ -95,6 +99,9 @@ class Tui (controller : Controller) extends Observer {
         controller.redo()
       case "b" =>
         println("Your current balance is " + controller.player.balance + "$")
+      case createNameRegEx(_*) =>
+        val name = input.replaceAll("create ", "")
+        controller.createNewPlayer(name)
       case betRegEx(_*) =>
         val number = input.replaceAll("n ", "")
         controller.setBet(number.toInt)

@@ -25,9 +25,14 @@ class Controller extends Observable {
   class AceStrategy11 extends AceStrategy {
     override def execute() : Unit = gameStates = gameStates :+ GameState.ACE
   }
-
+  def createNewPlayer(name: String) : Unit = {
+    player = Player(name)
+    gameStates = gameStates :+ GameState.NEW_NAME
+    notifyObservers()
+  }
   def startGame() : Unit = {
     dealer.generateDealerCards
+
   }
   def startNewRound() : Unit = {
     revealed = false
