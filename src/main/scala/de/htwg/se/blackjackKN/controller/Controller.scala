@@ -1,15 +1,21 @@
 package de.htwg.se.blackjackKN.controller
 
 import de.htwg.se.blackjackKN.model.{Bet, Dealer, FaceCard, Player, Ranks}
-import de.htwg.se.blackjackKN.util.Observable
+import de.htwg.se.blackjackKN.util.{Observable, UndoManager}
 
 
 class Controller extends Observable {
-  val dealer = Dealer()
-  val player = Player()
+  var dealer = Dealer()
+  var player = Player()
   var gameStates : List[GameState.Value] = List(GameState.IDLE)
   var revealed : Boolean = false
   var aceStrategy : AceStrategy = new AceStrategy11
+  private val undoManager = new UndoManager
+
+  val win = new WinningHandler(null)
+  val loose = new LoosingHandler(win)
+  val blackjack = new BlackjackHandler(loose)
+  val push = new PushHandler(blackjack)
 
   trait AceStrategy {
     def execute()
@@ -20,12 +26,18 @@ class Controller extends Observable {
       player.getCard(i).value = 1
     }
   }
+
   class AceStrategy11 extends AceStrategy {
     override def execute() : Unit = gameStates = gameStates :+ GameState.ACE
   }
-
+  def createNewPlayer(name: String) : Unit = {
+    player = Player(name)
+    gameStates = gameStates :+ GameState.NEW_NAME
+    notifyObservers()
+  }
   def startGame() : Unit = {
     dealer.generateDealerCards
+
   }
   def startNewRound() : Unit = {
     revealed = false
@@ -43,22 +55,25 @@ class Controller extends Observable {
     gameStates = gameStates :+ GameState.FIRST_ROUND
     if (player.containsCardType(Ranks.Ace) != -1) {
       gameStates = gameStates :+ GameState.ACE
+      if (player.getCard(0).rank == Ranks.Ace && player.getCard(1).rank == Ranks.Ace) {
+        aceStrategy = new AceStrategy1
+        aceStrategy.execute()
+      }
     }
     evaluate()
-    notifyObservers
+    notifyObservers()
   }
   def setBet(value : Int): Unit = {
     if (player.addBet(Bet(value)))
       gameStates = gameStates :+ GameState.BET_SET
     else
       gameStates = gameStates :+ GameState.BET_FAILED
-    notifyObservers
+    notifyObservers()
   }
 
   def stand() : Unit = {
     gameStates = gameStates :+ GameState.STAND
     revealDealer()
-    notifyObservers
   }
   def hit() : Unit = {
     player.addCardToHand(dealer.drawCard())
@@ -67,8 +82,30 @@ class Controller extends Observable {
       gameStates = gameStates :+ GameState.ACE
     }
     evaluate()
-    notifyObservers
   }
+
+  def hitCommand() : Unit = {
+    undoManager.doStep(new HitCommand(this))
+    notifyObservers()
+  }
+
+  def standCommand() : Unit = {
+    undoManager.doStep(new StandCommand(this))
+    notifyObservers()
+  }
+
+  def undo() : Unit = {
+    gameStates = gameStates :+ GameState.UNDO
+    undoManager.undoStep
+    notifyObservers()
+  }
+
+  def redo() : Unit = {
+    gameStates = gameStates :+ GameState.REDO
+    undoManager.redoStep
+    notifyObservers()
+  }
+
   def revealDealer() : Unit = {
     gameStates = gameStates :+ GameState.REVEAL
     drawDealerCards()
@@ -82,10 +119,7 @@ class Controller extends Observable {
     }
   }
   def evaluate() : Unit = {
-    val win = new WinningHandler(null)
-    val loose = new LoosingHandler(win)
-    val blackjack = new BlackjackHandler(loose)
-    val push = new PushHandler(blackjack)
+
 
     if (player.containsCardType(Ranks.Ace) != -1 && player.getHandValue != 21) {
       if (player.getHandValue > 21) {

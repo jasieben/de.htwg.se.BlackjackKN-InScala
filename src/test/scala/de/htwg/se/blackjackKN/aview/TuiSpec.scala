@@ -19,12 +19,12 @@ class TuiSpec extends WordSpec with Matchers{
     "process h" in {
       controller.startNewRound()
       tui.processInput("h")
-      tui.output.contains("You hit") should be(true)
+      tui.output.contains("Test hits") should be(true)
     }
     "process s" in {
       controller.startNewRound()
       tui.processInput("s")
-      tui.output.contains("You stand") should be(true)
+      tui.output.contains("Test stands") should be(true)
     }
     "process Scala ist toll!" in {
       tui.processInput("Scala ist toll!")
