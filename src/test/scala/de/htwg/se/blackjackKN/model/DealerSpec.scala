@@ -23,7 +23,30 @@ class DealerSpec extends WordSpec with Matchers {
     }
     "drawing Card" should {
       "be a card" in {
-        dealer.drawCard() should(be(a [NumberCard]) or be( a [FaceCard]))
+        dealer.drawCard() should (be(a[NumberCard]) or be(a[FaceCard]))
+      }
+    }
+
+    "calling" should {
+      "getLastHandCard()" in {
+        dealer.generateDealerCards
+        dealer.addCardToHand(dealer.drawCard())
+        val testCard = dealer.addCardToHand(dealer.drawCard())
+        dealer.getLastHandCard should be(testCard)
+      }
+      "containsCardType when containing card" in {
+        dealer.generateDealerCards
+        dealer.clearHand()
+        dealer.addCardToHand(FaceCard(Suits.Hearts, Ranks.Jack))
+        dealer.addCardToHand(FaceCard(Suits.Spades,Ranks.Ace))
+        dealer.containsCardType(Ranks.Ace) should be(1)
+      }
+      "containsCardType when not containing card" in {
+        dealer.generateDealerCards
+        dealer.clearHand()
+        dealer.addCardToHand(FaceCard(Suits.Hearts,Ranks.Ace))
+        dealer.addCardToHand(FaceCard(Suits.Spades,Ranks.Ace))
+        dealer.containsCardType(Ranks.King) should be(-1)
       }
     }
   }

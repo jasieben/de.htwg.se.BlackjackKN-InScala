@@ -90,7 +90,6 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.dealer.addCardToHand(NumberCard(Suits.Clubs))
         controller.player.addCardToHand(NumberCard(Suits.Hearts, 9))
         controller.player.addCardToHand(NumberCard(Suits.Clubs))
-        controller.dealer.getHandValue should equal(controller.player.getHandValue)
         controller.revealDealer()
         controller.evaluate()
         controller.gameStates.contains(GameState.PUSH) should be(true)
