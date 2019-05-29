@@ -53,6 +53,12 @@ class Controller extends Observable {
     player.addCardToHand(dealer.drawCard())
     dealer.addCardToHand(dealer.drawCard())
     gameStates = gameStates :+ GameState.FIRST_ROUND
+    checkForAces()
+    evaluate()
+    notifyObservers()
+  }
+
+  def checkForAces(): Unit = {
     if (player.containsCardType(Ranks.Ace) != -1) {
       gameStates = gameStates :+ GameState.ACE
       if (player.getCard(0).rank == Ranks.Ace && player.getCard(1).rank == Ranks.Ace) {
@@ -60,9 +66,8 @@ class Controller extends Observable {
         aceStrategy.execute()
       }
     }
-    evaluate()
-    notifyObservers()
   }
+
   def setBet(value : Int): Unit = {
     if (player.addBet(Bet(value)))
       gameStates = gameStates :+ GameState.BET_SET
@@ -78,9 +83,7 @@ class Controller extends Observable {
   def hit() : Unit = {
     player.addCardToHand(dealer.drawCard())
     gameStates = gameStates :+ GameState.HIT
-    if (player.containsCardType(Ranks.Ace) != -1) {
-      gameStates = gameStates :+ GameState.ACE
-    }
+    checkForAces()
     evaluate()
   }
 
@@ -119,8 +122,6 @@ class Controller extends Observable {
     }
   }
   def evaluate() : Unit = {
-
-
     if (player.containsCardType(Ranks.Ace) != -1 && player.getHandValue != 21) {
       if (player.getHandValue > 21) {
         aceStrategy = new AceStrategy1

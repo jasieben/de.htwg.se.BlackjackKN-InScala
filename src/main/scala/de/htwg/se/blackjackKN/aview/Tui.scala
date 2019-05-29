@@ -98,7 +98,8 @@ class Tui (controller : Controller) extends Observer {
       case "y" =>
         controller.redo()
       case "b" =>
-        println("Your current balance is " + controller.player.balance + "$")
+        output = "Your current balance is " + controller.player.balance + "$"
+        print()
       case createNameRegEx(_*) =>
         val name = input.replaceAll("create ", "")
         controller.createNewPlayer(name)

@@ -1,6 +1,6 @@
 package de.htwg.se.blackjackKN.controller
 
-import de.htwg.se.blackjackKN.model.{FaceCard, NumberCard, Suits, Ranks}
+import de.htwg.se.blackjackKN.model.{FaceCard, NumberCard, Ranks, Suits}
 import de.htwg.se.blackjackKN.util.Observer
 import org.junit.runner.RunWith
 import org.scalatest._
@@ -121,6 +121,42 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.player.getHandValue should be(21)
         controller.evaluate()
         controller.gameStates.contains(GameState.PLAYER_BLACKJACK) should be(true)
+      }
+      "display when the bet fails" in {
+        controller.startNewRound()
+        controller.player.balance = 0
+        controller.setBet(100)
+        controller.gameStates.contains(GameState.BET_FAILED) should be(true)
+      }
+      "control Ace Behavior when ace with low number card" in {
+        controller.startNewRound()
+        controller.dealer.clearHand()
+        controller.player.clearHand()
+        controller.player.addCardToHand(NumberCard(Suits.Hearts, 7))
+        controller.player.addCardToHand(FaceCard(Suits.Diamonds, Ranks.Ace))
+        controller.aceStrategy.execute()
+        controller.gameStates.contains(GameState.ACE) should be(true)
+      }
+      "control Ace Behavior when double ace" in {
+        controller.startNewRound()
+        controller.dealer.clearHand()
+        controller.player.clearHand()
+        controller.player.addCardToHand(FaceCard(Suits.Diamonds, Ranks.Ace))
+        controller.player.addCardToHand(FaceCard(Suits.Spades, Ranks.Ace))
+        controller.checkForAces()
+        controller.player.getHandValue should be(12)
+      }
+      "control Ace Behavior when evaluating" in {
+        controller.startNewRound()
+        controller.dealer.clearHand()
+        controller.player.clearHand()
+        controller.player.addCardToHand(NumberCard(Suits.Spades, 5))
+        controller.player.addCardToHand(FaceCard(Suits.Diamonds, Ranks.Ace))
+        controller.player.addCardToHand(FaceCard(Suits.Spades, Ranks.King))
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts, 7))
+        controller.dealer.addCardToHand(NumberCard(Suits.Clubs))
+        controller.evaluate()
+        controller.player.getHandValue should be(16)
       }
       "renew the Card Deck if necessary" in {
         controller.startNewRound()
