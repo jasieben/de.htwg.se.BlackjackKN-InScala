@@ -1,6 +1,6 @@
 package de.htwg.se.blackjackKN.controller
 
-import de.htwg.se.blackjackKN.model.{FaceCard, NumberCard, Ranks, Suits}
+import de.htwg.se.blackjackKN.model.{Bet, FaceCard, NumberCard, Ranks, Suits}
 import de.htwg.se.blackjackKN.util.Observer
 import org.junit.runner.RunWith
 import org.scalatest._
@@ -190,6 +190,91 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.player.addCardToHand(NumberCard(Suits.Clubs))
         controller.revealDealer()
         controller.dealer.getHandValue should be(17)
+      }
+      "make correct decision when dealer and player have blackjack" in {
+        controller.startNewRound()
+        controller.dealer.clearHand()
+        controller.player.clearHand()
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts))
+        controller.dealer.addCardToHand(FaceCard(Suits.Clubs))
+        controller.player.addCardToHand(NumberCard(Suits.Hearts))
+        controller.player.addCardToHand(FaceCard(Suits.Clubs))
+        controller.evaluate()
+        controller.gameStates.contains(GameState.DEALER_BLACKJACK) should be(true)
+        controller.gameStates.contains(GameState.PLAYER_BLACKJACK) should be(true)
+      }
+      "make correct decision when dealer has blackjack and player not" in {
+        controller.startNewRound()
+        controller.dealer.clearHand()
+        controller.player.clearHand()
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts))
+        controller.dealer.addCardToHand(FaceCard(Suits.Clubs))
+        controller.player.addCardToHand(NumberCard(Suits.Hearts, 2))
+        controller.player.addCardToHand(FaceCard(Suits.Clubs))
+        controller.revealDealer()
+        controller.evaluate()
+        controller.gameStates.contains(GameState.DEALER_BLACKJACK) should be(true)
+        controller.gameStates.contains(GameState.PLAYER_LOOSE) should be(true)
+      }
+    }
+    "paying out bet" should {
+      val controller = new Controller()
+      controller.startGame()
+
+      "pay correct amount when blackjack" in {
+        controller.player.clearHand()
+        controller.dealer.clearHand()
+        controller.player.balance = 1000
+        controller.setBet(100)
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts, 7))
+        controller.dealer.addCardToHand(NumberCard(Suits.Clubs))
+        controller.player.addCardToHand(NumberCard(Suits.Hearts))
+        controller.player.addCardToHand(FaceCard(Suits.Clubs, Ranks.Ace))
+        controller.evaluate()
+        controller.player.balance should be(1150)
+        controller.player.bet = Bet(0)
+      }
+      "pay correct amount when push" in {
+        controller.player.clearHand()
+        controller.dealer.clearHand()
+        controller.player.balance = 1000
+        controller.setBet(100)
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts, 8))
+        controller.dealer.addCardToHand(NumberCard(Suits.Clubs))
+        controller.player.addCardToHand(NumberCard(Suits.Hearts, 8))
+        controller.player.addCardToHand(NumberCard(Suits.Clubs))
+        controller.revealDealer()
+        controller.evaluate()
+        controller.player.balance should be(1000)
+        controller.player.bet = Bet(0)
+      }
+      "pay correct amount when loosing" in {
+        controller.player.clearHand()
+        controller.dealer.clearHand()
+        controller.player.balance = 1000
+        controller.setBet(100)
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts, 9))
+        controller.dealer.addCardToHand(NumberCard(Suits.Clubs))
+        controller.player.addCardToHand(NumberCard(Suits.Hearts, 7))
+        controller.player.addCardToHand(NumberCard(Suits.Clubs))
+        controller.revealDealer()
+        controller.evaluate()
+        controller.player.balance should be(900)
+        controller.player.bet = Bet(0)
+      }
+      "pay correct amount when winning" in {
+        controller.player.clearHand()
+        controller.dealer.clearHand()
+        controller.player.balance = 1000
+        controller.setBet(100)
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts, 7))
+        controller.dealer.addCardToHand(NumberCard(Suits.Clubs))
+        controller.player.addCardToHand(NumberCard(Suits.Hearts, 9))
+        controller.player.addCardToHand(NumberCard(Suits.Clubs))
+        controller.revealDealer()
+        controller.evaluate()
+        controller.player.balance should be(1100)
+        controller.player.bet = Bet(0)
       }
     }
   }

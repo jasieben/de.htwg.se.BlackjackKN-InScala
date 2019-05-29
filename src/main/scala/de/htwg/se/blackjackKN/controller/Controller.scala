@@ -79,6 +79,7 @@ class Controller extends Observable {
   def stand() : Unit = {
     gameStates = gameStates :+ GameState.STAND
     revealDealer()
+    evaluate()
   }
   def hit() : Unit = {
     player.addCardToHand(dealer.drawCard())
@@ -111,9 +112,12 @@ class Controller extends Observable {
 
   def revealDealer() : Unit = {
     gameStates = gameStates :+ GameState.REVEAL
-    drawDealerCards()
+    if (dealer.getHandValue == 21 && dealer.getHandSize == 2) { //if dealer has bj as well
+      gameStates = gameStates :+ GameState.DEALER_BLACKJACK
+    } else {
+      drawDealerCards()
+    }
     revealed = true
-    evaluate()
   }
   private def drawDealerCards() : Unit = {
     gameStates = gameStates :+ GameState.DEALER_DRAWS
@@ -133,19 +137,23 @@ class Controller extends Observable {
     if (player.getHandValue > 21) {
       gameStates = gameStates :+ GameState.PLAYER_BUST
       gameStates = gameStates :+ GameState.PLAYER_LOOSE
-      push.handleRequest(gameStates.last, this.player)
+      push.handleRequest(GameState.PLAYER_LOOSE, this.player)
       return
     } else if (dealer.getHandValue > 21) {
       gameStates = gameStates :+ GameState.DEALER_BUST
       gameStates = gameStates :+ GameState.PLAYER_WINS
-      push.handleRequest(gameStates.last, this.player)
+      push.handleRequest(GameState.PLAYER_WINS, this.player)
       return
     } else if (player.getHandValue == 21 && !revealed && player.getHandSize == 2) {
-      gameStates = gameStates :+ GameState.PLAYER_BLACKJACK
+      gameStates = gameStates :+ GameState.PLAYER_BLACKJACK // if player has blackjack doesn't win yet
       revealDealer()
-      push.handleRequest(gameStates.last, this.player)
-      return
-    } else if (!revealed){  //when revealed
+      // if player has blackjack and dealer hasn't pay out can continue
+      if (gameStates.contains(GameState.PLAYER_BLACKJACK) && !gameStates.contains(GameState.DEALER_BLACKJACK)) {
+        push.handleRequest(GameState.PLAYER_BLACKJACK, this.player)
+        return
+      }
+      // if not continue for push handling
+    } else if (!revealed){  //when not revealed yet
       gameStates = gameStates :+ GameState.WAITING_FOR_INPUT
       return
     }
@@ -153,7 +161,8 @@ class Controller extends Observable {
     //nobody busted
     if (dealer.getHandValue < player.getHandValue) {
       gameStates = gameStates :+ GameState.PLAYER_WINS
-    } else if (dealer.getHandValue > player.getHandValue) {
+    } else if (dealer.getHandValue > player.getHandValue
+      || (gameStates.contains(GameState.DEALER_BLACKJACK) && !gameStates.contains(GameState.PLAYER_BLACKJACK))) {
       gameStates = gameStates :+ GameState.PLAYER_LOOSE
     } else if (dealer.getHandValue == player.getHandValue) {
       gameStates = gameStates :+ GameState.PUSH

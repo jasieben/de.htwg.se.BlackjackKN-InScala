@@ -77,6 +77,8 @@ class Tui (controller : Controller) extends Observer {
           output += "Redo last input operation\n"
         case GameState.NEW_NAME =>
           output += "Player name is set to " + controller.player.name + "\n"
+        case GameState.DEALER_BLACKJACK =>
+          output += "The dealer has a Blackjack!\n"
       }
     }
     print()

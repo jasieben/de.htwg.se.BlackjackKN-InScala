@@ -158,5 +158,12 @@ class TuiSpec extends WordSpec with Matchers{
       controller.notifyObservers()
       tui.output.contains("name") should be(true)
     }
+    "display when DealerBlackjack" in {
+      controller.startNewRound()
+      controller.clearGameStates()
+      controller.gameStates = controller.gameStates :+ GameState.DEALER_BLACKJACK
+      controller.notifyObservers()
+      tui.output.contains("Blackjack") should be(true)
+    }
   }
 }

@@ -7,8 +7,6 @@ class WinningHandler(val successor: BetHandler) extends BetHandler {
   override def handleRequest(gameState: GameState, player: Player): Unit = {
     if (gameState == GameState.PLAYER_WINS)
       player.balance += player.bet.value * 2
-    else
-      println("Error in chain")
   }
 }
 
