@@ -10,7 +10,7 @@ class Controller extends Observable {
   var gameStates : List[GameState.Value] = List(GameState.IDLE)
   var revealed : Boolean = false
   var aceStrategy : AceStrategy = new AceStrategy11
-  private val undoManager = new UndoManager
+  val undoManager = new UndoManager
 
   val win = new WinningHandler(null)
   val loose = new LoosingHandler(win)
@@ -41,6 +41,7 @@ class Controller extends Observable {
   }
   def startNewRound() : Unit = {
     revealed = false
+    clearGameStates()
     player.clearHand()
     dealer.clearHand()
     if (dealer.getCardDeckSize <= 52) {

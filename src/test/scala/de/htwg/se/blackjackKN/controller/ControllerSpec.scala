@@ -23,7 +23,6 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.startNewRound()
         observer.updated should be(true)
         controller.player.getHandSize should be(2)
-        controller.dealer.getHandSize should be(2)
       }
       "notify its Observer after standing" in {
         controller.startNewRound()
@@ -215,6 +214,35 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.evaluate()
         controller.gameStates.contains(GameState.DEALER_BLACKJACK) should be(true)
         controller.gameStates.contains(GameState.PLAYER_LOOSE) should be(true)
+      }
+    }
+    "making gamestate altering commands" should {
+      val controller = new Controller()
+      controller.startGame()
+      "as undo after hitting" in {
+        controller.startNewRound()
+        controller.dealer.clearHand()
+        controller.player.clearHand()
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts))
+        controller.dealer.addCardToHand(FaceCard(Suits.Clubs))
+        controller.hitCommand()
+        val testValue = controller.player.getHandValue
+        controller.standCommand()
+        controller.undo()
+        controller.player.getHandValue should be(testValue)
+      }
+      "as redo after undo" in {
+        controller.startNewRound()
+        controller.dealer.clearHand()
+        controller.player.clearHand()
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts))
+        controller.dealer.addCardToHand(FaceCard(Suits.Clubs))
+        controller.hitCommand()
+        controller.standCommand()
+        val testValue = controller.player.getHandValue
+        controller.undo()
+        controller.redo()
+        controller.player.getHandValue should be(testValue)
       }
     }
     "paying out bet" should {
