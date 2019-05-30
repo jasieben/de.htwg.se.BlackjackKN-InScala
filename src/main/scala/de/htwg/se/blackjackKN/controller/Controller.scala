@@ -150,7 +150,7 @@ class Controller extends Observable {
       revealDealer()
       // if player has blackjack and dealer hasn't pay out can continue
       if (gameStates.contains(GameState.PLAYER_BLACKJACK) && !gameStates.contains(GameState.DEALER_BLACKJACK)) {
-        push.handleRequest(GameState.PLAYER_BLACKJACK, this.player)
+        evaluate()
         return
       }
       // if not continue for push handling
@@ -160,15 +160,20 @@ class Controller extends Observable {
     }
 
     //nobody busted
-    if (dealer.getHandValue < player.getHandValue) {
+    if (dealer.getHandValue < 21 && player.getHandValue == 21) {
       gameStates = gameStates :+ GameState.PLAYER_WINS
+      push.handleRequest(GameState.PLAYER_BLACKJACK, this.player)
     } else if (dealer.getHandValue > player.getHandValue
       || (gameStates.contains(GameState.DEALER_BLACKJACK) && !gameStates.contains(GameState.PLAYER_BLACKJACK))) {
       gameStates = gameStates :+ GameState.PLAYER_LOOSE
+      push.handleRequest(gameStates.last, this.player)
     } else if (dealer.getHandValue == player.getHandValue) {
       gameStates = gameStates :+ GameState.PUSH
+      push.handleRequest(gameStates.last, this.player)
+    } else if (dealer.getHandValue < player.getHandValue) {
+      gameStates = gameStates :+ GameState.PLAYER_WINS
+      push.handleRequest(gameStates.last, this.player)
     }
-    push.handleRequest(gameStates.last, this.player)
     gameStates = gameStates :+ GameState.IDLE
   }
 
