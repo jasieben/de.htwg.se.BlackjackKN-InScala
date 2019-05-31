@@ -69,12 +69,18 @@ class Controller extends Observable {
     }
   }
 
-  def setBet(value : Int): Unit = {
-    if (player.addBet(Bet(value)))
+  def setBet(value : Int): Boolean = {
+    if (player.addBet(Bet(value))) {
       gameStates = gameStates :+ GameState.BET_SET
-    else
+      notifyObservers()
+      true
+    }
+    else {
       gameStates = gameStates :+ GameState.BET_FAILED
-    notifyObservers()
+      notifyObservers()
+      false
+    }
+
   }
 
   def stand() : Unit = {
