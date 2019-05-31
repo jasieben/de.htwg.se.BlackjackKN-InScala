@@ -23,15 +23,15 @@ class Gui(controller: Controller) extends JFXApp with Observer{
     width = 1200
     height = 800
     scene = new Scene {
+      fill = new LinearGradient(
+        endX = 0,
+        stops = Stops(PaleGreen, SeaGreen))
       root = new BorderPane {
         top = new HBox {
           children = new Text {
             text = "BLACKJACK"
             style = "-fx-font-size: 36pt"
             alignment = Pos.CENTER
-            fill = new LinearGradient(
-              endX = 0,
-              stops = Stops(PaleGreen, SeaGreen))
           }
         }
         center = new VBox {
@@ -81,8 +81,19 @@ class Gui(controller: Controller) extends JFXApp with Observer{
 
     result match {
       case Some(value) =>
+        var int : Double = 0
         try {
-          val int = value.toDouble
+          int = value.toDouble
+        } catch {
+          case _: Throwable =>
+            new Alert(AlertType.Error) {
+              initOwner(stage)
+              title = "Bet failed"
+              headerText = "Please enter a number and nothing else"
+              contentText = "I mean, come on what's wrong with you?"
+            }.showAndWait()
+            return
+        }
           if (controller.setBet(int.toInt)) {
             controller.startNewRound()
             setPlayingScene()
@@ -94,7 +105,6 @@ class Gui(controller: Controller) extends JFXApp with Observer{
               contentText = "You don't have enough money mate"
             }.showAndWait()
           }
-        }
       case None =>
     }
 
