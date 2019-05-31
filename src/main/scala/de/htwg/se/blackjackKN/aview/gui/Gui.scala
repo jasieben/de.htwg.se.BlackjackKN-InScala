@@ -3,20 +3,27 @@ package de.htwg.se.blackjackKN.aview.gui
 import scalafx.Includes._
 import de.htwg.se.blackjackKN.controller.Controller
 import de.htwg.se.blackjackKN.util.Observer
-import javafx.geometry._
+import scalafx.geometry._
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.geometry.Insets
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.{Scene, SubScene}
-import scalafx.scene.layout.{BorderPane, FlowPane, HBox, VBox}
+import scalafx.scene.layout.{BorderPane, FlowPane, HBox, Pane, VBox}
 import scalafx.scene.paint.Color._
 import scalafx.scene.paint.{LinearGradient, Stops}
 import scalafx.scene.text.{Text, TextAlignment}
 import scalafx.scene.control._
+import scalafx.scene.shape._
 
 class Gui(controller: Controller) extends JFXApp with Observer{
   controller.add(this)
+
+  val menuText : Text = new Text {
+    textAlignment = TextAlignment.Center
+    text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
+  }
+
   stage = new PrimaryStage {
     onCloseRequest = handle { exit() }
     title = "BlackjackKN"
@@ -76,15 +83,11 @@ class Gui(controller: Controller) extends JFXApp with Observer{
       fill = new LinearGradient(
         endX = 0,
         stops = Stops(DarkGreen, SeaGreen))
-      content = new FlowPane {
-        children = Seq(
-          new Text {
-            text = "NEW ROUND"
-            fill = White
-          }
-        )
+
+        var dealersCards = List(Rectangle(200,400))
+        dealersCards.head.translateY = 30
+        content = List(dealersCards.head)
       }
-    }
   }
 
   def setMenuScene() : Scene = {
@@ -97,23 +100,26 @@ class Gui(controller: Controller) extends JFXApp with Observer{
           children = new Text {
             text = "BLACKJACK"
             style = "-fx-font-size: 36pt"
-            alignment = Pos.CENTER
+            alignment = Pos.Center
           }
         }
         center = new VBox {
 
-          alignment = Pos.CENTER
+          alignment = Pos.Center
           spacing = 20
           style = "-fx-font-size: 12pt"
           children = Seq(
-            new Text {
-              textAlignment = TextAlignment.Center
-              text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
-            },
+            menuText,
             new Button {
               text = "Start New Round!"
               onAction = handle {
                 startNewRound()
+              }
+            },
+            new Button {
+              text = "Change Player Name"
+              onAction = handle {
+                changePlayer()
               }
             },
             new Button {
@@ -123,7 +129,7 @@ class Gui(controller: Controller) extends JFXApp with Observer{
           )
         }
         bottom = new HBox{
-          alignment = Pos.CENTER
+          alignment = Pos.Center
           spacing = 20
           children = Seq(
             new Text {
@@ -133,6 +139,23 @@ class Gui(controller: Controller) extends JFXApp with Observer{
           )
         }
       }
+    }
+  }
+
+  def changePlayer() : Unit = {
+    val dialog = new TextInputDialog(controller.player.name) {
+      initOwner(stage)
+      title = "Change your name"
+      headerText = "What name would you like to have?"
+      contentText = "Enter the name here:"
+    }
+
+    val result = dialog.showAndWait()
+
+    result match {
+      case Some(value) =>
+        controller.createNewPlayer(value)
+        menuText.text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
     }
   }
 
