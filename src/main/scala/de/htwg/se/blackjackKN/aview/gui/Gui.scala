@@ -22,52 +22,7 @@ class Gui(controller: Controller) extends JFXApp with Observer{
     title = "BlackjackKN"
     width = 1200
     height = 800
-    scene = new Scene {
-      fill = new LinearGradient(
-        endX = 0,
-        stops = Stops(PaleGreen, SeaGreen))
-      root = new BorderPane {
-        top = new HBox {
-          children = new Text {
-            text = "BLACKJACK"
-            style = "-fx-font-size: 36pt"
-            alignment = Pos.CENTER
-          }
-        }
-        center = new VBox {
-
-          alignment = Pos.CENTER
-          spacing = 20
-          style = "-fx-font-size: 12pt"
-          children = Seq(
-            new Text {
-              textAlignment = TextAlignment.Center
-              text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
-            },
-            new Button {
-              text = "Start New Round!"
-              onAction = handle {
-                startNewRound()
-              }
-            },
-            new Button {
-              text = "Exit Game"
-              onAction = handle { exit() }
-            }
-          )
-        }
-        bottom = new HBox{
-          alignment = Pos.CENTER
-          spacing = 20
-          children = Seq(
-            new Text {
-              text = "Developed by Jana Siebenhaller and Benjamin Jasper"
-              padding = Insets(40,0,20,0)
-            }
-          )
-        }
-      }
-    }
+    scene = setMenuScene()
   }
   def startNewRound() : Unit = {
     val dialog = new TextInputDialog(defaultValue = (controller.player.balance / 8).toInt.toString) {
@@ -118,7 +73,9 @@ class Gui(controller: Controller) extends JFXApp with Observer{
 
   def setPlayingScene() : Unit = {
     stage.scene = new Scene {
-      fill = Black
+      fill = new LinearGradient(
+        endX = 0,
+        stops = Stops(DarkGreen, SeaGreen))
       content = new FlowPane {
         children = Seq(
           new Text {
@@ -126,6 +83,55 @@ class Gui(controller: Controller) extends JFXApp with Observer{
             fill = White
           }
         )
+      }
+    }
+  }
+
+  def setMenuScene() : Scene = {
+    new Scene {
+      fill = new LinearGradient(
+        endX = 0,
+        stops = Stops(PaleGreen, SeaGreen))
+      root = new BorderPane {
+        top = new HBox {
+          children = new Text {
+            text = "BLACKJACK"
+            style = "-fx-font-size: 36pt"
+            alignment = Pos.CENTER
+          }
+        }
+        center = new VBox {
+
+          alignment = Pos.CENTER
+          spacing = 20
+          style = "-fx-font-size: 12pt"
+          children = Seq(
+            new Text {
+              textAlignment = TextAlignment.Center
+              text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
+            },
+            new Button {
+              text = "Start New Round!"
+              onAction = handle {
+                startNewRound()
+              }
+            },
+            new Button {
+              text = "Exit Game"
+              onAction = handle { exit() }
+            }
+          )
+        }
+        bottom = new HBox{
+          alignment = Pos.CENTER
+          spacing = 20
+          children = Seq(
+            new Text {
+              text = "Developed by Jana Siebenhaller and Benjamin Jasper"
+              padding = Insets(40,0,20,0)
+            }
+          )
+        }
       }
     }
   }
