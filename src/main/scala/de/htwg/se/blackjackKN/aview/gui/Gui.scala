@@ -156,6 +156,7 @@ class Gui(controller: Controller) extends JFXApp with Observer{
       case Some(value) =>
         controller.createNewPlayer(value)
         menuText.text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
+      case None =>
     }
   }
 
