@@ -4,6 +4,7 @@ import scalafx.Includes._
 import de.htwg.se.blackjackKN.controller.{Controller, GameState}
 import de.htwg.se.blackjackKN.util.Observer
 import javafx.scene.paint.ImagePattern
+import scalafx.animation._
 import scalafx.geometry._
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
@@ -17,6 +18,8 @@ import scalafx.scene.text.{Text, TextAlignment}
 import scalafx.scene.control._
 import scalafx.scene.image.Image
 import scalafx.scene.shape._
+
+import scala.language.postfixOps
 
 class Gui(controller: Controller) extends JFXApp with Observer {
   controller.add(this)
@@ -51,10 +54,10 @@ class Gui(controller: Controller) extends JFXApp with Observer {
       x = (stage.width - stage.width / 8).toInt
     }
     val dealerCard1: Card = new Card(stage) {
-      x = (stage.width / 2 - width + width / 4).toInt
+      x = (stage.width - stage.width / 8).toInt
     }
     val dealerCard2: Card = new Card(stage) {
-      x = ((stage.width / 2) - width / 4).toInt
+      x = (stage.width - stage.width / 8).toInt
     }
     val dealerCard3: Card = new Card(stage) {
       x = ((stage.width / 2) - width / 4 + width / 2).toInt
@@ -166,6 +169,21 @@ class Gui(controller: Controller) extends JFXApp with Observer {
   def exit(): Unit = {
     println("Exiting game...")
     System.exit(0)
+  }
+
+  val timelineD1 = new Timeline {
+    cycleCount = 1
+    autoReverse = false
+    keyFrames = Seq(
+      at (1.0 s) {Cards.dealerCard1.x -> (stage.width / 2 - Cards.dealerCard1.width + Cards.dealerCard1.width / 4).toInt tween Interpolator.EaseBoth})
+
+  }
+  val timelineD2 = new Timeline {
+    cycleCount = 1
+    autoReverse = false
+    keyFrames = Seq(
+      at (1.0 s) {Cards.dealerCard2.x -> ((stage.width / 2) - Cards.dealerCard2.width / 4).toInt tween Interpolator.EaseBoth})
+
   }
 
   def setPlayingScene(): Unit = {
@@ -287,12 +305,19 @@ class Gui(controller: Controller) extends JFXApp with Observer {
         case GameState.SHUFFLING =>
 
         case GameState.FIRST_ROUND =>
+          Cards.dealerCard1.setFill(backSideImagePattern)
+          timelineD1.play()
+          timelineD1.onFinished = handle {
+            Cards.dealerCard1.setFill(controller.dealer.getCard(0).getBackgroundImagePattern)
+            timelineD2.play()
+          }
+          // TODO: implement animations for other cards, also in correct order
+
           Controls.standButton.setDisable(true)
           Controls.hitButton.setDisable(true)
           currentBetText.text = "Current Bet: " + controller.player.bet.value + "$"
           balanceText.text = "Balance: " + controller.player.balance + "$"
           Cards.stackCards.setFill(backSideImagePattern)
-          Cards.dealerCard1.setFill(controller.dealer.getCard(0).getBackgroundImagePattern)
           Cards.dealerCard2.setFill(backSideImagePattern)
           Cards.playerCard1.setFill(controller.player.getCard(0).getBackgroundImagePattern)
           Cards.playerCard2.setFill(controller.player.getCard(1).getBackgroundImagePattern)
