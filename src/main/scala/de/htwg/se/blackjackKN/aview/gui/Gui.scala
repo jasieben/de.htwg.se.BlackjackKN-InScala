@@ -11,7 +11,7 @@ import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.{Scene, SubScene}
 import scalafx.scene.layout.{BorderPane, FlowPane, HBox, Pane, VBox}
 import scalafx.scene.paint.Color._
-import scalafx.scene.paint.{LinearGradient, Stops}
+import scalafx.scene.paint.{Color, LinearGradient, Stops}
 import scalafx.scene.text.{Text, TextAlignment}
 import scalafx.scene.control._
 import scalafx.scene.shape._
@@ -22,6 +22,68 @@ class Gui(controller: Controller) extends JFXApp with Observer{
   val menuText : Text = new Text {
     textAlignment = TextAlignment.Center
     text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
+  }
+
+  val backgroundCard: Color = LightGrey
+  object Cards {
+    val stackCards = new Rectangle {
+      fill = backgroundCard
+      stroke = Black
+      width = 100
+      height = 150
+      x = (stage.width - stage.width / 8).toInt
+      y = (stage.height / 10).toInt
+    }
+    val dealerCard1 = new Rectangle {
+      fill = backgroundCard
+      stroke = Black
+      width = 100
+      height = 150
+      x = (stage.width / 2 - width + width/4).toInt
+      y = (stage.height / 10).toInt
+    }
+    val dealerCard2 = new Rectangle {
+      fill = backgroundCard
+      stroke = Black
+      width = 100
+      height = 150
+      x = ((stage.width / 2) - width /4).toInt
+      y = (stage.height / 10).toInt
+    }
+    val dealerCard3 = new Rectangle {
+      fill = backgroundCard
+      stroke = Black
+      width = 100
+      height = 150
+      x = ((stage.width / 2) - width /4 + width / 2).toInt
+      y = (stage.height / 10).toInt
+    }
+    val dealerCard4 = new Rectangle {
+      fill = backgroundCard
+      stroke = Black
+      width = 100
+      height = 150
+      x = ((stage.width / 2) - width /4 + width).toInt
+      y = (stage.height / 10).toInt
+    }
+
+    val dealerCard5 = new Rectangle {
+      fill = backgroundCard
+      stroke = Black
+      width = 100
+      height = 150
+      x = ((stage.width / 2) - width /4 + width * 1.5).toInt
+      y = (stage.height / 10).toInt
+    }
+    val dealerCard6 = new Rectangle {
+      fill = backgroundCard
+      stroke = Black
+      width = 100
+      height = 150
+      x = ((stage.width / 2) - width /4 + width * 2).toInt
+      y = (stage.height / 10).toInt
+    }
+
   }
 
   stage = new PrimaryStage {
@@ -84,9 +146,11 @@ class Gui(controller: Controller) extends JFXApp with Observer{
         endX = 0,
         stops = Stops(DarkGreen, SeaGreen))
 
-        var dealersCards = List(Rectangle(200,400))
-        dealersCards.head.translateY = 30
-        content = List(dealersCards.head)
+        root = new Pane {
+          children = List(Cards.dealerCard1, Cards.dealerCard2,
+            Cards.dealerCard3,Cards.dealerCard4, Cards.dealerCard5, Cards.dealerCard6,
+            Cards.stackCards)
+        }
       }
   }
 
