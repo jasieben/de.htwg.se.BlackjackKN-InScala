@@ -35,7 +35,7 @@ trait Card {
       case Suits.Clubs =>
         fileName += "C"
     }
-    if (!(fileName.length == 2)) {
+    if (!(fileName.length <= 3)) {
       println("Error in image parser with the card: " + this.toString)
     }
     fileName += ".png"
