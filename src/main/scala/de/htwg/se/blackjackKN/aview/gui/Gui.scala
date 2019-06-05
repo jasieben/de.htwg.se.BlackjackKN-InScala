@@ -10,7 +10,7 @@ import scalafx.application.JFXApp.PrimaryStage
 import scalafx.geometry.Insets
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.{Scene, SubScene}
-import scalafx.scene.layout.{Background, BorderPane, FlowPane, HBox, Pane, VBox}
+import scalafx.scene.layout.{Background, BackgroundFill, BackgroundImage, BorderPane, CornerRadii, FlowPane, HBox, Pane, VBox}
 import scalafx.scene.paint.Color._
 import scalafx.scene.paint.{Color, LinearGradient, Stops}
 import scalafx.scene.text.{Text, TextAlignment}
@@ -37,6 +37,12 @@ class Gui(controller: Controller) extends JFXApp with Observer {
   val currentBetText : Text = new Text {
     textAlignment = TextAlignment.Center
     text = "Current Bet: " + controller.player.bet.value + "$"
+    fill = Black
+  }
+
+  val statusText : Text = new Text {
+    textAlignment = TextAlignment.Center
+    text = ""
     fill = Black
   }
 
@@ -114,7 +120,8 @@ class Gui(controller: Controller) extends JFXApp with Observer {
   }
 
   def startNewRound(): Unit = {
-    val dialog = new TextInputDialog(defaultValue = (controller.player.balance / 8).toInt.toString) {
+
+    val dialog = new TextInputDialog(defaultValue = (controller.player.balance / 10).toInt.toString) {
       initOwner(stage)
       title = "Bet amount"
       headerText = "What amount of your " + controller.player.balance + "$ would you like to bet, " + controller.player.name + "?"
@@ -163,11 +170,9 @@ class Gui(controller: Controller) extends JFXApp with Observer {
 
   def setPlayingScene(): Unit = {
     stage.scene = new Scene {
-      fill = new LinearGradient(
-        endX = 0,
-        stops = Stops(DarkGreen, SeaGreen))
-      root = new BorderPane {
 
+      root = new BorderPane {
+        style = "-fx-background-color: linear-gradient(to bottom right, green, #0dad0a);"
         bottom = new VBox {
           alignment = Pos.Center
           spacing = 20
@@ -176,6 +181,7 @@ class Gui(controller: Controller) extends JFXApp with Observer {
           children = List(
             balanceText,
             currentBetText,
+            statusText,
             new HBox {
               alignment = Pos.Center
               spacing = 40
@@ -281,6 +287,8 @@ class Gui(controller: Controller) extends JFXApp with Observer {
         case GameState.SHUFFLING =>
 
         case GameState.FIRST_ROUND =>
+          Controls.standButton.setDisable(true)
+          Controls.hitButton.setDisable(true)
           currentBetText.text = "Current Bet: " + controller.player.bet.value + "$"
           balanceText.text = "Balance: " + controller.player.balance + "$"
           Cards.stackCards.setFill(backSideImagePattern)
@@ -305,13 +313,28 @@ class Gui(controller: Controller) extends JFXApp with Observer {
         case GameState.PLAYER_BLACKJACK =>
 
         case GameState.WAITING_FOR_INPUT =>
+          statusText.text = "Would you like to hit or stand?"
+          Controls.standButton.setDisable(false)
+          Controls.hitButton.setDisable(false)
 
         case GameState.PLAYER_WINS =>
+          balanceText.text = "Balance: " + controller.player.balance  + "$"
+          currentBetText.text = "Current bet: 0$"
+          statusText.text = controller.player.name + " wins!"
+          Controls.standButton.setDisable(true)
+          Controls.hitButton.setDisable(true)
 
         case GameState.PLAYER_LOOSE =>
+          balanceText.text = "Balance: " + controller.player.balance  + "$"
+          currentBetText.text = "Current bet: 0$"
+          statusText.text = controller.player.name + " looses!"
+          Controls.standButton.setDisable(true)
+          Controls.hitButton.setDisable(true)
 
         case GameState.PUSH =>
-
+          statusText.text = "Push! " + controller.player.name + " and the Dealer's hand value the same "
+          Controls.standButton.setDisable(true)
+          Controls.hitButton.setDisable(true)
         case GameState.ACE =>
 
         case GameState.BET_FAILED =>
