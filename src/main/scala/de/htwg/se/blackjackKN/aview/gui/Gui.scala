@@ -246,6 +246,7 @@ class Gui(controller: Controller) extends JFXApp with Observer {
         case GameState.SHUFFLING =>
 
         case GameState.FIRST_ROUND =>
+          currentBetText.text = "Current Bet: " + controller.player.bet.value + "$"
           Cards.stackCards.setFill(backSideImagePattern)
           Cards.dealerCard1.setFill(controller.dealer.getCard(0).getBackgroundImagePattern)
           Cards.dealerCard2.setFill(backSideImagePattern)
