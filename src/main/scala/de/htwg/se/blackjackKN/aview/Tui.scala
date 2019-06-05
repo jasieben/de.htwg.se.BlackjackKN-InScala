@@ -7,6 +7,7 @@ import de.htwg.se.blackjackKN.util.Observer
 class Tui (controller : Controller) extends Observer {
 
   controller.add(this)
+  var gamestatePointer : Int = 0
   var output : String = ""
   var firstAceMessage = false
 
@@ -23,8 +24,9 @@ class Tui (controller : Controller) extends Observer {
 
   override def update : Boolean = {
     output = ""
-    for (gameState <- controller.gameStates) {
-      gameState match {
+    var counter : Int = 0
+    for (i <- gamestatePointer until controller.gameStates.length) {
+      controller.gameStates(i) match {
         case GameState.IDLE =>
           output += "Press n to start a new game!\n"
         case GameState.SHUFFLING =>
@@ -80,7 +82,9 @@ class Tui (controller : Controller) extends Observer {
         case GameState.DEALER_BLACKJACK =>
           output += "The dealer has a Blackjack!\n"
       }
+      counter = i
     }
+    gamestatePointer = counter + 1
     print()
     true
   }
@@ -118,6 +122,6 @@ class Tui (controller : Controller) extends Observer {
   }
   def print() : Unit = {
     println(output)
-    controller.clearGameStates()
+
   }
 }

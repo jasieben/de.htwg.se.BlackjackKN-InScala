@@ -41,7 +41,6 @@ class Controller extends Observable {
   }
   def startNewRound() : Unit = {
     revealed = false
-    clearGameStates()
     player.clearHand()
     dealer.clearHand()
     if (dealer.getCardDeckSize <= 52) {
@@ -71,6 +70,7 @@ class Controller extends Observable {
 
   def setBet(value : Int): Boolean = {
     if (player.addBet(Bet(value))) {
+      clearGameStates()
       gameStates = gameStates :+ GameState.BET_SET
       notifyObservers()
       true

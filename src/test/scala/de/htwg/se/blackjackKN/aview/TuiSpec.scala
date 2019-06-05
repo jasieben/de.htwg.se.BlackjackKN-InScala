@@ -118,6 +118,7 @@ class TuiSpec extends WordSpec with Matchers{
     }
     "display when Ace happens" in {
       controller.clearGameStates()
+      tui.gamestatePointer = 0
       tui.firstAceMessage = false
       controller.gameStates = controller.gameStates :+ GameState.ACE
       controller.notifyObservers()
@@ -125,42 +126,36 @@ class TuiSpec extends WordSpec with Matchers{
     }
     "display when Bet fails" in {
       controller.startNewRound()
-      controller.clearGameStates()
       controller.gameStates = controller.gameStates :+ GameState.BET_FAILED
       controller.notifyObservers()
       tui.output.contains("failed") should be(true)
     }
     "display when setting Bet" in {
       controller.startNewRound()
-      controller.clearGameStates()
       controller.gameStates = controller.gameStates :+ GameState.BET_SET
       controller.notifyObservers()
       tui.output.contains("set") should be(true)
     }
     "display when undoing" in {
       controller.startNewRound()
-      controller.clearGameStates()
       controller.gameStates = controller.gameStates :+ GameState.UNDO
       controller.notifyObservers()
       tui.output.contains("Undo") should be(true)
     }
     "display when redoing" in {
       controller.startNewRound()
-      controller.clearGameStates()
       controller.gameStates = controller.gameStates :+ GameState.REDO
       controller.notifyObservers()
       tui.output.contains("Redo") should be(true)
     }
     "display when setting name" in {
       controller.startNewRound()
-      controller.clearGameStates()
       controller.gameStates = controller.gameStates :+ GameState.NEW_NAME
       controller.notifyObservers()
       tui.output.contains("name") should be(true)
     }
     "display when DealerBlackjack" in {
       controller.startNewRound()
-      controller.clearGameStates()
       controller.gameStates = controller.gameStates :+ GameState.DEALER_BLACKJACK
       controller.notifyObservers()
       tui.output.contains("Blackjack") should be(true)
