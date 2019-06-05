@@ -87,14 +87,19 @@ class Gui(controller: Controller) extends JFXApp with Observer {
       x = ((playerCard5.x + width) - width / 2).toInt
       y = (playerCard5.y - height / 6).toInt
     }
+
+    val dealerCards : List[Card] = List(dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5, dealerCard6)
+    val playerCards : List[Card] = List(playerCard1, playerCard2, playerCard3, playerCard4, playerCard5, playerCard6)
   }
 
   object Controls {
     val hitButton: Button = new Button {
       text = "Hit"
+      onAction = handle {controller.hitCommand()}
     }
     val standButton: Button = new Button {
       text = "Stand"
+      onAction = handle {controller.standCommand()}
     }
   }
 
@@ -277,19 +282,22 @@ class Gui(controller: Controller) extends JFXApp with Observer {
 
         case GameState.FIRST_ROUND =>
           currentBetText.text = "Current Bet: " + controller.player.bet.value + "$"
+          balanceText.text = "Balance: " + controller.player.balance + "$"
           Cards.stackCards.setFill(backSideImagePattern)
           Cards.dealerCard1.setFill(controller.dealer.getCard(0).getBackgroundImagePattern)
           Cards.dealerCard2.setFill(backSideImagePattern)
-          Cards.playerCard1.setFill(controller.dealer.getCard(0).getBackgroundImagePattern)
-          Cards.playerCard2.setFill(controller.dealer.getCard(1).getBackgroundImagePattern)
+          Cards.playerCard1.setFill(controller.player.getCard(0).getBackgroundImagePattern)
+          Cards.playerCard2.setFill(controller.player.getCard(1).getBackgroundImagePattern)
         case GameState.STAND =>
-
         case GameState.HIT =>
-
+          Cards.playerCards(controller.player.getHandSize - 1).setFill(controller.player.getLastHandCard.getBackgroundImagePattern)
         case GameState.REVEAL =>
+          Cards.dealerCard2.setFill(controller.dealer.getCard(1).getBackgroundImagePattern)
 
         case GameState.DEALER_DRAWS =>
-
+          for (i <- 2 until controller.dealer.getHandSize) {
+            Cards.dealerCards(i).setFill(controller.dealer.getCard(i).getBackgroundImagePattern)
+          }
         case GameState.PLAYER_BUST =>
 
         case GameState.DEALER_BUST =>
