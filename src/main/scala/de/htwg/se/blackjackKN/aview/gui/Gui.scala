@@ -56,12 +56,36 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     val dealerCard4: Card = new Card(stage) {
       x = ((stage.width / 2) - width / 4 + width).toInt
     }
-
     val dealerCard5: Card = new Card(stage) {
       x = ((stage.width / 2) - width / 4 + width * 1.5).toInt
     }
     val dealerCard6: Card = new Card(stage) {
       x = ((stage.width / 2) - width / 4 + width * 2).toInt
+    }
+
+    val playerCard1: Card = new Card(stage) {
+      x = (stage.width / 2 - width / 2).toInt
+      y = (stage.height / 2.5).toInt
+    }
+    val playerCard2: Card = new Card(stage) {
+      x = ((playerCard1.x + width) - width / 2).toInt
+      y = (playerCard1.y - height / 6).toInt
+    }
+    val playerCard3: Card = new Card(stage) {
+      x = ((playerCard2.x + width) - width / 2).toInt
+      y = (playerCard2.y - height / 6).toInt
+    }
+    val playerCard4: Card = new Card(stage) {
+      x = ((playerCard3.x + width) - width / 2).toInt
+      y = (playerCard3.y - height / 6).toInt
+    }
+    val playerCard5: Card = new Card(stage) {
+      x = ((playerCard4.x + width) - width / 2).toInt
+      y = (playerCard4.y - height / 6).toInt
+    }
+    val playerCard6: Card = new Card(stage) {
+      x = ((playerCard5.x + width) - width / 2).toInt
+      y = (playerCard5.y - height / 6).toInt
     }
   }
 
@@ -80,7 +104,7 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     }
     title = "BlackjackKN"
     width = 1400
-    height = 800
+    height = 900
     scene = setMenuScene()
   }
 
@@ -159,7 +183,13 @@ class Gui(controller: Controller) extends JFXApp with Observer {
           margin = Insets(60,0,0,0)
           children = List(Cards.dealerCard1, Cards.dealerCard2,
             Cards.dealerCard3, Cards.dealerCard4, Cards.dealerCard5, Cards.dealerCard6,
-            Cards.stackCards)
+            Cards.stackCards,
+            Cards.playerCard1,
+            Cards.playerCard2,
+            Cards.playerCard3,
+            Cards.playerCard4,
+            Cards.playerCard5,
+            Cards.playerCard6)
         }
       }
     }
@@ -250,6 +280,8 @@ class Gui(controller: Controller) extends JFXApp with Observer {
           Cards.stackCards.setFill(backSideImagePattern)
           Cards.dealerCard1.setFill(controller.dealer.getCard(0).getBackgroundImagePattern)
           Cards.dealerCard2.setFill(backSideImagePattern)
+          Cards.playerCard1.setFill(controller.dealer.getCard(0).getBackgroundImagePattern)
+          Cards.playerCard2.setFill(controller.dealer.getCard(1).getBackgroundImagePattern)
         case GameState.STAND =>
 
         case GameState.HIT =>

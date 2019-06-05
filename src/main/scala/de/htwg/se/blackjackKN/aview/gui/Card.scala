@@ -13,5 +13,5 @@ class Card(stage: Stage) extends Rectangle{
   fill = Transparent
   width = 110
   height = 175
-  //y = (stage.height / 10).toInt
+  //stroke = Black
 }
