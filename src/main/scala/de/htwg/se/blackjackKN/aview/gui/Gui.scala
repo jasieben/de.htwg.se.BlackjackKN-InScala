@@ -32,6 +32,8 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
   }
 
+
+
   val balanceText : Text = new Text {
     textAlignment = TextAlignment.Center
     text = "Balance: " + controller.player.balance + "$"
@@ -49,27 +51,31 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     fill = Black
   }
 
+
+
   object Cards {
+
+
     val stackCards: Card = new Card(stage) {
-      x = (stage.width - stage.width / 8).toInt
+      x = posStackCardx
     }
     val dealerCard1: Card = new Card(stage) {
-      x = (stage.width - stage.width / 8).toInt
+      x = posStackCardx
     }
     val dealerCard2: Card = new Card(stage) {
-      x = (stage.width - stage.width / 8).toInt
+      x = posStackCardx
     }
     val dealerCard3: Card = new Card(stage) {
-      x = ((stage.width / 2) - width / 4 + width / 2).toInt
+      x = posStackCardx
     }
     val dealerCard4: Card = new Card(stage) {
-      x = ((stage.width / 2) - width / 4 + width).toInt
+      x = posStackCardx
     }
     val dealerCard5: Card = new Card(stage) {
-      x = ((stage.width / 2) - width / 4 + width * 1.5).toInt
+      x = posStackCardx
     }
     val dealerCard6: Card = new Card(stage) {
-      x = ((stage.width / 2) - width / 4 + width * 2).toInt
+      x = posStackCardx
     }
 
     val playerCard1: Card = new Card(stage) {
@@ -156,10 +162,8 @@ class Gui(controller: Controller) extends JFXApp with Observer {
             headerText = "Not enough money"
             contentText = "You don't have enough money mate"
           }.showAndWait()
-          return
         }
       case None =>
-        return
     }
 
   }
@@ -169,34 +173,66 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     System.exit(0)
   }
 
+
+  val posStackCardx: Int = (stage.width - stage.width / 8).toInt
+
+  val posDealerCard1x : Int = (stage.width / 2 - Cards.dealerCard1.width + Cards.dealerCard1.width / 4).toInt
+  val posDealerCard2x : Int = ((stage.width / 2) - Cards.dealerCard2.width / 4).toInt
+  val posDealerCard3x : Int = ((stage.width / 2) - (Cards.stackCards.width / 4) + (Cards.stackCards.width / 2)).toInt
+  val posDealerCard4x : Int = ((stage.width / 2) - Cards.stackCards.width / 4 + Cards.stackCards.width).toInt
+  val posDealerCard5x : Int = ((stage.width / 2) - Cards.stackCards.width / 4 + Cards.stackCards.width * 1.5).toInt
+  val posDealerCard6x : Int = ((stage.width / 2) - Cards.stackCards.width / 4 + Cards.stackCards.width * 2).toInt
+
+  val posPlayerCard1x : Int = (stage.width / 2 - Cards.playerCard1.width / 2).toInt
+  val posPlayerCard1y : Int = (stage.height / 2.5).toInt
+
+  val posPlayerCard2x : Int = posPlayerCard1x + (Cards.playerCard1.width - Cards.playerCard1.width / 2).toInt
+  val posPlayerCard2y : Int = posPlayerCard1y - (Cards.playerCard2.height / 6).toInt
+
+  val posDealerCardsX : List[Int] = List(posDealerCard1x,posDealerCard2x,posDealerCard3x,
+    posDealerCard4x,posDealerCard5x,posDealerCard6x)
+
+  val posPlayerCardsX : List[Int] = List(posPlayerCard1x, posPlayerCard2x)
+
+  val posPlayerCardsY : List[Int] = List(posPlayerCard1y, posPlayerCard2y)
+
   val timelineD1 = new Timeline {
     cycleCount = 1
     autoReverse = false
     keyFrames = Seq(
-      at (1.0 s) {Cards.dealerCard1.x -> (stage.width / 2 - Cards.dealerCard1.width + Cards.dealerCard1.width / 4).toInt tween Interpolator.EaseBoth})
+      at (1.0 s) {Cards.dealerCard1.x -> posDealerCard1x tween Interpolator.EaseBoth})
 
   }
   val timelineD2 = new Timeline {
     cycleCount = 1
     autoReverse = false
     keyFrames = Seq(
-      at (1.0 s) {Cards.dealerCard2.x -> ((stage.width / 2) - Cards.dealerCard2.width / 4).toInt tween Interpolator.EaseBoth})
+      at (1.0 s) {Cards.dealerCard2.x -> posDealerCard2x tween Interpolator.EaseBoth})
 
   }
   val timelineP1 = new Timeline {
     cycleCount = 1
     autoReverse = false
     keyFrames = Seq(
-      at (1.0 s) {Cards.playerCard1.x -> (stage.width / 2 - Cards.playerCard1.width / 2).toInt tween Interpolator.EaseBoth},
-      at (1.0 s) {Cards.playerCard1.y -> (stage.height / 2.5).toInt})
+      at (1.0 s) {Cards.playerCard1.x -> posPlayerCard1x tween Interpolator.EaseBoth},
+      at (1.0 s) {Cards.playerCard1.y -> posPlayerCard1y})
   }
   val timelineP2 = new Timeline {
     cycleCount = 1
     autoReverse = false
     keyFrames = Seq(
       // TOOO: playerCard1 coordinates need to be constant
-      at (1.0 s) {Cards.playerCard2.x -> ((Cards.playerCard1.x + Cards.playerCard1.width) - Cards.playerCard1.width / 2).toInt tween Interpolator.EaseBoth},
-      at (1.0 s) {Cards.playerCard2.y -> (Cards.playerCard1.y - Cards.playerCard2.height / 6).toInt tween Interpolator.EaseBoth})
+      at (1.0 s) {Cards.playerCard2.x -> posPlayerCard2x tween Interpolator.EaseBoth},
+      at (1.0 s) {Cards.playerCard2.y -> posPlayerCard2y tween Interpolator.EaseBoth})
+  }
+
+  def buildTimeline(card : Card ,toX : Int) : Timeline = {
+    new Timeline {
+      cycleCount = 1
+      autoReverse = false
+      keyFrames = Seq(
+        at (1.0 s) {card.x -> toX tween Interpolator.EaseBoth})
+    }
   }
 
   def setPlayingScene(): Unit = {
@@ -355,7 +391,12 @@ class Gui(controller: Controller) extends JFXApp with Observer {
 
         case GameState.DEALER_DRAWS =>
           for (i <- 2 until controller.dealer.getHandSize) {
-            Cards.dealerCards(i).setFill(controller.dealer.getCard(i).getBackgroundImagePattern)
+            Cards.dealerCards(i).setFill(backSideImagePattern)
+            val tl = buildTimeline(Cards.dealerCards(i), posDealerCardsX(i))
+            tl.play()
+            tl.onFinished = handle {
+              Cards.dealerCards(i).setFill(controller.dealer.getCard(i).getBackgroundImagePattern)
+            }
           }
         case GameState.PLAYER_BUST =>
 
