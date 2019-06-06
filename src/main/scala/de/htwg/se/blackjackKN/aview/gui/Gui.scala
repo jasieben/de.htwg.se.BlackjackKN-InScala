@@ -79,26 +79,22 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     }
 
     val playerCard1: Card = new Card(stage) {
-      x = (stage.width - stage.width / 8).toInt
+      x = posStackCardx
     }
     val playerCard2: Card = new Card(stage) {
-      x = (stage.width - stage.width / 8).toInt
+      x = posStackCardx
     }
     val playerCard3: Card = new Card(stage) {
-      x = ((playerCard2.x + width) - width / 2).toInt
-      y = (playerCard2.y - height / 6).toInt
+      x = posStackCardx
     }
     val playerCard4: Card = new Card(stage) {
-      x = ((playerCard3.x + width) - width / 2).toInt
-      y = (playerCard3.y - height / 6).toInt
+      x = posStackCardx
     }
     val playerCard5: Card = new Card(stage) {
-      x = ((playerCard4.x + width) - width / 2).toInt
-      y = (playerCard4.y - height / 6).toInt
+      x = posStackCardx
     }
     val playerCard6: Card = new Card(stage) {
-      x = ((playerCard5.x + width) - width / 2).toInt
-      y = (playerCard5.y - height / 6).toInt
+      x = posStackCardx
     }
 
     val dealerCards : List[Card] = List(dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5, dealerCard6)
@@ -189,12 +185,27 @@ class Gui(controller: Controller) extends JFXApp with Observer {
   val posPlayerCard2x : Int = posPlayerCard1x + (Cards.playerCard1.width - Cards.playerCard1.width / 2).toInt
   val posPlayerCard2y : Int = posPlayerCard1y - (Cards.playerCard2.height / 6).toInt
 
+  val posPlayerCard3x : Int = (posPlayerCard2x + Cards.stackCards.width.toInt) - Cards.stackCards.width.toInt / 2
+  val posPlayerCard3y : Int = posPlayerCard2y - Cards.playerCard3.height.toInt / 6
+
+  val posPlayerCard4x : Int = (posPlayerCard3x + Cards.stackCards.width.toInt) - Cards.stackCards.width.toInt / 2
+  val posPlayerCard4y : Int = posPlayerCard3y - Cards.playerCard4.height.toInt / 6
+
+  val posPlayerCard5x : Int = (posPlayerCard4x + Cards.stackCards.width.toInt) - Cards.stackCards.width.toInt / 2
+  val posPlayerCard5y : Int = posPlayerCard4y - Cards.playerCard5.height.toInt / 6
+
+
+  val posPlayerCard6x : Int = (posPlayerCard5x + Cards.stackCards.width.toInt) - Cards.stackCards.width.toInt / 2
+  val posPlayerCard6y : Int = posPlayerCard5y - Cards.playerCard6.height.toInt / 6
+
   val posDealerCardsX : List[Int] = List(posDealerCard1x,posDealerCard2x,posDealerCard3x,
     posDealerCard4x,posDealerCard5x,posDealerCard6x)
 
-  val posPlayerCardsX : List[Int] = List(posPlayerCard1x, posPlayerCard2x)
+  val posPlayerCardsX : List[Int] = List(posPlayerCard1x, posPlayerCard2x, posPlayerCard3x, posPlayerCard4x,
+    posPlayerCard5x, posPlayerCard6x)
 
-  val posPlayerCardsY : List[Int] = List(posPlayerCard1y, posPlayerCard2y)
+  val posPlayerCardsY : List[Int] = List(posPlayerCard1y, posPlayerCard2y, posPlayerCard3y, posPlayerCard4y,
+    posPlayerCard5y, posPlayerCard6y)
 
   val timelineD1 = new Timeline {
     cycleCount = 1
@@ -226,12 +237,13 @@ class Gui(controller: Controller) extends JFXApp with Observer {
       at (1.0 s) {Cards.playerCard2.y -> posPlayerCard2y tween Interpolator.EaseBoth})
   }
 
-  def buildTimeline(card : Card ,toX : Int) : Timeline = {
+  def buildTimeline(card : Card ,toX : Int, toY : Int) : Timeline = {
     new Timeline {
       cycleCount = 1
       autoReverse = false
       keyFrames = Seq(
-        at (1.0 s) {card.x -> toX tween Interpolator.EaseBoth})
+        at (1.0 s) {card.x -> toX tween Interpolator.EaseBoth},
+        at (1.0 s) {card.y -> toY tween Interpolator.EaseBoth})
     }
   }
 
@@ -363,7 +375,6 @@ class Gui(controller: Controller) extends JFXApp with Observer {
           Cards.playerCard1.setFill(backSideImagePattern)
           Cards.playerCard2.setFill(backSideImagePattern)
 
-
           Cards.dealerCard1.setFill(backSideImagePattern)
           timelineP1.play()
           timelineP1.onFinished = handle {
@@ -380,19 +391,22 @@ class Gui(controller: Controller) extends JFXApp with Observer {
             Cards.playerCard2.setFill(controller.player.getCard(1).getBackgroundImagePattern)
             timelineD2.play()
           }
-          // TODO: implement animations for other cards, also in correct order
-
-
         case GameState.STAND =>
         case GameState.HIT =>
-          Cards.playerCards(controller.player.getHandSize - 1).setFill(controller.player.getLastHandCard.getBackgroundImagePattern)
+          val c = Cards.playerCards(controller.player.getHandSize - 1)
+          c.setFill(backSideImagePattern)
+          val tl = buildTimeline(c, posPlayerCardsX(controller.player.getHandSize - 1), posPlayerCardsY(controller.player.getHandSize - 1))
+          tl.play()
+          tl.onFinished = handle {
+            c.setFill(controller.player.getLastHandCard.getBackgroundImagePattern)
+          }
         case GameState.REVEAL =>
           Cards.dealerCard2.setFill(controller.dealer.getCard(1).getBackgroundImagePattern)
 
         case GameState.DEALER_DRAWS =>
           for (i <- 2 until controller.dealer.getHandSize) {
             Cards.dealerCards(i).setFill(backSideImagePattern)
-            val tl = buildTimeline(Cards.dealerCards(i), posDealerCardsX(i))
+            val tl = buildTimeline(Cards.dealerCards(i), posDealerCardsX(i), Cards.dealerCards(i).y.toInt)
             tl.play()
             tl.onFinished = handle {
               Cards.dealerCards(i).setFill(controller.dealer.getCard(i).getBackgroundImagePattern)
