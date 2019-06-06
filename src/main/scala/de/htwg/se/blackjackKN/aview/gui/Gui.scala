@@ -11,7 +11,7 @@ import scalafx.application.JFXApp.PrimaryStage
 import scalafx.geometry.Insets
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.{Scene, SubScene}
-import scalafx.scene.layout.{Background, BackgroundFill, BackgroundImage, BorderPane, CornerRadii, FlowPane, HBox, Pane, VBox}
+import scalafx.scene.layout.{AnchorPane, Background, BackgroundFill, BackgroundImage, BorderPane, ColumnConstraints, CornerRadii, FlowPane, GridPane, HBox, Pane, TilePane, VBox}
 import scalafx.scene.paint.Color._
 import scalafx.scene.paint.{Color, LinearGradient, Stops}
 import scalafx.scene.text.{Text, TextAlignment}
@@ -51,10 +51,19 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     fill = Black
   }
 
+  val playerHandValueText : Text = new Text {
+    textAlignment = TextAlignment.Center
+    text = ""
+    fill = Black
+  }
 
+  val dealerHandValueText : Text = new Text {
+    textAlignment = TextAlignment.Center
+    text = ""
+    fill = Black
+  }
 
   object Cards {
-
 
     val stackCards: Card = new Card(stage) {
       x = posStackCardx
@@ -110,6 +119,11 @@ class Gui(controller: Controller) extends JFXApp with Observer {
       text = "Stand"
       onAction = handle {controller.standCommand()}
     }
+    val newRoundButton : Button = new Button {
+      text = "Start new round"
+      onAction = handle {startNewRound()}
+      disable = true
+    }
   }
 
   stage = new PrimaryStage {
@@ -119,7 +133,7 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     title = "BlackjackKN"
     width = 1400
     height = 900
-    scene = setMenuScene()
+    scene = getMenuScene
   }
 
   def startNewRound(): Unit = {
@@ -248,44 +262,87 @@ class Gui(controller: Controller) extends JFXApp with Observer {
   }
 
   def setPlayingScene(): Unit = {
+    for (c <- Cards.dealerCards) {
+      c.setFill(Transparent)
+      c.x = posStackCardx
+    }
+    for (c <- Cards.playerCards) {
+      c.setFill(Transparent)
+      c.x = posStackCardx
+      c.y = Cards.stackCards.y.toInt
+    }
     stage.scene = new Scene {
 
       root = new BorderPane {
         style = "-fx-background-color: linear-gradient(to bottom right, green, #0dad0a);"
-        bottom = new VBox {
-          alignment = Pos.Center
-          spacing = 20
+        bottom = new GridPane {
           style = "-fx-font-size: 14pt"
-          margin = Insets(20,0,30,0)
-          children = List(
-            balanceText,
-            currentBetText,
-            statusText,
-            new HBox {
-              alignment = Pos.Center
-              spacing = 40
-              children = List(Controls.hitButton,
-                Controls.standButton)
-            }
-          )
-        }
-        center = new Pane {
-          margin = Insets(60,0,0,0)
-          children = List(Cards.dealerCard1, Cards.dealerCard2,
-            Cards.dealerCard3, Cards.dealerCard4, Cards.dealerCard5, Cards.dealerCard6,
-            Cards.stackCards,
-            Cards.playerCard1,
-            Cards.playerCard2,
-            Cards.playerCard3,
-            Cards.playerCard4,
-            Cards.playerCard5,
-            Cards.playerCard6)
+          margin = Insets(20, 0, 30, 0)
+          columnConstraints = Seq(new ColumnConstraints{
+            halignment = HPos.Left
+            percentWidth = 100/3
+          },new ColumnConstraints{
+            halignment = HPos.Center
+            percentWidth = 100/3
+          },new ColumnConstraints{
+            halignment = HPos.Right
+            percentWidth = 100/3
+          })
+          add(new VBox {
+            alignment = Pos.CenterLeft
+            margin = Insets(0,0,0,20)
+            spacing = 20
+            children = Seq(
+              new Button {
+                text = "Main menu"
+                onAction = handle {
+                  setMenuScene()
+                }
+              },
+              playerHandValueText,
+              dealerHandValueText,
+              Controls.newRoundButton
+            )
+          },0,0)
+          add(new VBox {
+            alignment = Pos.Center
+            spacing = 20
+            children = Seq(
+              balanceText
+              ,
+              currentBetText
+              ,
+              statusText
+              ,
+              new HBox {
+                alignment = Pos.Center
+                spacing = 40
+                children = List(Controls.hitButton,
+                  Controls.standButton)
+              })
+          },1,0)
+          }
+          center = new Pane {
+            margin = Insets(60, 0, 0, 0)
+            children = List(Cards.dealerCard1, Cards.dealerCard2,
+              Cards.dealerCard3, Cards.dealerCard4, Cards.dealerCard5, Cards.dealerCard6,
+              Cards.stackCards,
+              Cards.playerCard1,
+              Cards.playerCard2,
+              Cards.playerCard3,
+              Cards.playerCard4,
+              Cards.playerCard5,
+              Cards.playerCard6)
+          }
         }
       }
     }
+
+  def setMenuScene() : Unit = {
+    stage.scene = getMenuScene
   }
 
-  def setMenuScene(): Scene = {
+  def getMenuScene : Scene = {
     new Scene {
       fill = new LinearGradient(
         endX = 0,
@@ -388,10 +445,15 @@ class Gui(controller: Controller) extends JFXApp with Observer {
           }
 
           timelineP2.onFinished = handle {
+            playerHandValueText.text = controller.player.name + "'s hand value: " + controller.player.getHandValue
             Cards.playerCard2.setFill(controller.player.getCard(1).getBackgroundImagePattern)
             timelineD2.play()
           }
+          timelineD2.onFinished = handle {
+            dealerHandValueText.text = "Dealer's hand value: " + controller.dealer.getCard(0).value
+          }
         case GameState.STAND =>
+          statusText.text = controller.player.name + " stands"
         case GameState.HIT =>
           val c = Cards.playerCards(controller.player.getHandSize - 1)
           c.setFill(backSideImagePattern)
@@ -399,10 +461,11 @@ class Gui(controller: Controller) extends JFXApp with Observer {
           tl.play()
           tl.onFinished = handle {
             c.setFill(controller.player.getLastHandCard.getBackgroundImagePattern)
+            playerHandValueText.text = controller.player.name + "'s hand value: " + controller.player.getHandValue
           }
         case GameState.REVEAL =>
           Cards.dealerCard2.setFill(controller.dealer.getCard(1).getBackgroundImagePattern)
-
+          dealerHandValueText.text = "Dealer's hand value: " + controller.dealer.getHandValue
         case GameState.DEALER_DRAWS =>
           for (i <- 2 until controller.dealer.getHandSize) {
             Cards.dealerCards(i).setFill(backSideImagePattern)
@@ -410,14 +473,16 @@ class Gui(controller: Controller) extends JFXApp with Observer {
             tl.play()
             tl.onFinished = handle {
               Cards.dealerCards(i).setFill(controller.dealer.getCard(i).getBackgroundImagePattern)
+              dealerHandValueText.text = "Dealer's hand value: " + controller.dealer.getHandValue
             }
           }
         case GameState.PLAYER_BUST =>
+          playerHandValueText.text = controller.player.name + " busts (value: "+ controller.player.getHandValue + ")"
 
         case GameState.DEALER_BUST =>
-
+          dealerHandValueText.text = "Dealer busts (value: " + controller.dealer.getHandValue + ")"
         case GameState.PLAYER_BLACKJACK =>
-
+          playerHandValueText.text = controller.player.name + "has a Blackjack (value: 21)"
         case GameState.WAITING_FOR_INPUT =>
           statusText.text = "Would you like to hit or stand?"
           Controls.standButton.setDisable(false)
@@ -429,18 +494,20 @@ class Gui(controller: Controller) extends JFXApp with Observer {
           statusText.text = controller.player.name + " wins!"
           Controls.standButton.setDisable(true)
           Controls.hitButton.setDisable(true)
-
+          Controls.newRoundButton.setDisable(false)
         case GameState.PLAYER_LOOSE =>
           balanceText.text = "Balance: " + controller.player.balance  + "$"
           currentBetText.text = "Current bet: 0$"
           statusText.text = controller.player.name + " looses!"
           Controls.standButton.setDisable(true)
           Controls.hitButton.setDisable(true)
-
+          Controls.newRoundButton.setDisable(false)
         case GameState.PUSH =>
           statusText.text = "Push! " + controller.player.name + " and the Dealer's hand value the same "
           Controls.standButton.setDisable(true)
           Controls.hitButton.setDisable(true)
+          Controls.newRoundButton.setDisable(false)
+
         case GameState.ACE =>
 
         case GameState.BET_FAILED =>
