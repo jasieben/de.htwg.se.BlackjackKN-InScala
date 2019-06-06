@@ -73,12 +73,10 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     }
 
     val playerCard1: Card = new Card(stage) {
-      x = (stage.width / 2 - width / 2).toInt
-      y = (stage.height / 2.5).toInt
+      x = (stage.width - stage.width / 8).toInt
     }
     val playerCard2: Card = new Card(stage) {
-      x = ((playerCard1.x + width) - width / 2).toInt
-      y = (playerCard1.y - height / 6).toInt
+      x = (stage.width - stage.width / 8).toInt
     }
     val playerCard3: Card = new Card(stage) {
       x = ((playerCard2.x + width) - width / 2).toInt
@@ -184,6 +182,21 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     keyFrames = Seq(
       at (1.0 s) {Cards.dealerCard2.x -> ((stage.width / 2) - Cards.dealerCard2.width / 4).toInt tween Interpolator.EaseBoth})
 
+  }
+  val timelineP1 = new Timeline {
+    cycleCount = 1
+    autoReverse = false
+    keyFrames = Seq(
+      at (1.0 s) {Cards.playerCard1.x -> (stage.width / 2 - Cards.playerCard1.width / 2).toInt tween Interpolator.EaseBoth},
+      at (1.0 s) {Cards.playerCard1.y -> (stage.height / 2.5).toInt})
+  }
+  val timelineP2 = new Timeline {
+    cycleCount = 1
+    autoReverse = false
+    keyFrames = Seq(
+      // TOOO: playerCard1 coordinates need to be constant
+      at (1.0 s) {Cards.playerCard2.x -> ((Cards.playerCard1.x + Cards.playerCard1.width) - Cards.playerCard1.width / 2).toInt tween Interpolator.EaseBoth},
+      at (1.0 s) {Cards.playerCard2.y -> (Cards.playerCard1.y - Cards.playerCard2.height / 6).toInt tween Interpolator.EaseBoth})
   }
 
   def setPlayingScene(): Unit = {
@@ -305,22 +318,35 @@ class Gui(controller: Controller) extends JFXApp with Observer {
         case GameState.SHUFFLING =>
 
         case GameState.FIRST_ROUND =>
-          Cards.dealerCard1.setFill(backSideImagePattern)
-          timelineD1.play()
-          timelineD1.onFinished = handle {
-            Cards.dealerCard1.setFill(controller.dealer.getCard(0).getBackgroundImagePattern)
-            timelineD2.play()
-          }
-          // TODO: implement animations for other cards, also in correct order
-
           Controls.standButton.setDisable(true)
           Controls.hitButton.setDisable(true)
           currentBetText.text = "Current Bet: " + controller.player.bet.value + "$"
           balanceText.text = "Balance: " + controller.player.balance + "$"
           Cards.stackCards.setFill(backSideImagePattern)
           Cards.dealerCard2.setFill(backSideImagePattern)
-          Cards.playerCard1.setFill(controller.player.getCard(0).getBackgroundImagePattern)
-          Cards.playerCard2.setFill(controller.player.getCard(1).getBackgroundImagePattern)
+          Cards.playerCard1.setFill(backSideImagePattern)
+          Cards.playerCard2.setFill(backSideImagePattern)
+
+
+          Cards.dealerCard1.setFill(backSideImagePattern)
+          timelineP1.play()
+          timelineP1.onFinished = handle {
+            Cards.playerCard1.setFill(controller.player.getCard(0).getBackgroundImagePattern)
+            timelineD1.play()
+          }
+
+          timelineD1.onFinished = handle {
+            Cards.dealerCard1.setFill(controller.dealer.getCard(0).getBackgroundImagePattern)
+            timelineP2.play()
+          }
+
+          timelineP2.onFinished = handle {
+            Cards.playerCard2.setFill(controller.player.getCard(1).getBackgroundImagePattern)
+            timelineD2.play()
+          }
+          // TODO: implement animations for other cards, also in correct order
+
+
         case GameState.STAND =>
         case GameState.HIT =>
           Cards.playerCards(controller.player.getHandSize - 1).setFill(controller.player.getLastHandCard.getBackgroundImagePattern)
