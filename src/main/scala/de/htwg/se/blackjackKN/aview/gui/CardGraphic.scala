@@ -8,7 +8,7 @@ import scalafx.scene.shape.Rectangle
 import scalafx.stage._
 
 
-class Card(stage: Stage) extends Rectangle{
+class CardGraphic(stage: Stage) extends Rectangle{
   val backgroundCard: Color = LightGrey
   fill = Transparent
   width = 110

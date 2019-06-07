@@ -2,6 +2,7 @@ package de.htwg.se.blackjackKN.aview.gui
 
 import scalafx.Includes._
 import de.htwg.se.blackjackKN.controller.{Controller, GameState}
+import de.htwg.se.blackjackKN.model._
 import de.htwg.se.blackjackKN.util.Observer
 import javafx.scene.paint.ImagePattern
 import scalafx.animation._
@@ -31,8 +32,6 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     textAlignment = TextAlignment.Center
     text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
   }
-
-
 
   val balanceText : Text = new Text {
     textAlignment = TextAlignment.Center
@@ -65,49 +64,49 @@ class Gui(controller: Controller) extends JFXApp with Observer {
 
   object Cards {
 
-    val stackCards: Card = new Card(stage) {
+    val stackCards: CardGraphic = new CardGraphic(stage) {
       x = posStackCardx
     }
-    val dealerCard1: Card = new Card(stage) {
+    val dealerCard1: CardGraphic = new CardGraphic(stage) {
       x = posStackCardx
     }
-    val dealerCard2: Card = new Card(stage) {
+    val dealerCard2: CardGraphic = new CardGraphic(stage) {
       x = posStackCardx
     }
-    val dealerCard3: Card = new Card(stage) {
+    val dealerCard3: CardGraphic = new CardGraphic(stage) {
       x = posStackCardx
     }
-    val dealerCard4: Card = new Card(stage) {
+    val dealerCard4: CardGraphic = new CardGraphic(stage) {
       x = posStackCardx
     }
-    val dealerCard5: Card = new Card(stage) {
+    val dealerCard5: CardGraphic = new CardGraphic(stage) {
       x = posStackCardx
     }
-    val dealerCard6: Card = new Card(stage) {
-      x = posStackCardx
-    }
-
-    val playerCard1: Card = new Card(stage) {
-      x = posStackCardx
-    }
-    val playerCard2: Card = new Card(stage) {
-      x = posStackCardx
-    }
-    val playerCard3: Card = new Card(stage) {
-      x = posStackCardx
-    }
-    val playerCard4: Card = new Card(stage) {
-      x = posStackCardx
-    }
-    val playerCard5: Card = new Card(stage) {
-      x = posStackCardx
-    }
-    val playerCard6: Card = new Card(stage) {
+    val dealerCard6: CardGraphic = new CardGraphic(stage) {
       x = posStackCardx
     }
 
-    val dealerCards : List[Card] = List(dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5, dealerCard6)
-    val playerCards : List[Card] = List(playerCard1, playerCard2, playerCard3, playerCard4, playerCard5, playerCard6)
+    val playerCard1: CardGraphic = new CardGraphic(stage) {
+      x = posStackCardx
+    }
+    val playerCard2: CardGraphic = new CardGraphic(stage) {
+      x = posStackCardx
+    }
+    val playerCard3: CardGraphic = new CardGraphic(stage) {
+      x = posStackCardx
+    }
+    val playerCard4: CardGraphic = new CardGraphic(stage) {
+      x = posStackCardx
+    }
+    val playerCard5: CardGraphic = new CardGraphic(stage) {
+      x = posStackCardx
+    }
+    val playerCard6: CardGraphic = new CardGraphic(stage) {
+      x = posStackCardx
+    }
+
+    val dealerCards : List[CardGraphic] = List(dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5, dealerCard6)
+    val playerCards : List[CardGraphic] = List(playerCard1, playerCard2, playerCard3, playerCard4, playerCard5, playerCard6)
   }
 
   object Controls {
@@ -251,7 +250,7 @@ class Gui(controller: Controller) extends JFXApp with Observer {
       at (1.0 s) {Cards.playerCard2.y -> posPlayerCard2y tween Interpolator.EaseBoth})
   }
 
-  def buildTimeline(card : Card ,toX : Int, toY : Int) : Timeline = {
+  def buildTimeline(card : CardGraphic, toX : Int, toY : Int) : Timeline = {
     new Timeline {
       cycleCount = 1
       autoReverse = false
@@ -396,6 +395,10 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     }
   }
 
+  def getBackgroundImagePattern(card : Card): ImagePattern = {
+    new ImagePattern(new Image("de/htwg/se/blackjackKN/res/" + card.getBackgroundImageFileName))
+  }
+
   def changePlayer(): Unit = {
     val dialog = new TextInputDialog(controller.player.name) {
       initOwner(stage)
@@ -435,18 +438,18 @@ class Gui(controller: Controller) extends JFXApp with Observer {
           Cards.dealerCard1.setFill(backSideImagePattern)
           timelineP1.play()
           timelineP1.onFinished = handle {
-            Cards.playerCard1.setFill(controller.player.getCard(0).getBackgroundImagePattern)
+            Cards.playerCard1.setFill(getBackgroundImagePattern(controller.player.getCard(0)))
             timelineD1.play()
           }
 
           timelineD1.onFinished = handle {
-            Cards.dealerCard1.setFill(controller.dealer.getCard(0).getBackgroundImagePattern)
+            Cards.dealerCard1.setFill(getBackgroundImagePattern(controller.dealer.getCard(0)))
             timelineP2.play()
           }
 
           timelineP2.onFinished = handle {
             playerHandValueText.text = controller.player.name + "'s hand value: " + controller.player.getHandValue
-            Cards.playerCard2.setFill(controller.player.getCard(1).getBackgroundImagePattern)
+            Cards.playerCard2.setFill(getBackgroundImagePattern(controller.player.getCard(1)))
             timelineD2.play()
           }
           timelineD2.onFinished = handle {
@@ -460,11 +463,11 @@ class Gui(controller: Controller) extends JFXApp with Observer {
           val tl = buildTimeline(c, posPlayerCardsX(controller.player.getHandSize - 1), posPlayerCardsY(controller.player.getHandSize - 1))
           tl.play()
           tl.onFinished = handle {
-            c.setFill(controller.player.getLastHandCard.getBackgroundImagePattern)
+            c.setFill(getBackgroundImagePattern(controller.player.getLastHandCard))
             playerHandValueText.text = controller.player.name + "'s hand value: " + controller.player.getHandValue
           }
         case GameState.REVEAL =>
-          Cards.dealerCard2.setFill(controller.dealer.getCard(1).getBackgroundImagePattern)
+          Cards.dealerCard2.setFill(getBackgroundImagePattern(controller.dealer.getCard(1)))
           dealerHandValueText.text = "Dealer's hand value: " + controller.dealer.getHandValue
         case GameState.DEALER_DRAWS =>
           for (i <- 2 until controller.dealer.getHandSize) {
@@ -472,7 +475,7 @@ class Gui(controller: Controller) extends JFXApp with Observer {
             val tl = buildTimeline(Cards.dealerCards(i), posDealerCardsX(i), Cards.dealerCards(i).y.toInt)
             tl.play()
             tl.onFinished = handle {
-              Cards.dealerCards(i).setFill(controller.dealer.getCard(i).getBackgroundImagePattern)
+              Cards.dealerCards(i).setFill(getBackgroundImagePattern(controller.dealer.getCard(i)))
               dealerHandValueText.text = "Dealer's hand value: " + controller.dealer.getHandValue
             }
           }

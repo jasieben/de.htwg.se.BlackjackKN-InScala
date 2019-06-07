@@ -38,6 +38,9 @@ class CardSpec extends WordSpec with Matchers {
       "have corresponding values" in {
         numbersTestCard.rank should be(numbersTestCard.value)
       }
+      "get correct image filename" in {
+        numbersTestCard.getBackgroundImageFileName should be("9H.png")
+      }
     }
   }
   "A CardDeck" when {

@@ -11,7 +11,7 @@ trait Card {
 
   val suits: List[Suits.Value] = List(Suits.Hearts, Suits.Clubs, Suits.Diamonds, Suits.Spades)
 
-  def getBackgroundImagePattern : ImagePattern = {
+  def getBackgroundImageFileName : String = {
     var fileName : String = ""
     rank match {
       case Ranks.Ace =>
@@ -35,10 +35,7 @@ trait Card {
       case Suits.Clubs =>
         fileName += "C"
     }
-    if (!(fileName.length <= 3)) {
-      println("Error in image parser with the card: " + this.toString)
-    }
     fileName += ".png"
-    new ImagePattern(new Image("de/htwg/se/blackjackKN/res/" + fileName))
+    fileName
   }
 }
