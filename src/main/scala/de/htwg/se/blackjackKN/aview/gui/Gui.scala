@@ -347,6 +347,7 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     }
 
   def setMenuScene() : Unit = {
+    menuText.text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
     stage.scene = getMenuScene
   }
 
