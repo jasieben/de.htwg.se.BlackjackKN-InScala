@@ -26,7 +26,7 @@ import scala.language.postfixOps
 class Gui(controller: Controller) extends JFXApp with Observer {
   controller.add(this)
 
-  val backSideImagePattern = new ImagePattern(new Image("de/htwg/se/blackjackKN/res/red_back.png"))
+  val backSideImagePattern = new ImagePattern(new Image("de/htwg/se/blackjackKN/res/blue_back.png"))
   var gamestatesPointer : Int = 0
 
   val menuText: Text = new Text {
@@ -130,12 +130,13 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     onCloseRequest = handle {
       exit()
     }
-    val bounds = Screen.primary.visualBounds
-    println(bounds)
+    val bounds: Rectangle2D = Screen.primary.visualBounds
+
     if (bounds.maxY >= 1080) {
       width = 1400
       height = 900
     } else {
+
       width = 1300
       height = 700
     }
