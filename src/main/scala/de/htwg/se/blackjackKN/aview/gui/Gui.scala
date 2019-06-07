@@ -19,6 +19,7 @@ import scalafx.scene.text.{Text, TextAlignment}
 import scalafx.scene.control._
 import scalafx.scene.image.Image
 import scalafx.scene.shape._
+import scalafx.stage.Screen
 
 import scala.language.postfixOps
 
@@ -129,9 +130,16 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     onCloseRequest = handle {
       exit()
     }
+    val bounds = Screen.primary.visualBounds
+    println(bounds)
+    if (bounds.maxY >= 1080) {
+      width = 1400
+      height = 900
+    } else {
+      width = 1300
+      height = 700
+    }
     title = "BlackjackKN"
-    width = 1300
-    height = 700
     scene = getMenuScene
   }
 
