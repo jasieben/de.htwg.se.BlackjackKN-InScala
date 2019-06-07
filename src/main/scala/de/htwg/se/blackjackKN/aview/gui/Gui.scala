@@ -130,8 +130,8 @@ class Gui(controller: Controller) extends JFXApp with Observer {
       exit()
     }
     title = "BlackjackKN"
-    width = 1400
-    height = 900
+    width = 1300
+    height = 700
     scene = getMenuScene
   }
 
