@@ -38,6 +38,25 @@ class CardSpec extends WordSpec with Matchers {
       "have corresponding values" in {
         numbersTestCard.rank should be(numbersTestCard.value)
       }
+      "get correct image filename" in {
+        val numbersTestCardClubs = NumberCard(Suits.Clubs,9)
+        val numbersTestCardDiamonds = NumberCard(Suits.Diamonds,9)
+        val numbersTestCardSpades = NumberCard(Suits.Spades,9)
+        numbersTestCardClubs.getBackgroundImageFileName should be("9C.png")
+        numbersTestCardDiamonds.getBackgroundImageFileName should be("9D.png")
+        numbersTestCardSpades.getBackgroundImageFileName should be("9S.png")
+        numbersTestCard.getBackgroundImageFileName should be("9H.png")
+
+        val faceTestCardKing = FaceCard(Suits.Clubs, Ranks.King)
+        val faceTestCardJack = FaceCard(Suits.Diamonds, Ranks.Jack)
+        val faceTestCardSQueen = FaceCard(Suits.Spades,Ranks.Queen)
+        val faceTestCardSAce = FaceCard(Suits.Spades,Ranks.Ace)
+
+        faceTestCardKing.getBackgroundImageFileName should be("KC.png")
+        faceTestCardJack.getBackgroundImageFileName should be("JD.png")
+        faceTestCardSQueen.getBackgroundImageFileName should be("QS.png")
+        faceTestCardSAce.getBackgroundImageFileName should be("AS.png")
+      }
     }
   }
   "A CardDeck" when {

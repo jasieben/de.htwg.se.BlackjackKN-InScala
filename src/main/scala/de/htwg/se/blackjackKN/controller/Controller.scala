@@ -10,7 +10,7 @@ class Controller extends Observable {
   var gameStates : List[GameState.Value] = List(GameState.IDLE)
   var revealed : Boolean = false
   var aceStrategy : AceStrategy = new AceStrategy11
-  private val undoManager = new UndoManager
+  val undoManager = new UndoManager
 
   val win = new WinningHandler(null)
   val loose = new LoosingHandler(win)
@@ -53,6 +53,12 @@ class Controller extends Observable {
     player.addCardToHand(dealer.drawCard())
     dealer.addCardToHand(dealer.drawCard())
     gameStates = gameStates :+ GameState.FIRST_ROUND
+    checkForAces()
+    evaluate()
+    notifyObservers()
+  }
+
+  def checkForAces(): Unit = {
     if (player.containsCardType(Ranks.Ace) != -1) {
       gameStates = gameStates :+ GameState.ACE
       if (player.getCard(0).rank == Ranks.Ace && player.getCard(1).rank == Ranks.Ace) {
@@ -60,27 +66,32 @@ class Controller extends Observable {
         aceStrategy.execute()
       }
     }
-    evaluate()
-    notifyObservers()
   }
-  def setBet(value : Int): Unit = {
-    if (player.addBet(Bet(value)))
+
+  def setBet(value : Int): Boolean = {
+    if (player.addBet(Bet(value))) {
+      clearGameStates()
       gameStates = gameStates :+ GameState.BET_SET
-    else
+      notifyObservers()
+      true
+    }
+    else {
       gameStates = gameStates :+ GameState.BET_FAILED
-    notifyObservers()
+      notifyObservers()
+      false
+    }
+
   }
 
   def stand() : Unit = {
     gameStates = gameStates :+ GameState.STAND
     revealDealer()
+    evaluate()
   }
   def hit() : Unit = {
     player.addCardToHand(dealer.drawCard())
     gameStates = gameStates :+ GameState.HIT
-    if (player.containsCardType(Ranks.Ace) != -1) {
-      gameStates = gameStates :+ GameState.ACE
-    }
+    checkForAces()
     evaluate()
   }
 
@@ -108,9 +119,12 @@ class Controller extends Observable {
 
   def revealDealer() : Unit = {
     gameStates = gameStates :+ GameState.REVEAL
-    drawDealerCards()
+    if (dealer.getHandValue == 21 && dealer.getHandSize == 2) { //if dealer has bj as well
+      gameStates = gameStates :+ GameState.DEALER_BLACKJACK
+    } else {
+      drawDealerCards()
+    }
     revealed = true
-    evaluate()
   }
   private def drawDealerCards() : Unit = {
     gameStates = gameStates :+ GameState.DEALER_DRAWS
@@ -119,8 +133,6 @@ class Controller extends Observable {
     }
   }
   def evaluate() : Unit = {
-
-
     if (player.containsCardType(Ranks.Ace) != -1 && player.getHandValue != 21) {
       if (player.getHandValue > 21) {
         aceStrategy = new AceStrategy1
@@ -132,32 +144,42 @@ class Controller extends Observable {
     if (player.getHandValue > 21) {
       gameStates = gameStates :+ GameState.PLAYER_BUST
       gameStates = gameStates :+ GameState.PLAYER_LOOSE
-      push.handleRequest(gameStates.last, this.player)
+      push.handleRequest(GameState.PLAYER_LOOSE, this.player)
       return
     } else if (dealer.getHandValue > 21) {
       gameStates = gameStates :+ GameState.DEALER_BUST
       gameStates = gameStates :+ GameState.PLAYER_WINS
-      push.handleRequest(gameStates.last, this.player)
+      push.handleRequest(GameState.PLAYER_WINS, this.player)
       return
     } else if (player.getHandValue == 21 && !revealed && player.getHandSize == 2) {
-      gameStates = gameStates :+ GameState.PLAYER_BLACKJACK
+      gameStates = gameStates :+ GameState.PLAYER_BLACKJACK // if player has blackjack doesn't win yet
       revealDealer()
-      push.handleRequest(gameStates.last, this.player)
-      return
-    } else if (!revealed){  //when revealed
+      // if player has blackjack and dealer hasn't pay out can continue
+      if (gameStates.contains(GameState.PLAYER_BLACKJACK) && !gameStates.contains(GameState.DEALER_BLACKJACK)) {
+        evaluate()
+        return
+      }
+      // if not continue for push handling
+    } else if (!revealed){  //when not revealed yet
       gameStates = gameStates :+ GameState.WAITING_FOR_INPUT
       return
     }
 
     //nobody busted
-    if (dealer.getHandValue < player.getHandValue) {
+    if (dealer.getHandValue < 21 && player.getHandValue == 21) {
       gameStates = gameStates :+ GameState.PLAYER_WINS
-    } else if (dealer.getHandValue > player.getHandValue) {
+      push.handleRequest(GameState.PLAYER_BLACKJACK, this.player)
+    } else if (dealer.getHandValue > player.getHandValue
+      || (gameStates.contains(GameState.DEALER_BLACKJACK) && !gameStates.contains(GameState.PLAYER_BLACKJACK))) {
       gameStates = gameStates :+ GameState.PLAYER_LOOSE
+      push.handleRequest(gameStates.last, this.player)
     } else if (dealer.getHandValue == player.getHandValue) {
       gameStates = gameStates :+ GameState.PUSH
+      push.handleRequest(gameStates.last, this.player)
+    } else if (dealer.getHandValue < player.getHandValue) {
+      gameStates = gameStates :+ GameState.PLAYER_WINS
+      push.handleRequest(gameStates.last, this.player)
     }
-    push.handleRequest(gameStates.last, this.player)
     gameStates = gameStates :+ GameState.IDLE
   }
 
