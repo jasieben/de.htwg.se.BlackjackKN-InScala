@@ -1,4 +1,6 @@
-package de.htwg.se.blackjackKN.model
+package de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl
+
+import de.htwg.se.blackjackKN.model.{Ranks, Suits}
 
 case class FaceCard(suit: Suits.Value = Suits.Clubs, rank : Ranks.Value = Ranks.Ace) extends Card{
   val ranks: List[(Ranks.Value, Int)] = List((Ranks.King, 10),(Ranks.Queen,10), (Ranks.Jack,10), (Ranks.Ace,11))

@@ -1,8 +1,9 @@
 package de.htwg.se.blackjackKN.controller
 
-import de.htwg.se.blackjackKN.controller.ControllerBaseImpl._
-import de.htwg.se.blackjackKN.controller.GameState
-import de.htwg.se.blackjackKN.model.{Bet, Player}
+import de.htwg.se.blackjackKN.controller.{Controller, GameState}
+import de.htwg.se.blackjackKN.controller.BetHandler
+import de.htwg.se.blackjackKN.model.betComponent.Bet
+import de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl.Player
 import org.junit.runner.RunWith
 import org.scalatest._
 import org.scalatest.junit.JUnitRunner

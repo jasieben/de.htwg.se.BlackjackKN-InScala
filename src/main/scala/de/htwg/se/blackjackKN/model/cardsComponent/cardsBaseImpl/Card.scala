@@ -1,11 +1,11 @@
-package de.htwg.se.blackjackKN.model
+package de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl
 
-import javafx.scene.paint.ImagePattern
-import scalafx.scene.image.Image
+import de.htwg.se.blackjackKN.model.cardsComponent.CardInterface
+import de.htwg.se.blackjackKN.model.{Ranks, Suits}
 
-trait Card {
-  def suit : Suits.Value
-  def rank: Any
+abstract class Card extends CardInterface{
+  val suit : Suits.Value
+  val rank: Any
   var value : Int
   override def toString: String = {rank + " of " + suit}
 

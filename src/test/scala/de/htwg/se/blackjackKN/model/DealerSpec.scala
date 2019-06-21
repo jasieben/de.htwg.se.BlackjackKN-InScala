@@ -1,8 +1,11 @@
 package de.htwg.se.blackjackKN.model
 
+import de.htwg.se.blackjackKN.model.cardsComponent.NumberCard
+import de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl.{FaceCard, NumberCard}
+import de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl.Dealer
 import org.scalatest._
-  import org.junit.runner.RunWith
-  import org.scalatest.junit.JUnitRunner
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class DealerSpec extends WordSpec with Matchers {

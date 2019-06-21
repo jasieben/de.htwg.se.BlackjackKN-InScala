@@ -4,6 +4,7 @@ import de.htwg.se.blackjackKN.controller.ControllerInterface
 import scalafx.Includes._
 import de.htwg.se.blackjackKN.controller.GameState
 import de.htwg.se.blackjackKN.model._
+import de.htwg.se.blackjackKN.model.cardsComponent.CardInterface
 import de.htwg.se.blackjackKN.util.Observer
 import javafx.scene.paint.ImagePattern
 import scalafx.animation._
@@ -405,7 +406,7 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
     }
   }
 
-  def getBackgroundImagePattern(card : Card): ImagePattern = {
+  def getBackgroundImagePattern(card : CardInterface): ImagePattern = {
     new ImagePattern(new Image("de/htwg/se/blackjackKN/res/" + card.getBackgroundImageFileName))
   }
 

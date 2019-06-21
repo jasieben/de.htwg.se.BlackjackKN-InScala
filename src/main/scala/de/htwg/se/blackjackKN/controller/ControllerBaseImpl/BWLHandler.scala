@@ -2,7 +2,7 @@ package de.htwg.se.blackjackKN.controller.ControllerBaseImpl
 
 import de.htwg.se.blackjackKN.controller.GameState
 import de.htwg.se.blackjackKN.controller.GameState.GameState
-import de.htwg.se.blackjackKN.model.Player
+import de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl.Player
 
 class WinningHandler(val successor: BetHandler) extends BetHandler {
   override def handleRequest(gameState: GameState, player: Player): Unit = {
