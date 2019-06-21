@@ -2,13 +2,13 @@ package de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl
 
 import de.htwg.se.blackjackKN.model.cardsComponent.CardInterface
 import de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl.Card
-import de.htwg.se.blackjackKN.model.personsComponent.personsInterface
 import de.htwg.se.blackjackKN.model.Ranks
 import de.htwg.se.blackjackKN.model.betComponent.Bet
+import de.htwg.se.blackjackKN.model.personsComponent.PlayerInterface
 
 import scala.collection.mutable.ListBuffer
 
-case class Player(name: String = "Test", handList : ListBuffer[CardInterface] = ListBuffer.empty[CardInterface], money : Double = 1000, bets : Bet = Bet(0) ) extends personsInterface{
+case class Player(name: String = "Test", handList : ListBuffer[CardInterface] = ListBuffer.empty[CardInterface], money : Double = 1000, bets : Bet = Bet(0) ) extends PlayerInterface{
   var hand : ListBuffer[CardInterface] = handList
   var balance: Double = money
   var bet : Bet = bets
@@ -69,5 +69,9 @@ case class Player(name: String = "Test", handList : ListBuffer[CardInterface] = 
       }
     }
     -1
+  }
+
+  def getName : String = {
+    name
   }
 }

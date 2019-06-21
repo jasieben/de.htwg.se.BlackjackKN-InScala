@@ -3,7 +3,6 @@ package de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl
 import de.htwg.se.blackjackKN.model.Ranks
 import de.htwg.se.blackjackKN.model.cardsComponent.CardInterface
 import de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl.{Card, CardDeck}
-import de.htwg.se.blackjackKN.model.personsComponent.personsInterface
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Random

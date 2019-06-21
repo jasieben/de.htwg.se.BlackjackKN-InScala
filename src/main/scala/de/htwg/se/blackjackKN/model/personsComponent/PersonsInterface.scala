@@ -6,7 +6,7 @@ import de.htwg.se.blackjackKN.model.cardsComponent.CardInterface
 
 import scala.collection.mutable.ListBuffer
 
-trait personsInterface {
+trait PersonsInterface {
   def addCardToHand(card: CardInterface): CardInterface
 
   def clearHand()

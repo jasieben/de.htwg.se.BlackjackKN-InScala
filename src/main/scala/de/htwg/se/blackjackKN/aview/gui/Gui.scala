@@ -33,7 +33,7 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
 
   val menuText: Text = new Text {
     textAlignment = TextAlignment.Center
-    text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
+    text = "Hello " + controller.player.getName + "!\nYour balance is " + controller.player.balance + "$"
   }
 
   val balanceText : Text = new Text {
@@ -150,7 +150,7 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
     val dialog = new TextInputDialog(defaultValue = (controller.player.balance / 10).toInt.toString) {
       initOwner(stage)
       title = "Bet amount"
-      headerText = "What amount of your " + controller.player.balance + "$ would you like to bet, " + controller.player.name + "?"
+      headerText = "What amount of your " + controller.player.balance + "$ would you like to bet, " + controller.player.getName + "?"
       contentText = "Enter the amount here:"
     }
 
@@ -348,7 +348,7 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
     }
 
   def setMenuScene() : Unit = {
-    menuText.text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
+    menuText.text = "Hello " + controller.player.getName + "!\nYour balance is " + controller.player.balance + "$"
     stage.scene = getMenuScene
   }
 
@@ -411,7 +411,7 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
   }
 
   def changePlayer(): Unit = {
-    val dialog = new TextInputDialog(controller.player.name) {
+    val dialog = new TextInputDialog(controller.player.getName) {
       initOwner(stage)
       title = "Change your name"
       headerText = "What name would you like to have?"
@@ -423,7 +423,7 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
     result match {
       case Some(value) =>
         controller.createNewPlayer(value)
-        menuText.text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
+        menuText.text = "Hello " + controller.player.getName + "!\nYour balance is " + controller.player.balance + "$"
       case None =>
     }
   }
@@ -459,7 +459,7 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
           }
 
           timelineP2.onFinished = handle {
-            playerHandValueText.text = controller.player.name + "'s hand value: " + controller.player.getHandValue
+            playerHandValueText.text = controller.player.getName + "'s hand value: " + controller.player.getHandValue
             Cards.playerCard2.setFill(getBackgroundImagePattern(controller.player.getCard(1)))
             timelineD2.play()
           }
@@ -467,7 +467,7 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
             dealerHandValueText.text = "Dealer's hand value: " + controller.dealer.getCard(0).value
           }
         case GameState.STAND =>
-          statusText.text = controller.player.name + " stands"
+          statusText.text = controller.player.getName + " stands"
         case GameState.HIT =>
           val c = Cards.playerCards(controller.player.getHandSize - 1)
           c.setFill(backSideImagePattern)
@@ -475,7 +475,7 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
           tl.play()
           tl.onFinished = handle {
             c.setFill(getBackgroundImagePattern(controller.player.getLastHandCard))
-            playerHandValueText.text = controller.player.name + "'s hand value: " + controller.player.getHandValue
+            playerHandValueText.text = controller.player.getName + "'s hand value: " + controller.player.getHandValue
           }
         case GameState.REVEAL =>
           Cards.dealerCard2.setFill(getBackgroundImagePattern(controller.dealer.getCard(1)))
@@ -491,12 +491,12 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
             }
           }
         case GameState.PLAYER_BUST =>
-          playerHandValueText.text = controller.player.name + " busts (value: "+ controller.player.getHandValue + ")"
+          playerHandValueText.text = controller.player.getName + " busts (value: "+ controller.player.getHandValue + ")"
 
         case GameState.DEALER_BUST =>
           dealerHandValueText.text = "Dealer busts (value: " + controller.dealer.getHandValue + ")"
         case GameState.PLAYER_BLACKJACK =>
-          playerHandValueText.text = controller.player.name + "has a Blackjack (value: 21)"
+          playerHandValueText.text = controller.player.getName + "has a Blackjack (value: 21)"
         case GameState.WAITING_FOR_INPUT =>
           statusText.text = "Would you like to hit or stand?"
           Controls.standButton.setDisable(false)
@@ -505,19 +505,19 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
         case GameState.PLAYER_WINS =>
           balanceText.text = "Balance: " + controller.player.balance  + "$"
           currentBetText.text = "Current bet: 0$"
-          statusText.text = controller.player.name + " wins!"
+          statusText.text = controller.player.getName + " wins!"
           Controls.standButton.setDisable(true)
           Controls.hitButton.setDisable(true)
           Controls.newRoundButton.setDisable(false)
         case GameState.PLAYER_LOOSE =>
           balanceText.text = "Balance: " + controller.player.balance  + "$"
           currentBetText.text = "Current bet: 0$"
-          statusText.text = controller.player.name + " looses!"
+          statusText.text = controller.player.getName + " looses!"
           Controls.standButton.setDisable(true)
           Controls.hitButton.setDisable(true)
           Controls.newRoundButton.setDisable(false)
         case GameState.PUSH =>
-          statusText.text = "Push! " + controller.player.name + " and the Dealer's hand value the same "
+          statusText.text = "Push! " + controller.player.getName + " and the Dealer's hand value the same "
           Controls.standButton.setDisable(true)
           Controls.hitButton.setDisable(true)
           Controls.newRoundButton.setDisable(false)
