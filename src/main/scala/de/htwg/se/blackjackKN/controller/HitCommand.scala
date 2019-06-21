@@ -1,6 +1,7 @@
 package de.htwg.se.blackjackKN.controller
 
-import de.htwg.se.blackjackKN.model.{Dealer, Player}
+import de.htwg.se.blackjackKN.model.Player
+import de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl.{Dealer, Player}
 import de.htwg.se.blackjackKN.util.Command
 
 class HitCommand(controller: Controller) extends Command {

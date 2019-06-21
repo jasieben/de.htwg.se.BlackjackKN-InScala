@@ -1,5 +1,6 @@
 package de.htwg.se.blackjackKN.model
 
+import de.htwg.se.blackjackKN.model.betComponent.Bet
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatest.junit.JUnitRunner

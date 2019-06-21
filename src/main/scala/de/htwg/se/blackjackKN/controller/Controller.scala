@@ -1,6 +1,8 @@
 package de.htwg.se.blackjackKN.controller
 
-import de.htwg.se.blackjackKN.model.{Bet, Dealer, FaceCard, Player, Ranks}
+import de.htwg.se.blackjackKN.model.betComponent.Bet
+import de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl.{Dealer, Player}
+import de.htwg.se.blackjackKN.model.{Player, Ranks}
 import de.htwg.se.blackjackKN.util.{Observable, UndoManager}
 
 

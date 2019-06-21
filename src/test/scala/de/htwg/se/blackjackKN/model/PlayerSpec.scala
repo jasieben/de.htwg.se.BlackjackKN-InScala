@@ -1,5 +1,8 @@
 package de.htwg.se.blackjackKN.model
 
+import de.htwg.se.blackjackKN.model.betComponent.Bet
+import de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl.NumberCard
+import de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl.Player
 import org.scalatest._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

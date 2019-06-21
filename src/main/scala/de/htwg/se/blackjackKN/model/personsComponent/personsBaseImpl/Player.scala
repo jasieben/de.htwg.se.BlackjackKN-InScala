@@ -1,9 +1,15 @@
-package de.htwg.se.blackjackKN.model
+package de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl
+
+import de.htwg.se.blackjackKN.model.cardsComponent.CardInterface
+import de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl.Card
+import de.htwg.se.blackjackKN.model.personsComponent.personsInterface
+import de.htwg.se.blackjackKN.model.Ranks
+import de.htwg.se.blackjackKN.model.betComponent.Bet
 
 import scala.collection.mutable.ListBuffer
 
-case class Player(name: String = "Test", handList : ListBuffer[Card] = ListBuffer.empty[Card], money : Double = 1000, bets : Bet = Bet(0) ) extends Person{
-  var hand : ListBuffer[Card] = handList
+case class Player(name: String = "Test", handList : ListBuffer[CardInterface] = ListBuffer.empty[CardInterface], money : Double = 1000, bets : Bet = Bet(0) ) extends personsInterface{
+  var hand : ListBuffer[CardInterface] = handList
   var balance: Double = money
   var bet : Bet = bets
 
@@ -27,7 +33,7 @@ case class Player(name: String = "Test", handList : ListBuffer[Card] = ListBuffe
     Player(this.name, hand.clone(), this.balance, bet)
   }
 
-  def addCardToHand(card: Card): Card = {
+  def addCardToHand(card: CardInterface): CardInterface = {
     hand += card
     card
   }
@@ -36,7 +42,7 @@ case class Player(name: String = "Test", handList : ListBuffer[Card] = ListBuffe
     hand.clear()
   }
 
-  def getCard(index : Int): Card = {
+  def getCard(index : Int): CardInterface = {
     hand(index)
   }
 
@@ -52,7 +58,7 @@ case class Player(name: String = "Test", handList : ListBuffer[Card] = ListBuffe
     v
   }
 
-  def getLastHandCard : Card = {
+  def getLastHandCard : CardInterface = {
     hand.last
   }
 

@@ -1,5 +1,7 @@
 package de.htwg.se.blackjackKN.model
 
+import de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl.{CardDeck, FaceCard, NumberCard}
+import de.htwg.se.blackjackKN.model.cardsComponent.{FaceCard, NumberCard}
 import org.scalatest._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

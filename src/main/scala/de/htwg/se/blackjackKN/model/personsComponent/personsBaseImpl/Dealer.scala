@@ -1,13 +1,18 @@
-package de.htwg.se.blackjackKN.model
+package de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl
+
+import de.htwg.se.blackjackKN.model.Ranks
+import de.htwg.se.blackjackKN.model.cardsComponent.CardInterface
+import de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl.{Card, CardDeck}
+import de.htwg.se.blackjackKN.model.personsComponent.personsInterface
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
 
-case class Dealer(name: String = "Dealer", handList : ListBuffer[Card] = ListBuffer.empty[Card], deck: ListBuffer[Card] = ListBuffer.empty[Card]) extends Person {
-  private var cardDeck : ListBuffer[Card] = deck
-  var hand : ListBuffer[Card] = handList
+case class Dealer(name: String = "Dealer", handList : ListBuffer[CardInterface] = ListBuffer.empty[CardInterface], deck: ListBuffer[CardInterface] = ListBuffer.empty[CardInterface]) extends personsInterface {
+  private var cardDeck : ListBuffer[CardInterface] = deck
+  var hand : ListBuffer[CardInterface] = handList
 
-  def generateDealerCards: ListBuffer[Card] = {
+  def generateDealerCards: ListBuffer[CardInterface] = {
     cardDeck.clear()
     for {
       i <- 0 to 5
@@ -16,7 +21,7 @@ case class Dealer(name: String = "Dealer", handList : ListBuffer[Card] = ListBuf
     cardDeck
   }
 
-  def drawCard(): Card = {
+  def drawCard(): CardInterface = {
     val tmp = cardDeck.head
     cardDeck.remove(0)
     tmp
@@ -35,7 +40,7 @@ case class Dealer(name: String = "Dealer", handList : ListBuffer[Card] = ListBuf
 
   override def toString: String = name
 
-  def addCardToHand(card: Card): Card = {
+  def addCardToHand(card: CardInterface): CardInterface = {
     hand += card
     card
   }
@@ -44,7 +49,7 @@ case class Dealer(name: String = "Dealer", handList : ListBuffer[Card] = ListBuf
     hand.clear()
   }
 
-  def getCard(index : Int): Card = {
+  def getCard(index : Int): CardInterface = {
     hand(index)
   }
 
@@ -60,7 +65,7 @@ case class Dealer(name: String = "Dealer", handList : ListBuffer[Card] = ListBuf
     v
   }
 
-  def getLastHandCard : Card = {
+  def getLastHandCard : CardInterface = {
     hand.last
   }
 

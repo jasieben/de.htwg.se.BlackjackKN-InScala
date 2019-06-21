@@ -2,10 +2,10 @@ package de.htwg.se.blackjackKN.aview
 
 import de.htwg.se.blackjackKN.controller.GameState.GameState
 import de.htwg.se.blackjackKN.controller.{Controller, GameState}
+import de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl.Card
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{Matchers, WordSpec}
-import de.htwg.se.blackjackKN.model.Card
 
 @RunWith(classOf[JUnitRunner])
 class TuiSpec extends WordSpec with Matchers{
