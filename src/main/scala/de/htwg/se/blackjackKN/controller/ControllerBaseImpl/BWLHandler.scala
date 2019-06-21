@@ -1,5 +1,6 @@
-package de.htwg.se.blackjackKN.controller
+package de.htwg.se.blackjackKN.controller.ControllerBaseImpl
 
+import de.htwg.se.blackjackKN.controller.GameState
 import de.htwg.se.blackjackKN.controller.GameState.GameState
 import de.htwg.se.blackjackKN.model.Player
 

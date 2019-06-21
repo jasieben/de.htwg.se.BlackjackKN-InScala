@@ -1,7 +1,8 @@
 package de.htwg.se.blackjackKN.aview.gui
 
+import de.htwg.se.blackjackKN.controller.ControllerInterface
 import scalafx.Includes._
-import de.htwg.se.blackjackKN.controller.{Controller, GameState}
+import de.htwg.se.blackjackKN.controller.GameState
 import de.htwg.se.blackjackKN.model._
 import de.htwg.se.blackjackKN.util.Observer
 import javafx.scene.paint.ImagePattern
@@ -23,7 +24,7 @@ import scalafx.stage.Screen
 
 import scala.language.postfixOps
 
-class Gui(controller: Controller) extends JFXApp with Observer {
+class Gui(controller: ControllerInterface) extends JFXApp with Observer {
   controller.add(this)
 
   val backSideImagePattern = new ImagePattern(new Image("de/htwg/se/blackjackKN/res/blue_back.png"))
@@ -131,7 +132,6 @@ class Gui(controller: Controller) extends JFXApp with Observer {
       exit()
     }
     val bounds: Rectangle2D = Screen.primary.visualBounds
-
     if (bounds.maxY >= 1080) {
       width = 1400
       height = 900
@@ -229,28 +229,28 @@ class Gui(controller: Controller) extends JFXApp with Observer {
   val posPlayerCardsY : List[Int] = List(posPlayerCard1y, posPlayerCard2y, posPlayerCard3y, posPlayerCard4y,
     posPlayerCard5y, posPlayerCard6y)
 
-  val timelineD1 = new Timeline {
+  val timelineD1: Timeline = new Timeline {
     cycleCount = 1
     autoReverse = false
     keyFrames = Seq(
       at (1.0 s) {Cards.dealerCard1.x -> posDealerCard1x tween Interpolator.EaseBoth})
 
   }
-  val timelineD2 = new Timeline {
+  val timelineD2: Timeline = new Timeline {
     cycleCount = 1
     autoReverse = false
     keyFrames = Seq(
       at (1.0 s) {Cards.dealerCard2.x -> posDealerCard2x tween Interpolator.EaseBoth})
 
   }
-  val timelineP1 = new Timeline {
+  val timelineP1: Timeline = new Timeline {
     cycleCount = 1
     autoReverse = false
     keyFrames = Seq(
       at (1.0 s) {Cards.playerCard1.x -> posPlayerCard1x tween Interpolator.EaseBoth},
       at (1.0 s) {Cards.playerCard1.y -> posPlayerCard1y})
   }
-  val timelineP2 = new Timeline {
+  val timelineP2: Timeline = new Timeline {
     cycleCount = 1
     autoReverse = false
     keyFrames = Seq(

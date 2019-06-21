@@ -1,10 +1,11 @@
 package de.htwg.se.blackjackKN.aview
 
-import de.htwg.se.blackjackKN.controller.{Controller, GameState}
+import de.htwg.se.blackjackKN.controller.ControllerInterface
+import de.htwg.se.blackjackKN.controller.GameState
 import de.htwg.se.blackjackKN.util.Observer
 
 
-class Tui (controller : Controller) extends Observer {
+class Tui (controller : ControllerInterface) extends Observer {
 
   controller.add(this)
   var gamestatePointer : Int = 0

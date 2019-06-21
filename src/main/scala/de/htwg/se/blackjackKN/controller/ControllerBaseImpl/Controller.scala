@@ -1,10 +1,11 @@
-package de.htwg.se.blackjackKN.controller
+package de.htwg.se.blackjackKN.controller.ControllerBaseImpl
 
-import de.htwg.se.blackjackKN.model.{Bet, Dealer, FaceCard, Player, Ranks}
+import de.htwg.se.blackjackKN.controller._
+import de.htwg.se.blackjackKN.model._
 import de.htwg.se.blackjackKN.util.{Observable, UndoManager}
 
 
-class Controller extends Observable {
+class Controller extends ControllerInterface {
   var dealer = Dealer()
   var player = Player()
   var gameStates : List[GameState.Value] = List(GameState.IDLE)
@@ -107,13 +108,13 @@ class Controller extends Observable {
 
   def undo() : Unit = {
     gameStates = gameStates :+ GameState.UNDO
-    undoManager.undoStep
+    undoManager.undoStep()
     notifyObservers()
   }
 
   def redo() : Unit = {
     gameStates = gameStates :+ GameState.REDO
-    undoManager.redoStep
+    undoManager.redoStep()
     notifyObservers()
   }
 
