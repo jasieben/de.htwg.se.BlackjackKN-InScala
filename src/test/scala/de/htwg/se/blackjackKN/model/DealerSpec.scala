@@ -1,6 +1,5 @@
 package de.htwg.se.blackjackKN.model
 
-import de.htwg.se.blackjackKN.model.cardsComponent.NumberCard
 import de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl.{FaceCard, NumberCard}
 import de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl.Dealer
 import org.scalatest._

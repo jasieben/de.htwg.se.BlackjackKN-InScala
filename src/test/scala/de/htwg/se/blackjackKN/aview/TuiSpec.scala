@@ -6,7 +6,7 @@ import de.htwg.se.blackjackKN.controller.GameState
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{Matchers, WordSpec}
-import de.htwg.se.blackjackKN.model.Card
+import de.htwg.se.blackjackKN.model.cardsComponent.CardInterface
 
 @RunWith(classOf[JUnitRunner])
 class TuiSpec extends WordSpec with Matchers{
@@ -16,7 +16,7 @@ class TuiSpec extends WordSpec with Matchers{
     controller.startGame()
     "process n" in {
       tui.processInput("n")
-      controller.dealer.drawCard() should be(a [Card])
+      controller.dealer.drawCard() should be(a [CardInterface])
     }
     "process h" in {
       controller.startNewRound()

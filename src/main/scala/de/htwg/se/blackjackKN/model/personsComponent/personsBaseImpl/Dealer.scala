@@ -3,11 +3,12 @@ package de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl
 import de.htwg.se.blackjackKN.model.Ranks
 import de.htwg.se.blackjackKN.model.cardsComponent.CardInterface
 import de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl.{Card, CardDeck}
+import de.htwg.se.blackjackKN.model.personsComponent.DealerInterface
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
 
-case class Dealer(name: String = "Dealer", handList : ListBuffer[CardInterface] = ListBuffer.empty[CardInterface], deck: ListBuffer[CardInterface] = ListBuffer.empty[CardInterface]) extends personsInterface {
+case class Dealer(name: String = "Dealer", handList : ListBuffer[CardInterface] = ListBuffer.empty[CardInterface], deck: ListBuffer[CardInterface] = ListBuffer.empty[CardInterface]) extends DealerInterface {
   private var cardDeck : ListBuffer[CardInterface] = deck
   var hand : ListBuffer[CardInterface] = handList
 

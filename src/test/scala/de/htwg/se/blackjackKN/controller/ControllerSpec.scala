@@ -1,7 +1,9 @@
 package de.htwg.se.blackjackKN.controller
 
 import de.htwg.se.blackjackKN.controller.ControllerBaseImpl.Controller
-import de.htwg.se.blackjackKN.model.{Bet, FaceCard, NumberCard, Ranks, Suits}
+import de.htwg.se.blackjackKN.model.betComponent.Bet
+import de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl.{FaceCard, NumberCard}
+import de.htwg.se.blackjackKN.model.{Ranks, Suits}
 import de.htwg.se.blackjackKN.util.Observer
 import org.junit.runner.RunWith
 import org.scalatest._
@@ -12,7 +14,7 @@ class ControllerSpec extends WordSpec with Matchers {
   "A Controller" when {
     "observed by an Observer" should {
       val controller = new Controller()
-      val observer: Observer = new Observer {
+      val observer = new Observer {
         var updated: Boolean = false
 
         def isUpdated: Boolean = updated

@@ -1,6 +1,5 @@
 package de.htwg.se.blackjackKN.controller.ControllerBaseImpl
 
-import de.htwg.se.blackjackKN.model.Player
 import de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl.{Dealer, Player}
 import de.htwg.se.blackjackKN.util.Command
 
