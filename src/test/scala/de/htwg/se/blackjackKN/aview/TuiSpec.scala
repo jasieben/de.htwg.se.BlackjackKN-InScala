@@ -1,8 +1,8 @@
 package de.htwg.se.blackjackKN.aview
 
-import de.htwg.se.blackjackKN.controller.ControllerBaseImpl.Controller
-import de.htwg.se.blackjackKN.controller.GameState.GameState
-import de.htwg.se.blackjackKN.controller.GameState
+import de.htwg.se.blackjackKN.controller.controllerComponent.controllerBaseImpl.Controller
+import de.htwg.se.blackjackKN.controller.controllerComponent.GameState
+import de.htwg.se.blackjackKN.controller.controllerComponent.GameState.GameState
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{Matchers, WordSpec}

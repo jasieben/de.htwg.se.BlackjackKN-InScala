@@ -1,6 +1,7 @@
 package de.htwg.se.blackjackKN.controller
 
-import de.htwg.se.blackjackKN.controller.ControllerBaseImpl.Controller
+import de.htwg.se.blackjackKN.controller.controllerComponent.controllerBaseImpl.Controller
+import de.htwg.se.blackjackKN.controller.controllerComponent.GameState
 import de.htwg.se.blackjackKN.model.betComponent.Bet
 import de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl.{FaceCard, NumberCard}
 import de.htwg.se.blackjackKN.model.{Ranks, Suits}

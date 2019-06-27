@@ -1,7 +1,7 @@
 package de.htwg.se.blackjackKN.controller
 
-import de.htwg.se.blackjackKN.controller.ControllerBaseImpl.{BlackjackHandler, LoosingHandler, PushHandler, WinningHandler}
-import de.htwg.se.blackjackKN.controller.GameState
+import de.htwg.se.blackjackKN.controller.controllerComponent.controllerBaseImpl.{BlackjackHandler, LoosingHandler, PushHandler, WinningHandler}
+import de.htwg.se.blackjackKN.controller.controllerComponent.GameState
 import de.htwg.se.blackjackKN.model.betComponent.Bet
 import de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl.Player
 import org.junit.runner.RunWith

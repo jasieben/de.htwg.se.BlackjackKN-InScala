@@ -1,8 +1,7 @@
 package de.htwg.se.blackjackKN.aview.gui
 
-import de.htwg.se.blackjackKN.controller.ControllerInterface
 import scalafx.Includes._
-import de.htwg.se.blackjackKN.controller.GameState
+import de.htwg.se.blackjackKN.controller.controllerComponent.{ControllerInterface, GameState}
 import de.htwg.se.blackjackKN.model._
 import de.htwg.se.blackjackKN.model.cardsComponent.CardInterface
 import de.htwg.se.blackjackKN.util.Observer

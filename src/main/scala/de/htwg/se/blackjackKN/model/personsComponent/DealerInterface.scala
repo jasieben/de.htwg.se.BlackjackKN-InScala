@@ -9,4 +9,5 @@ trait DealerInterface extends PersonsInterface {
   def getCardDeckSize : Int
   def renewCardDeck() : Unit
   def drawCard() : CardInterface
+  def copy() : DealerInterface
 }
