@@ -1,11 +1,8 @@
-package de.htwg.se.blackjackKN.controller
+package de.htwg.se.blackjackKN.controller.controllerComponent
 
-import de.htwg.se.blackjackKN.controller.GameState
-import de.htwg.se.blackjackKN.controller.GameState.GameState
+import GameState.GameState
 import de.htwg.se.blackjackKN.model.personsComponent.{DealerInterface, PlayerInterface}
 import de.htwg.se.blackjackKN.util.Observable
-
-
 
 trait ControllerInterface extends Observable {
   def createNewPlayer(name: String): Unit

@@ -1,11 +1,12 @@
-package de.htwg.se.blackjackKN.controller.ControllerBaseImpl
+package de.htwg.se.blackjackKN.controller.controllerComponent.controllerBaseImpl
 
+import de.htwg.se.blackjackKN.model.personsComponent.{DealerInterface, PlayerInterface}
 import de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl.{Dealer, Player}
 import de.htwg.se.blackjackKN.util.Command
 
 class StandCommand(controller: Controller) extends Command {
-  var dealerMemento : Dealer = controller.dealer
-  var playerMemento : Player = controller.player
+  var dealerMemento : DealerInterface = controller.dealer
+  var playerMemento : PlayerInterface = controller.player
   var revealedMemento : Boolean = controller.revealed
   override def doStep(): Unit = {
     dealerMemento = controller.dealer.copy()
@@ -15,8 +16,8 @@ class StandCommand(controller: Controller) extends Command {
   }
 
   override def redoStep(): Unit = {
-    val newDealerMemento : Dealer = controller.dealer.copy()
-    val newPlayerMemento : Player = controller.player.copy()
+    val newDealerMemento = controller.dealer.copy()
+    val newPlayerMemento = controller.player.copy()
     val newRevealedMemento : Boolean = controller.revealed
 
     controller.dealer = dealerMemento
@@ -30,8 +31,8 @@ class StandCommand(controller: Controller) extends Command {
   }
 
   override def undoStep(): Unit = {
-    val newDealerMemento : Dealer = controller.dealer.copy()
-    val newPlayerMemento : Player = controller.player.copy()
+    val newDealerMemento = controller.dealer.copy()
+    val newPlayerMemento = controller.player.copy()
     val newRevealedMemento : Boolean = controller.revealed
 
     controller.dealer = dealerMemento

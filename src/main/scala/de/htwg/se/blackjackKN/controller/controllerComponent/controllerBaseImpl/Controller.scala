@@ -1,15 +1,19 @@
-package de.htwg.se.blackjackKN.controller.ControllerBaseImpl
+package de.htwg.se.blackjackKN.controller.controllerComponent.controllerBaseImpl
 
-import de.htwg.se.blackjackKN.controller._
+import com.google.inject.{Guice, Inject, Injector}
+import de.htwg.se.blackjackKN.BlackjackModule
+import de.htwg.se.blackjackKN.controller.controllerComponent.{ControllerInterface, GameState}
 import de.htwg.se.blackjackKN.model.Ranks
 import de.htwg.se.blackjackKN.model.betComponent.Bet
+import de.htwg.se.blackjackKN.model.personsComponent.{DealerInterface, PlayerInterface}
 import de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl.{Dealer, Player}
-import de.htwg.se.blackjackKN.util.{Observable, UndoManager}
+import de.htwg.se.blackjackKN.util.UndoManager
 
 
-class Controller extends ControllerInterface {
-  var dealer = Dealer()
-  var player = Player()
+class Controller @Inject() extends ControllerInterface {
+  val injector: Injector = Guice.createInjector(new BlackjackModule)
+  var dealer: DealerInterface = injector.getInstance(classOf[DealerInterface])
+  var player: PlayerInterface = injector.getInstance(classOf[PlayerInterface])
   var gameStates : List[GameState.Value] = List(GameState.IDLE)
   var revealed : Boolean = false
   var aceStrategy : AceStrategy = new AceStrategy11
