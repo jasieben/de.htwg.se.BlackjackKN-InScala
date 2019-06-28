@@ -13,17 +13,18 @@ import scala.xml.{NodeSeq, PrettyPrinter}
 class FileIO extends FileIOInterface{
 
   def load(playerName: String): PlayerInterface = {
-    val source: String = Source.fromFile(playerName + ".json").getLines.mkString
-
+    val file = scala.xml.XML.loadFile(playerName + ".xml")
+    val balance : Double = (file \\ "player" \ "@balance").text.toDouble
     val injector = Guice.createInjector(new BlackjackModule)
     val player = injector.getInstance(classOf[PlayerInterface])
-
+    player.setName(playerName)
+    player.setBalance(balance)
     player
   }
 
   override def store(player: PlayerInterface): Boolean = {
     storeString(player)
-    return true
+    true
   }
 
   def storeString(player: PlayerInterface) = {

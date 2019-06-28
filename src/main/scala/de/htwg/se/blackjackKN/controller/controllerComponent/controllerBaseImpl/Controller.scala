@@ -41,6 +41,7 @@ class Controller @Inject() extends ControllerInterface {
   def createNewPlayer(name: String) : Unit = {
     player = injector.getInstance(classOf[PlayerInterface])
     player.setName(name)
+    this.player = player
     fileIO.store(this.player)
     gameStates = gameStates :+ GameState.NEW_NAME
     notifyObservers()
