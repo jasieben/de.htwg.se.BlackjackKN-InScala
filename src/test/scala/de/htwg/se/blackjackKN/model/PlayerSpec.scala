@@ -9,14 +9,14 @@ import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class PlayerSpec extends WordSpec with Matchers {
-  val player = Player("Your Name")
+  val player = Player()
   "A Player" when {
     "new" should {
       "have a name" in {
-        player.name should be("Your Name")
+        player.name should be("Test")
       }
       "have a nice String representation" in {
-        player.toString should be("Your Name")
+        player.toString should be("Test")
       }
       "have a balance of 0$" in {
         player.balance > 0 should be (true)

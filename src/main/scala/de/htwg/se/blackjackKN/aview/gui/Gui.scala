@@ -378,7 +378,7 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
               }
             },
             new Button {
-              text = "Change Player Name"
+              text = "Change Player"
               onAction = handle {
                 changePlayer()
               }
@@ -412,7 +412,7 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
   def changePlayer(): Unit = {
     val dialog = new TextInputDialog(controller.player.getName) {
       initOwner(stage)
-      title = "Change your name"
+      title = "Change the player"
       headerText = "What name would you like to have?"
       contentText = "Enter the name here:"
     }
@@ -421,7 +421,7 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
 
     result match {
       case Some(value) =>
-        controller.createNewPlayer(value)
+        controller.changePlayer(value)
         menuText.text = "Hello " + controller.player.getName + "!\nYour balance is " + controller.player.balance + "$"
       case None =>
     }

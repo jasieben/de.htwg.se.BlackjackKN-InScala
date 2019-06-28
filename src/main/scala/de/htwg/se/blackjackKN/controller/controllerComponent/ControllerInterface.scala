@@ -16,5 +16,6 @@ trait ControllerInterface extends Observable {
   def standCommand(): Unit
   def setBet(value: Int): Boolean
   def startNewRound(): Unit
+  def changePlayer(name : String) : Unit
 
 }

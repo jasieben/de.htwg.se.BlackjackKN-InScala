@@ -5,8 +5,8 @@ import de.htwg.se.blackjackKN.BlackjackModule
 import de.htwg.se.blackjackKN.controller.controllerComponent.{ControllerInterface, GameState}
 import de.htwg.se.blackjackKN.model.Ranks
 import de.htwg.se.blackjackKN.model.betComponent.Bet
+import de.htwg.se.blackjackKN.model.fileioComponent.FileIOInterface
 import de.htwg.se.blackjackKN.model.personsComponent.{DealerInterface, PlayerInterface}
-import de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl.{Dealer, Player}
 import de.htwg.se.blackjackKN.util.UndoManager
 
 
@@ -14,6 +14,7 @@ class Controller @Inject() extends ControllerInterface {
   val injector: Injector = Guice.createInjector(new BlackjackModule)
   var dealer: DealerInterface = injector.getInstance(classOf[DealerInterface])
   var player: PlayerInterface = injector.getInstance(classOf[PlayerInterface])
+  var fileIO: FileIOInterface = injector.getInstance(classOf[FileIOInterface])
   var gameStates : List[GameState.Value] = List(GameState.IDLE)
   var revealed : Boolean = false
   var aceStrategy : AceStrategy = new AceStrategy11
@@ -38,9 +39,15 @@ class Controller @Inject() extends ControllerInterface {
     override def execute() : Unit = gameStates = gameStates :+ GameState.ACE
   }
   def createNewPlayer(name: String) : Unit = {
-    player = Player(name)
+    player = injector.getInstance(classOf[PlayerInterface])
+    player.setName(name)
+    fileIO.store(this.player)
     gameStates = gameStates :+ GameState.NEW_NAME
     notifyObservers()
+  }
+
+  def changePlayer(name : String): Unit = {
+    this.player = fileIO.load(name)
   }
   def startGame() : Unit = {
     dealer.generateDealerCards
@@ -152,11 +159,13 @@ class Controller @Inject() extends ControllerInterface {
       gameStates = gameStates :+ GameState.PLAYER_BUST
       gameStates = gameStates :+ GameState.PLAYER_LOOSE
       push.handleRequest(GameState.PLAYER_LOOSE, this.player)
+      fileIO.store(this.player)
       return
     } else if (dealer.getHandValue > 21) {
       gameStates = gameStates :+ GameState.DEALER_BUST
       gameStates = gameStates :+ GameState.PLAYER_WINS
       push.handleRequest(GameState.PLAYER_WINS, this.player)
+      fileIO.store(this.player)
       return
     } else if (player.getHandValue == 21 && !revealed && player.getHandSize == 2) {
       gameStates = gameStates :+ GameState.PLAYER_BLACKJACK // if player has blackjack doesn't win yet
@@ -176,16 +185,20 @@ class Controller @Inject() extends ControllerInterface {
     if (dealer.getHandValue < 21 && player.getHandValue == 21) {
       gameStates = gameStates :+ GameState.PLAYER_WINS
       push.handleRequest(GameState.PLAYER_BLACKJACK, this.player)
+      fileIO.store(this.player)
     } else if (dealer.getHandValue > player.getHandValue
       || (gameStates.contains(GameState.DEALER_BLACKJACK) && !gameStates.contains(GameState.PLAYER_BLACKJACK))) {
       gameStates = gameStates :+ GameState.PLAYER_LOOSE
       push.handleRequest(gameStates.last, this.player)
+      fileIO.store(this.player)
     } else if (dealer.getHandValue == player.getHandValue) {
       gameStates = gameStates :+ GameState.PUSH
       push.handleRequest(gameStates.last, this.player)
+      fileIO.store(this.player)
     } else if (dealer.getHandValue < player.getHandValue) {
       gameStates = gameStates :+ GameState.PLAYER_WINS
       push.handleRequest(gameStates.last, this.player)
+      fileIO.store(this.player)
     }
     gameStates = gameStates :+ GameState.IDLE
   }

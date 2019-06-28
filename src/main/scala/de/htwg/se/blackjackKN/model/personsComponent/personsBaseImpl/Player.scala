@@ -8,11 +8,11 @@ import de.htwg.se.blackjackKN.model.personsComponent.PlayerInterface
 
 import scala.collection.mutable.ListBuffer
 
-case class Player(name: String = "Test", handList : ListBuffer[CardInterface] = ListBuffer.empty[CardInterface], money : Double = 1000, bets : Bet = Bet(0) ) extends PlayerInterface{
+case class Player(handList : ListBuffer[CardInterface] = ListBuffer.empty[CardInterface], money : Double = 1000, bets : Bet = Bet(0) ) extends PlayerInterface{
   var hand : ListBuffer[CardInterface] = handList
   var balance: Double = money
   var bet : Bet = bets
-
+  var name = "Test"
   override def toString:String = name
 
   def addBet(bet: Bet): Boolean = {
@@ -30,7 +30,9 @@ case class Player(name: String = "Test", handList : ListBuffer[CardInterface] = 
   }
 
   def copy() : Player = {
-    Player(this.name, hand.clone(), this.balance, bet)
+    val p = Player(hand.clone(), this.balance, bet)
+    p.name = this.name
+    p
   }
 
   def addCardToHand(card: CardInterface): CardInterface = {
@@ -71,7 +73,15 @@ case class Player(name: String = "Test", handList : ListBuffer[CardInterface] = 
     -1
   }
 
+  def setBalance(balance : Double): Unit = {
+    this.balance = balance
+  }
+
   def getName : String = {
     name
+  }
+
+  def setName(name : String) : Unit = {
+    this.name = name
   }
 }

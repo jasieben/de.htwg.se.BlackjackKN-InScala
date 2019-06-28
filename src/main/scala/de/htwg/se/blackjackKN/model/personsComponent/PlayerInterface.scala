@@ -9,4 +9,6 @@ trait PlayerInterface extends PersonsInterface {
   def addBet(bet : Bet) : Boolean
   def getName : String
   def copy() : PlayerInterface
+  def setBalance(balance : Double) : Unit
+  def setName(name : String) : Unit
 }
