@@ -34,6 +34,10 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
     textAlignment = TextAlignment.Center
     text = "Hello " + controller.player.getName + "!\nYour balance is " + controller.player.balance + "$"
   }
+  val settingsText: Text = new Text {
+    textAlignment = TextAlignment.Center
+    text = "Hello " + controller.player.getName + "!\nChoose your settings. "
+  }
 
   val balanceText : Text = new Text {
     textAlignment = TextAlignment.Center
@@ -384,9 +388,67 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
               }
             },
             new Button {
+              text = "Settings"
+              onAction = handle {
+                getSettingsScene
+              }
+            },
+            new Button {
               text = "Exit Game"
               onAction = handle {
                 exit()
+              }
+            }
+          )
+        }
+        bottom = new HBox {
+          alignment = Pos.Center
+          spacing = 20
+          children = Seq(
+            new Text {
+              text = "Developed by Jana Siebenhaller and Benjamin Jasper"
+              padding = Insets(40, 0, 20, 0)
+            }
+          )
+        }
+      }
+    }
+  }
+  def setSettingsScene() : Unit = {
+    settingsText.text = "Hello " + controller.player.getName + "!\nChoose your Settings. "
+    stage.scene = getSettingsScene
+  }
+
+  def getSettingsScene : Scene = {
+    new Scene {
+      fill = new LinearGradient(
+        endX = 0,
+        stops = Stops(PaleGreen, SeaGreen))
+      root = new BorderPane {
+        top = new HBox {
+          children = new Text {
+            text = "BLACKJACK"
+            style = "-fx-font-size: 36pt"
+            alignment = Pos.Center
+          }
+        }
+        center = new VBox {
+
+          alignment = Pos.Center
+          spacing = 20
+          style = "-fx-font-size: 12pt"
+          children = Seq(
+            settingsText,
+            new Button {
+              text = "Coose Cardback"
+              onAction = handle {
+                startNewRound()
+              }
+            },
+            new Button {
+              text = "Exit"
+              onAction = handle {
+                getMenuScene
               }
             }
           )
