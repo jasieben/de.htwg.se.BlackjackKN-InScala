@@ -1,8 +1,9 @@
 package de.htwg.se.blackjackKN.aview.gui
 
 import scalafx.Includes._
-import de.htwg.se.blackjackKN.controller.{Controller, GameState}
+import de.htwg.se.blackjackKN.controller.controllerComponent.{ControllerInterface, GameState}
 import de.htwg.se.blackjackKN.model._
+import de.htwg.se.blackjackKN.model.cardsComponent.CardInterface
 import de.htwg.se.blackjackKN.util.Observer
 import javafx.scene.paint.ImagePattern
 import scalafx.animation._
@@ -23,7 +24,7 @@ import scalafx.stage.Screen
 
 import scala.language.postfixOps
 
-class Gui(controller: Controller) extends JFXApp with Observer {
+class Gui(controller: ControllerInterface) extends JFXApp with Observer {
   controller.add(this)
 
   val backSideImagePattern = new ImagePattern(new Image("de/htwg/se/blackjackKN/res/blue_back.png"))
@@ -31,7 +32,11 @@ class Gui(controller: Controller) extends JFXApp with Observer {
 
   val menuText: Text = new Text {
     textAlignment = TextAlignment.Center
-    text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
+    text = "Hello " + controller.player.getName + "!\nYour balance is " + controller.player.balance + "$"
+  }
+  val settingsText: Text = new Text {
+    textAlignment = TextAlignment.Center
+    text = "Hello " + controller.player.getName + "!\nChoose your settings. "
   }
 
   val balanceText : Text = new Text {
@@ -131,7 +136,6 @@ class Gui(controller: Controller) extends JFXApp with Observer {
       exit()
     }
     val bounds: Rectangle2D = Screen.primary.visualBounds
-
     if (bounds.maxY >= 1080) {
       width = 1400
       height = 900
@@ -149,7 +153,7 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     val dialog = new TextInputDialog(defaultValue = (controller.player.balance / 10).toInt.toString) {
       initOwner(stage)
       title = "Bet amount"
-      headerText = "What amount of your " + controller.player.balance + "$ would you like to bet, " + controller.player.name + "?"
+      headerText = "What amount of your " + controller.player.balance + "$ would you like to bet, " + controller.player.getName + "?"
       contentText = "Enter the amount here:"
     }
 
@@ -229,28 +233,28 @@ class Gui(controller: Controller) extends JFXApp with Observer {
   val posPlayerCardsY : List[Int] = List(posPlayerCard1y, posPlayerCard2y, posPlayerCard3y, posPlayerCard4y,
     posPlayerCard5y, posPlayerCard6y)
 
-  val timelineD1 = new Timeline {
+  val timelineD1: Timeline = new Timeline {
     cycleCount = 1
     autoReverse = false
     keyFrames = Seq(
       at (1.0 s) {Cards.dealerCard1.x -> posDealerCard1x tween Interpolator.EaseBoth})
 
   }
-  val timelineD2 = new Timeline {
+  val timelineD2: Timeline = new Timeline {
     cycleCount = 1
     autoReverse = false
     keyFrames = Seq(
       at (1.0 s) {Cards.dealerCard2.x -> posDealerCard2x tween Interpolator.EaseBoth})
 
   }
-  val timelineP1 = new Timeline {
+  val timelineP1: Timeline = new Timeline {
     cycleCount = 1
     autoReverse = false
     keyFrames = Seq(
       at (1.0 s) {Cards.playerCard1.x -> posPlayerCard1x tween Interpolator.EaseBoth},
       at (1.0 s) {Cards.playerCard1.y -> posPlayerCard1y})
   }
-  val timelineP2 = new Timeline {
+  val timelineP2: Timeline = new Timeline {
     cycleCount = 1
     autoReverse = false
     keyFrames = Seq(
@@ -347,7 +351,7 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     }
 
   def setMenuScene() : Unit = {
-    menuText.text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
+    menuText.text = "Hello " + controller.player.getName + "!\nYour balance is " + controller.player.balance + "$"
     stage.scene = getMenuScene
   }
 
@@ -378,9 +382,19 @@ class Gui(controller: Controller) extends JFXApp with Observer {
               }
             },
             new Button {
-              text = "Change Player Name"
+              text = "Change Player"
               onAction = handle {
                 changePlayer()
+              }
+            },
+            new Button {
+              text = "Create new player"
+              onAction = handle { createPlayer() }
+            },
+            new Button {
+              text = "Settings"
+              onAction = handle {
+                getSettingsScene
               }
             },
             new Button {
@@ -404,15 +418,85 @@ class Gui(controller: Controller) extends JFXApp with Observer {
       }
     }
   }
+  def setSettingsScene() : Unit = {
+    settingsText.text = "Hello " + controller.player.getName + "!\nChoose your Settings. "
+    stage.scene = getSettingsScene
+  }
 
-  def getBackgroundImagePattern(card : Card): ImagePattern = {
+  def getSettingsScene : Scene = {
+    new Scene {
+      fill = new LinearGradient(
+        endX = 0,
+        stops = Stops(PaleGreen, SeaGreen))
+      root = new BorderPane {
+        top = new HBox {
+          children = new Text {
+            text = "BLACKJACK"
+            style = "-fx-font-size: 36pt"
+            alignment = Pos.Center
+          }
+        }
+        center = new VBox {
+
+          alignment = Pos.Center
+          spacing = 20
+          style = "-fx-font-size: 12pt"
+          children = Seq(
+            settingsText,
+            new Button {
+              text = "Coose Cardback"
+              onAction = handle {
+                startNewRound()
+              }
+            },
+            new Button {
+              text = "Exit"
+              onAction = handle {
+                getMenuScene
+              }
+            }
+          )
+        }
+        bottom = new HBox {
+          alignment = Pos.Center
+          spacing = 20
+          children = Seq(
+            new Text {
+              text = "Developed by Jana Siebenhaller and Benjamin Jasper"
+              padding = Insets(40, 0, 20, 0)
+            }
+          )
+        }
+      }
+    }
+  }
+
+  def getBackgroundImagePattern(card : CardInterface): ImagePattern = {
     new ImagePattern(new Image("de/htwg/se/blackjackKN/res/" + card.getBackgroundImageFileName))
   }
 
   def changePlayer(): Unit = {
-    val dialog = new TextInputDialog(controller.player.name) {
+    val dialog = new TextInputDialog(controller.player.getName) {
       initOwner(stage)
-      title = "Change your name"
+      title = "Change the player"
+      headerText = "What name would you like to have?"
+      contentText = "Enter the name here:"
+    }
+
+    val result = dialog.showAndWait()
+
+    result match {
+      case Some(value) =>
+        controller.changePlayer(value)
+        menuText.text = "Hello " + controller.player.getName + "!\nYour balance is " + controller.player.balance + "$"
+      case None =>
+    }
+  }
+
+  def createPlayer(): Unit = {
+    val dialog = new TextInputDialog(controller.player.getName) {
+      initOwner(stage)
+      title = "Create new player"
       headerText = "What name would you like to have?"
       contentText = "Enter the name here:"
     }
@@ -422,7 +506,7 @@ class Gui(controller: Controller) extends JFXApp with Observer {
     result match {
       case Some(value) =>
         controller.createNewPlayer(value)
-        menuText.text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
+        menuText.text = "Hello " + controller.player.getName + "!\nYour balance is " + controller.player.balance + "$"
       case None =>
     }
   }
@@ -458,7 +542,7 @@ class Gui(controller: Controller) extends JFXApp with Observer {
           }
 
           timelineP2.onFinished = handle {
-            playerHandValueText.text = controller.player.name + "'s hand value: " + controller.player.getHandValue
+            playerHandValueText.text = controller.player.getName + "'s hand value: " + controller.player.getHandValue
             Cards.playerCard2.setFill(getBackgroundImagePattern(controller.player.getCard(1)))
             timelineD2.play()
           }
@@ -466,7 +550,7 @@ class Gui(controller: Controller) extends JFXApp with Observer {
             dealerHandValueText.text = "Dealer's hand value: " + controller.dealer.getCard(0).value
           }
         case GameState.STAND =>
-          statusText.text = controller.player.name + " stands"
+          statusText.text = controller.player.getName + " stands"
         case GameState.HIT =>
           val c = Cards.playerCards(controller.player.getHandSize - 1)
           c.setFill(backSideImagePattern)
@@ -474,7 +558,7 @@ class Gui(controller: Controller) extends JFXApp with Observer {
           tl.play()
           tl.onFinished = handle {
             c.setFill(getBackgroundImagePattern(controller.player.getLastHandCard))
-            playerHandValueText.text = controller.player.name + "'s hand value: " + controller.player.getHandValue
+            playerHandValueText.text = controller.player.getName + "'s hand value: " + controller.player.getHandValue
           }
         case GameState.REVEAL =>
           Cards.dealerCard2.setFill(getBackgroundImagePattern(controller.dealer.getCard(1)))
@@ -490,12 +574,12 @@ class Gui(controller: Controller) extends JFXApp with Observer {
             }
           }
         case GameState.PLAYER_BUST =>
-          playerHandValueText.text = controller.player.name + " busts (value: "+ controller.player.getHandValue + ")"
+          playerHandValueText.text = controller.player.getName + " busts (value: "+ controller.player.getHandValue + ")"
 
         case GameState.DEALER_BUST =>
           dealerHandValueText.text = "Dealer busts (value: " + controller.dealer.getHandValue + ")"
         case GameState.PLAYER_BLACKJACK =>
-          playerHandValueText.text = controller.player.name + "has a Blackjack (value: 21)"
+          playerHandValueText.text = controller.player.getName + "has a Blackjack (value: 21)"
         case GameState.WAITING_FOR_INPUT =>
           statusText.text = "Would you like to hit or stand?"
           Controls.standButton.setDisable(false)
@@ -504,19 +588,19 @@ class Gui(controller: Controller) extends JFXApp with Observer {
         case GameState.PLAYER_WINS =>
           balanceText.text = "Balance: " + controller.player.balance  + "$"
           currentBetText.text = "Current bet: 0$"
-          statusText.text = controller.player.name + " wins!"
+          statusText.text = controller.player.getName + " wins!"
           Controls.standButton.setDisable(true)
           Controls.hitButton.setDisable(true)
           Controls.newRoundButton.setDisable(false)
         case GameState.PLAYER_LOOSE =>
           balanceText.text = "Balance: " + controller.player.balance  + "$"
           currentBetText.text = "Current bet: 0$"
-          statusText.text = controller.player.name + " looses!"
+          statusText.text = controller.player.getName + " looses!"
           Controls.standButton.setDisable(true)
           Controls.hitButton.setDisable(true)
           Controls.newRoundButton.setDisable(false)
         case GameState.PUSH =>
-          statusText.text = "Push! " + controller.player.name + " and the Dealer's hand value the same "
+          statusText.text = "Push! " + controller.player.getName + " and the Dealer's hand value the same "
           Controls.standButton.setDisable(true)
           Controls.hitButton.setDisable(true)
           Controls.newRoundButton.setDisable(false)

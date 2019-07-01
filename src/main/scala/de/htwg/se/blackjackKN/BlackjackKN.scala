@@ -1,15 +1,16 @@
 package de.htwg.se.blackjackKN
 
+import com.google.inject.Guice
 import de.htwg.se.blackjackKN.aview.Tui
 import de.htwg.se.blackjackKN.aview.gui.Gui
-import de.htwg.se.blackjackKN.controller.Controller
+import de.htwg.se.blackjackKN.controller.controllerComponent.ControllerInterface
 
 import scala.io.StdIn.readLine
 
 object BlackjackKN {
   def main(args: Array[String]): Unit = {
-
-    val controller : Controller = new Controller
+    val injector = Guice.createInjector(new BlackjackModule)
+    val controller = injector.getInstance(classOf[ControllerInterface])
     val tui = new Tui(controller)
     val gui = new Gui(controller)
     new Thread(() => {
