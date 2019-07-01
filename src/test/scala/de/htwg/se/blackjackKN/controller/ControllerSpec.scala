@@ -130,6 +130,13 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.setBet(100)
         controller.gameStates.contains(GameState.BET_FAILED) should be(true)
       }
+      "change player when loading new one in" in {
+        controller.createNewPlayer("TestUser1")
+        controller.createNewPlayer("TestUser2")
+        controller.changePlayer("TestUser1")
+        controller.player.getName should be("TestUser1")
+
+      }
       "control Ace Behavior when ace with low number card" in {
         controller.startNewRound()
         controller.dealer.clearHand()
