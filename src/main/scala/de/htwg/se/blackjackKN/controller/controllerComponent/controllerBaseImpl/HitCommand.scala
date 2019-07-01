@@ -27,7 +27,6 @@ class HitCommand(controller: Controller) extends Command {
     dealerMemento = newDealerMemento
     playerMemento = newPlayerMemento
     revealedMemento = newRevealedMemento
-    controller.hit()
   }
 
   override def undoStep(): Unit = {

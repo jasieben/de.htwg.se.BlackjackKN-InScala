@@ -27,7 +27,6 @@ class StandCommand(controller: Controller) extends Command {
     dealerMemento = newDealerMemento
     playerMemento = newPlayerMemento
     revealedMemento = newRevealedMemento
-    controller.stand()
   }
 
   override def undoStep(): Unit = {
