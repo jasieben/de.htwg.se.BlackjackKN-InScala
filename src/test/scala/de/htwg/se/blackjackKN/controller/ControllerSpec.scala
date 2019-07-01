@@ -281,6 +281,7 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.startNewRound()
         controller.dealer.clearHand()
         controller.player.clearHand()
+        controller.player.addCardToHand(NumberCard(Suits.Hearts))
         controller.dealer.addCardToHand(NumberCard(Suits.Hearts))
         controller.dealer.addCardToHand(FaceCard(Suits.Clubs))
         controller.hitCommand()
