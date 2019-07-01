@@ -1,7 +1,10 @@
 package de.htwg.se.blackjackKN.util
 
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.{Matchers, WordSpec}
 
+@RunWith(classOf[JUnitRunner])
 class UndoManagerSpec extends WordSpec with Matchers {
 
   "An UndoManager" should {
