@@ -1,6 +1,8 @@
-package de.htwg.se.blackjackKN.model
+package de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl
 
-case class CardDeck(countOfDecks : Int = 1) {
+import de.htwg.se.blackjackKN.model.cardsComponent.CardDeckInterface
+
+case class CardDeck(countOfDecks : Int = 1) extends CardDeckInterface{
   private val faceCards : List[FaceCard] = generateFaceCards
   private val numberCards : List [NumberCard] = generateNumberCards
   val cardDeck: List[Card] = faceCards ::: numberCards

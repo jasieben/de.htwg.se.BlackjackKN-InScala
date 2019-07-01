@@ -1,10 +1,10 @@
 package de.htwg.se.blackjackKN.aview
 
-import de.htwg.se.blackjackKN.controller.{Controller, GameState}
+import de.htwg.se.blackjackKN.controller.controllerComponent.{ControllerInterface, GameState}
 import de.htwg.se.blackjackKN.util.Observer
 
 
-class Tui (controller : Controller) extends Observer {
+class Tui (controller : ControllerInterface) extends Observer {
 
   controller.add(this)
   var gamestatePointer : Int = 0
@@ -32,15 +32,15 @@ class Tui (controller : Controller) extends Observer {
         case GameState.SHUFFLING =>
           output += "Card Deck is being changed and shuffled" + "\n"
         case GameState.FIRST_ROUND =>
-          output += controller.player.name + " has a " + controller.player.getCard(0) + "\n"
+          output += controller.player.getName + " has a " + controller.player.getCard(0) + "\n"
           output += "The dealer has a " + controller.dealer.getCard(0) + "\n"
-          output += controller.player.name + " also has a " + controller.player.getCard(1) + "\n"
+          output += controller.player.getName + " also has a " + controller.player.getCard(1) + "\n"
           output += "The combined value of your cards is " + controller.player.getHandValue +"\n"
         case GameState.STAND =>
-          output += controller.player.name + " stands\n"
+          output += controller.player.getName + " stands\n"
         case GameState.HIT =>
-          output += controller.player.name + " hits and draws a " +  controller.player.getLastHandCard + "\n"
-          output += "The combined value of " + controller.player.name +"s cards are " + controller.player.getHandValue + "\n"
+          output += controller.player.getName + " hits and draws a " +  controller.player.getLastHandCard + "\n"
+          output += "The combined value of " + controller.player.getName +"s cards are " + controller.player.getHandValue + "\n"
         case GameState.REVEAL =>
           output += "The dealer has a " + controller.dealer.getCard(1) + "\n"
         case GameState.DEALER_DRAWS =>
@@ -49,22 +49,22 @@ class Tui (controller : Controller) extends Observer {
           }
           output += "The dealers combined value of cards is " + controller.dealer.getHandValue + "\n"
         case GameState.PLAYER_BUST =>
-          output += controller.player.name + " busts!\n"
+          output += controller.player.getName + " busts!\n"
         case GameState.DEALER_BUST =>
-          output += "The dealer busts, " + controller.player.name + " wins!\n"
+          output += "The dealer busts, " + controller.player.getName + " wins!\n"
         case GameState.PLAYER_BLACKJACK =>
-          output += controller.player.name + " has a blackjack!\n"
+          output += controller.player.getName + " has a blackjack!\n"
         case GameState.WAITING_FOR_INPUT =>
           output += "Would you like to hit(h) or stand(s)?"
         case GameState.PLAYER_WINS =>
-          output += controller.player.name + " wins!\n" + controller.player.name + " won " + controller.player.bet.value + "$!\n"
-          output += controller.player.name + "s new balance is " + controller.player.balance + "$\n"
+          output += controller.player.getName + " wins!\n" + controller.player.getName + " won " + controller.player.bet.value + "$!\n"
+          output += controller.player.getName + "s new balance is " + controller.player.balance + "$\n"
         case GameState.PLAYER_LOOSE =>
-          output += controller.player.name + " looses!\n"
-          output += controller.player.name + "s current balance is " + controller.player.balance + "$\n"
+          output += controller.player.getName + " looses!\n"
+          output += controller.player.getName + "s current balance is " + controller.player.balance + "$\n"
         case GameState.PUSH =>
-          output += "Push! " + controller.player.name + " and the dealer have a combined card value of " + controller.dealer.getHandValue + "\n"
-          output += controller.player.name + "s balance stays at " + controller.player.balance + "$\n"
+          output += "Push! " + controller.player.getName + " and the dealer have a combined card value of " + controller.dealer.getHandValue + "\n"
+          output += controller.player.getName + "s balance stays at " + controller.player.balance + "$\n"
         case GameState.ACE =>
           if (!firstAceMessage && !controller.gameStates.contains(GameState.PLAYER_BLACKJACK))
             output += "or your cards can value " + (controller.player.getHandValue - 10) + "\n"
@@ -78,7 +78,7 @@ class Tui (controller : Controller) extends Observer {
         case GameState.REDO =>
           output += "Redo last input operation\n"
         case GameState.NEW_NAME =>
-          output += "Player name is set to " + controller.player.name + "\n"
+          output += "Player name is set to " + controller.player.getName + "\n"
         case GameState.DEALER_BLACKJACK =>
           output += "The dealer has a Blackjack!\n"
       }

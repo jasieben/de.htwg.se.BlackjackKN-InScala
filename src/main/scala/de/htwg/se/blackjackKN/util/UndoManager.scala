@@ -1,32 +1,30 @@
 package de.htwg.se.blackjackKN.util
 
-import de.htwg.se.blackjackKN.controller.Controller
+import de.htwg.se.blackjackKN.controller.controllerComponent.controllerBaseImpl.Controller
 
 class UndoManager {
   private var undoStack: List[Command]= Nil
   private var redoStack: List[Command]= Nil
-  def doStep(command: Command) = {
+  def doStep(command: Command): Unit = {
     undoStack = command::undoStack
-    command.doStep
+    command.doStep()
   }
-  def undoStep  = {
+  def undoStep(): Unit  = {
     undoStack match {
       case  Nil =>
-      case head::stack => {
-        head.undoStep
+      case head::stack =>
+        head.undoStep()
         undoStack=stack
         redoStack= head::redoStack
-      }
     }
   }
-  def redoStep = {
+  def redoStep(): Unit = {
     redoStack match {
       case Nil =>
-      case head::stack => {
-        head.redoStep
+      case head::stack =>
+        head.redoStep()
         redoStack=stack
         undoStack=head::undoStack
-      }
     }
   }
 }

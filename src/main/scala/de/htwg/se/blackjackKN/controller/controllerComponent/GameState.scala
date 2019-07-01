@@ -1,4 +1,4 @@
-package de.htwg.se.blackjackKN.controller
+package de.htwg.se.blackjackKN.controller.controllerComponent
 
 object GameState extends Enumeration {
   type GameState = Value

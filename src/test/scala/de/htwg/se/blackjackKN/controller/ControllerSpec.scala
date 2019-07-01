@@ -1,6 +1,10 @@
 package de.htwg.se.blackjackKN.controller
 
-import de.htwg.se.blackjackKN.model.{Bet, FaceCard, NumberCard, Ranks, Suits}
+import de.htwg.se.blackjackKN.controller.controllerComponent.controllerBaseImpl.Controller
+import de.htwg.se.blackjackKN.controller.controllerComponent.GameState
+import de.htwg.se.blackjackKN.model.betComponent.Bet
+import de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl.{FaceCard, NumberCard}
+import de.htwg.se.blackjackKN.model.{Ranks, Suits}
 import de.htwg.se.blackjackKN.util.Observer
 import org.junit.runner.RunWith
 import org.scalatest._
@@ -107,6 +111,20 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.evaluate()
         controller.gameStates.contains(GameState.PLAYER_LOOSE) should be(true)
       }
+      "display when the player wins" in {
+        controller.startNewRound()
+        controller.dealer.clearHand()
+        controller.player.clearHand()
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts, 4))
+        controller.dealer.addCardToHand(NumberCard(Suits.Clubs))
+        controller.player.addCardToHand(NumberCard(Suits.Hearts, 9))
+        controller.player.addCardToHand(NumberCard(Suits.Clubs))
+        controller.dealer.getHandValue should be(14)
+        controller.player.getHandValue should be(19)
+        controller.revealDealer()
+        controller.evaluate()
+        controller.gameStates.contains(GameState.PLAYER_WINS) should be(true)
+      }
       "display when the player has a Blackjack" in {
         controller.startNewRound()
         controller.dealer.clearHand()
@@ -125,6 +143,13 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.player.balance = 0
         controller.setBet(100)
         controller.gameStates.contains(GameState.BET_FAILED) should be(true)
+      }
+      "change player when loading new one in" in {
+        controller.createNewPlayer("TestUser1")
+        controller.createNewPlayer("TestUser2")
+        controller.changePlayer("TestUser1")
+        controller.player.getName should be("TestUser1")
+
       }
       "control Ace Behavior when ace with low number card" in {
         controller.startNewRound()
@@ -192,6 +217,7 @@ class ControllerSpec extends WordSpec with Matchers {
       }
       "make correct decision when dealer and player have blackjack" in {
         controller.startNewRound()
+        controller.clearGameStates()
         controller.dealer.clearHand()
         controller.player.clearHand()
         controller.dealer.addCardToHand(NumberCard(Suits.Hearts))
@@ -223,12 +249,32 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.startNewRound()
         controller.dealer.clearHand()
         controller.player.clearHand()
+        controller.player.addCardToHand(NumberCard(Suits.Clubs, 3))
         controller.dealer.addCardToHand(NumberCard(Suits.Hearts))
         controller.dealer.addCardToHand(FaceCard(Suits.Clubs))
         controller.hitCommand()
         val testValue = controller.player.getHandValue
+        controller.hitCommand()
+        controller.undo()
+        controller.player.getHandValue should be(testValue)
+      }
+      "undo hitting" in {
+        controller.hitCommand()
+        val testValue = controller.player.getHandValue
         controller.standCommand()
         controller.undo()
+        controller.player.getHandValue should be(testValue)
+      }
+      "redo after hitting" in {
+        controller.dealer.clearHand()
+        controller.player.clearHand()
+        controller.dealer.addCardToHand(NumberCard(Suits.Hearts))
+        controller.dealer.addCardToHand(FaceCard(Suits.Clubs))
+
+        controller.hitCommand()
+        val testValue = controller.player.getHandValue
+        controller.undo()
+        controller.redo()
         controller.player.getHandValue should be(testValue)
       }
       "as redo after undo" in {
