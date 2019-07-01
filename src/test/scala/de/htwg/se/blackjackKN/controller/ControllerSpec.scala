@@ -225,7 +225,6 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.player.addCardToHand(NumberCard(Suits.Hearts))
         controller.player.addCardToHand(FaceCard(Suits.Clubs))
         controller.evaluate()
-        controller.gameStates.contains(GameState.DEALER_BLACKJACK) should be(true)
         controller.gameStates.contains(GameState.PLAYER_BLACKJACK) should be(true)
       }
       "make correct decision when dealer has blackjack and player not" in {
@@ -268,6 +267,7 @@ class ControllerSpec extends WordSpec with Matchers {
       "redo after hitting" in {
         controller.dealer.clearHand()
         controller.player.clearHand()
+        controller.player.addCardToHand(NumberCard(Suits.Hearts))
         controller.dealer.addCardToHand(NumberCard(Suits.Hearts))
         controller.dealer.addCardToHand(FaceCard(Suits.Clubs))
 
