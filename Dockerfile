@@ -1,4 +1,4 @@
 FROM hseeberger/scala-sbt
-WORKDIR /blackjack
-ADD . /blackjack
+WORKDIR /BlackjackKNInScala
+ADD . /BlackjackKNInScala
 CMD sbt run

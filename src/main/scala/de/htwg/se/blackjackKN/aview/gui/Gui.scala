@@ -18,6 +18,7 @@ import scalafx.scene.paint.Color._
 import scalafx.scene.paint.{Color, LinearGradient, Stops}
 import scalafx.scene.text.{Text, TextAlignment}
 import scalafx.scene.control._
+import scalafx.scene.effect.{BlurType, DropShadow, Effect, MotionBlur}
 import scalafx.scene.image.Image
 import scalafx.scene.shape._
 import scalafx.stage.Screen
@@ -233,37 +234,9 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
   val posPlayerCardsY : List[Int] = List(posPlayerCard1y, posPlayerCard2y, posPlayerCard3y, posPlayerCard4y,
     posPlayerCard5y, posPlayerCard6y)
 
-  val timelineD1: Timeline = new Timeline {
-    cycleCount = 1
-    autoReverse = false
-    keyFrames = Seq(
-      at (1.0 s) {Cards.dealerCard1.x -> posDealerCard1x tween Interpolator.EaseBoth})
-
-  }
-  val timelineD2: Timeline = new Timeline {
-    cycleCount = 1
-    autoReverse = false
-    keyFrames = Seq(
-      at (1.0 s) {Cards.dealerCard2.x -> posDealerCard2x tween Interpolator.EaseBoth})
-
-  }
-  val timelineP1: Timeline = new Timeline {
-    cycleCount = 1
-    autoReverse = false
-    keyFrames = Seq(
-      at (1.0 s) {Cards.playerCard1.x -> posPlayerCard1x tween Interpolator.EaseBoth},
-      at (1.0 s) {Cards.playerCard1.y -> posPlayerCard1y})
-  }
-  val timelineP2: Timeline = new Timeline {
-    cycleCount = 1
-    autoReverse = false
-    keyFrames = Seq(
-      // TOOO: playerCard1 coordinates need to be constant
-      at (1.0 s) {Cards.playerCard2.x -> posPlayerCard2x tween Interpolator.EaseBoth},
-      at (1.0 s) {Cards.playerCard2.y -> posPlayerCard2y tween Interpolator.EaseBoth})
-  }
 
   def buildTimeline(card : CardGraphic, toX : Int, toY : Int) : Timeline = {
+
     new Timeline {
       cycleCount = 1
       autoReverse = false
@@ -528,25 +501,29 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
           Cards.dealerCard2.setFill(backSideImagePattern)
           Cards.playerCard1.setFill(backSideImagePattern)
           Cards.playerCard2.setFill(backSideImagePattern)
-
           Cards.dealerCard1.setFill(backSideImagePattern)
-          timelineP1.play()
-          timelineP1.onFinished = handle {
+
+          val tlP1 = buildTimeline(Cards.playerCards(0), posPlayerCardsX(0), posPlayerCardsY(0))
+          val tlP2 = buildTimeline(Cards.playerCards(1), posPlayerCardsX(1), posPlayerCardsY(1))
+          val tlD1 = buildTimeline(Cards.dealerCards(0), posDealerCardsX(0), Cards.dealerCards(0).y.toInt)
+          val tlD2 = buildTimeline(Cards.dealerCards(1), posDealerCardsX(1), Cards.dealerCards(1).y.toInt)
+          tlP1.play()
+          tlP1.onFinished = handle {
             Cards.playerCard1.setFill(getBackgroundImagePattern(controller.player.getCard(0)))
-            timelineD1.play()
+            tlD1.play()
           }
 
-          timelineD1.onFinished = handle {
+          tlD1.onFinished = handle {
             Cards.dealerCard1.setFill(getBackgroundImagePattern(controller.dealer.getCard(0)))
-            timelineP2.play()
+            tlP2.play()
           }
 
-          timelineP2.onFinished = handle {
+          tlP2.onFinished = handle {
             playerHandValueText.text = controller.player.getName + "'s hand value: " + controller.player.getHandValue
             Cards.playerCard2.setFill(getBackgroundImagePattern(controller.player.getCard(1)))
-            timelineD2.play()
+            tlD2.play()
           }
-          timelineD2.onFinished = handle {
+          tlD2.onFinished = handle {
             dealerHandValueText.text = "Dealer's hand value: " + controller.dealer.getCard(0).value
           }
         case GameState.STAND =>
