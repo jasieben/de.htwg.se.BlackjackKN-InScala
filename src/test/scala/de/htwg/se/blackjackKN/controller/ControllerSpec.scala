@@ -225,7 +225,7 @@ class ControllerSpec extends WordSpec with Matchers {
         controller.player.addCardToHand(NumberCard(Suits.Hearts))
         controller.player.addCardToHand(FaceCard(Suits.Clubs))
         controller.evaluate()
-        controller.gameStates.contains(GameState.PLAYER_BLACKJACK) should be(true)
+        controller.gameStates.contains(GameState.PUSH) should be(true)
       }
       "make correct decision when dealer has blackjack and player not" in {
         controller.startNewRound()
