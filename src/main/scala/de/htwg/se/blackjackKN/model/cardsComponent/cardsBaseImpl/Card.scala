@@ -6,7 +6,8 @@ import de.htwg.se.blackjackKN.model.{Ranks, Suits}
 abstract class Card extends CardInterface{
   val suit : Suits.Value
   val rank: Any
-  var value : Int
+  val value : Int
+
   override def toString: String = {rank + " of " + suit}
 
   val suits: List[Suits.Value] = List(Suits.Hearts, Suits.Clubs, Suits.Diamonds, Suits.Spades)

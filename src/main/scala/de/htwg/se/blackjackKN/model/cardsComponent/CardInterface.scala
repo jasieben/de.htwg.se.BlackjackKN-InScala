@@ -5,7 +5,7 @@ import de.htwg.se.blackjackKN.model.Suits
 trait CardInterface {
   def suit : Suits.Value
   def rank: Any
-  var value : Int
+  val value : Int
   def suits: List[Suits.Value]
   def getBackgroundImageFileName : String
 }
