@@ -24,6 +24,8 @@ import scalafx.scene.shape._
 import scalafx.stage.Screen
 
 import scala.language.postfixOps
+import scala.util.Try
+import scala.util.matching.Regex
 
 class Gui(controller: ControllerInterface) extends JFXApp with Observer {
   controller.add(this)
@@ -159,14 +161,12 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
     }
 
     val result = dialog.showAndWait()
-
     result match {
       case Some(value) =>
-        var int: Double = 0
-        try {
-          int = value.toDouble
-        } catch {
-          case _: Throwable =>
+        val int: Option[Int] = Try(value.toInt).toOption
+        int match {
+          case Some(_:Int) =>
+          case None =>
             new Alert(AlertType.Error) {
               initOwner(stage)
               title = "Bet failed"
@@ -175,7 +175,8 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
             }.showAndWait()
             return
         }
-        if (controller.setBet(int.toInt)) {
+
+        if (controller.setBet(int.get)) {
           setPlayingScene()
           controller.startNewRound()
         } else {
