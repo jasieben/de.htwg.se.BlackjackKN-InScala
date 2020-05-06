@@ -15,7 +15,7 @@ class BetSpec extends WordSpec with Matchers {
       }
       "return the value it was assigned, when calling getValue" in {
         val b : Bet = Bet(1000)
-        b.getValue should be (1000)
+        b.value should be (1000)
       }
     }
   }

@@ -3,8 +3,9 @@ package de.htwg.se.blackjackKN.controller.controllerComponent.controllerBaseImpl
 import com.google.inject.{Guice, Inject, Injector}
 import de.htwg.se.blackjackKN.BlackjackModule
 import de.htwg.se.blackjackKN.controller.controllerComponent.{ControllerInterface, GameState}
-import de.htwg.se.blackjackKN.model.Ranks
+import de.htwg.se.blackjackKN.model.{Ranks, Suits}
 import de.htwg.se.blackjackKN.model.betComponent.Bet
+import de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl.FaceCard
 import de.htwg.se.blackjackKN.model.fileioComponent.FileIOInterface
 import de.htwg.se.blackjackKN.model.personsComponent.{DealerInterface, PlayerInterface}
 import de.htwg.se.blackjackKN.util.UndoManager
@@ -31,7 +32,9 @@ class Controller @Inject() extends ControllerInterface {
   class AceStrategy1 extends AceStrategy {
     override def execute() : Unit = {
       val i : Int = player.containsCardType(Ranks.Ace)
-      player.getCard(i).value = 1
+      val oldCard = player.getCard(i)
+      val newValueAce = FaceCard(oldCard.suit, Ranks.Ace, isLowValueAce = true)
+      player.hand.update(i, newValueAce)
     }
   }
 

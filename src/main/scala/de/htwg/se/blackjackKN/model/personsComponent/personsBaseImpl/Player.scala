@@ -9,7 +9,7 @@ import de.htwg.se.blackjackKN.model.personsComponent.PlayerInterface
 import scala.collection.mutable.ListBuffer
 
 case class Player(handList : ListBuffer[CardInterface] = ListBuffer.empty[CardInterface], money : Double = 1000, bets : Bet = Bet(0) ) extends PlayerInterface{
-  var hand : ListBuffer[CardInterface] = handList
+  val hand : ListBuffer[CardInterface] = handList
   var balance: Double = money
   var bet : Bet = bets
   var name = "Test"
