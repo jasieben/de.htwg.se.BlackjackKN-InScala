@@ -9,7 +9,7 @@ import net.codingwell.scalaguice.ScalaModule
 
 class BlackjackModule extends AbstractModule with ScalaModule {
 
-  def configure() = {
+  override def configure(): Unit = {
     bind[ControllerInterface].to[controllerBaseImpl.Controller]
     bind[DealerInterface].toInstance(personsBaseImpl.Dealer())
     bind[PlayerInterface].toInstance(personsBaseImpl.Player())
