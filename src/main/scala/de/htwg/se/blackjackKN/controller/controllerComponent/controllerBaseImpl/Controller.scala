@@ -21,10 +21,10 @@ class Controller @Inject() extends ControllerInterface {
   var aceStrategy : AceStrategy = new AceStrategy11
   val undoManager = new UndoManager
 
-  val win = new WinningHandler(null)
-  val loose = new LoosingHandler(win)
-  val blackjack = new BlackjackHandler(loose)
-  val push = new PushHandler(blackjack)
+  val win = new WinningHandler(None)
+  val loose = new LoosingHandler(Option(win))
+  val blackjack = new BlackjackHandler(Option(loose))
+  val push = new PushHandler(Option(blackjack))
 
   trait AceStrategy {
     def execute()

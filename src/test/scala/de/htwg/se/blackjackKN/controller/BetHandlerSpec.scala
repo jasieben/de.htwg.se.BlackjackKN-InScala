@@ -12,10 +12,10 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class BetHandlerSpec extends WordSpec with Matchers{
 "A BetHandler " when {
-    val win = new WinningHandler(null)
-    val loose = new LoosingHandler(win)
-    val blackjack = new BlackjackHandler(loose)
-    val push = new PushHandler(blackjack)
+    val win = new WinningHandler(None)
+    val loose = new LoosingHandler(Option(win))
+    val blackjack = new BlackjackHandler(Option(loose))
+    val push = new PushHandler(Option(blackjack))
   "handle Winning Request" in {
     val player = Player()
     player.bet = Bet(100)
