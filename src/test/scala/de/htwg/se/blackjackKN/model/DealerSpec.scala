@@ -1,7 +1,7 @@
 package de.htwg.se.blackjackKN.model
 
 import de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl.{FaceCard, NumberCard}
-import de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl.Dealer
+import de.htwg.se.blackjackKN.model.personsComponent.Dealer
 import org.scalatest._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
@@ -9,7 +9,7 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class DealerSpec extends WordSpec with Matchers {
   "A Dealer" when {
-    val dealer = Dealer()
+    var dealer = Dealer()
     "new" should {
       "have a name" in {
         dealer.name should be("Dealer")
@@ -20,27 +20,34 @@ class DealerSpec extends WordSpec with Matchers {
     }
     "generating Cards" should {
       "give the right amount of cards" in {
-        dealer.generateDealerCards.size should be(312)
+        dealer = dealer.generateDealerCards
+        dealer.cardDeck.size should be(260)
       }
     }
     "drawing Card" should {
       "be a card" in {
+        val ogSize = dealer.cardDeck.size
         dealer.drawCard() should (be(a[NumberCard]) or be(a[FaceCard]))
+        dealer = dealer.dropCard()
+        dealer.cardDeck.size should be(ogSize - 1)
       }
     }
 
     "calling" should {
       "getLastHandCard()" in {
-        dealer.generateDealerCards
-        dealer.addCardToHand(dealer.drawCard())
-        val testCard = dealer.addCardToHand(dealer.drawCard())
+        dealer = dealer.generateDealerCards
+        dealer = dealer.addCardToHand(dealer.drawCard())
+        dealer = dealer.dropCard()
+        val testCard = dealer.drawCard()
+        dealer = dealer.addCardToHand(testCard)
+        dealer = dealer.dropCard()
         dealer.getLastHandCard should be(testCard)
       }
       "containsCardType when containing card" in {
-        dealer.generateDealerCards
-        dealer.clearHand()
-        dealer.addCardToHand(FaceCard(Suits.Hearts, Ranks.Jack))
-        dealer.addCardToHand(FaceCard(Suits.Spades,Ranks.Ace))
+        dealer = dealer.generateDealerCards
+        dealer = dealer.clearHand()
+        dealer = dealer.addCardToHand(FaceCard(Suits.Hearts, Ranks.Jack))
+        dealer = dealer.addCardToHand(FaceCard(Suits.Spades,Ranks.Ace))
         dealer.containsCardType(Ranks.Ace) should be(1)
       }
       "containsCardType when not containing card" in {

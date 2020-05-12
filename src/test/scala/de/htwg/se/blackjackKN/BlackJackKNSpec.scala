@@ -5,10 +5,10 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class BlackJackKNSpec extends WordSpec with Matchers{
+class BlackJackKNSpec extends WordSpec with Matchers {
   "The Blackjack main class" should {
     "accept a string" in {
-      BlackjackKN.main(Array[String]("Test-String"))
+      BlackjackKN.main(Array[String]("Test-String", "test"))
     }
   }
 }

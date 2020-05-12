@@ -1,12 +1,11 @@
 package de.htwg.se.blackjackKN.controller.controllerComponent.controllerBaseImpl
 
-import de.htwg.se.blackjackKN.model.personsComponent.{DealerInterface, PlayerInterface}
-import de.htwg.se.blackjackKN.model.personsComponent.personsBaseImpl.{Dealer, Player}
+import de.htwg.se.blackjackKN.model.personsComponent.{Dealer, Player}
 import de.htwg.se.blackjackKN.util.Command
 
 class StandCommand(controller: Controller) extends Command {
-  var dealerMemento : DealerInterface = controller.dealer
-  var playerMemento : PlayerInterface = controller.player
+  var dealerMemento : Dealer = controller.dealer
+  var playerMemento : Player = controller.player
   var revealedMemento : Boolean = controller.revealed
   override def doStep(): Unit = {
     dealerMemento = controller.dealer.copy()

@@ -12,10 +12,14 @@ object BlackjackKN {
     val injector = Guice.createInjector(new BlackjackModule)
     val controller = injector.getInstance(classOf[ControllerInterface])
     val tui = new Tui(controller)
-    val gui = new Gui(controller)
-    new Thread(() => {
-      gui.main(Array())
-    }).start()
+
+    if (args.length < 2 && !args.contains("test")) {
+      val gui = new Gui(controller)
+      new Thread(() => {
+        gui.main(Array())
+      }).start()
+    }
+
     controller.startGame()
     var input: String = ""
     if (!args.isEmpty) tui.processInput(args(0))

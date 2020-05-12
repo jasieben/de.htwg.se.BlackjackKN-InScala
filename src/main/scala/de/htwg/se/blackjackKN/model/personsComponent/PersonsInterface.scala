@@ -7,9 +7,7 @@ import de.htwg.se.blackjackKN.model.cardsComponent.CardInterface
 import scala.collection.mutable.ListBuffer
 
 trait PersonsInterface {
-  def addCardToHand(card: CardInterface): CardInterface
-
-  def clearHand()
+  val name : String
 
   def getCard(index: Int): CardInterface
 
@@ -20,6 +18,4 @@ trait PersonsInterface {
   def getLastHandCard: CardInterface
 
   def containsCardType(rank: Ranks.Value): Int
-
-  def hand : ListBuffer[CardInterface]
 }

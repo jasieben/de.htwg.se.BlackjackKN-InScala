@@ -69,8 +69,8 @@ class TuiSpec extends WordSpec with Matchers{
     }
     "display when Dealer draws cards" in {
       controller.startNewRound()
-      controller.dealer.addCardToHand(controller.dealer.drawCard())
-      controller.dealer.addCardToHand(controller.dealer.drawCard())
+      controller.dealer = controller.dealer.addCardToHand(controller.dealer.drawCard())
+      controller.dealer = controller.dealer.addCardToHand(controller.dealer.drawCard())
       controller.gameStates = controller.gameStates :+ GameState.DEALER_DRAWS
       controller.notifyObservers()
       tui.output.contains("dealer draws") should be(true)

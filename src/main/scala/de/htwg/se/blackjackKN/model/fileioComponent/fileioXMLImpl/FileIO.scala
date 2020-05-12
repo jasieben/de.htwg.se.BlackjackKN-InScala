@@ -5,37 +5,35 @@ import com.google.inject.name.Names
 import de.htwg.se.blackjackKN.BlackjackModule
 import net.codingwell.scalaguice.InjectorExtensions._
 import de.htwg.se.blackjackKN.model.fileioComponent.FileIOInterface
-import de.htwg.se.blackjackKN.model.personsComponent.PlayerInterface
+import de.htwg.se.blackjackKN.model.personsComponent.Player
 
 import scala.io.Source
-import scala.xml.{NodeSeq, PrettyPrinter}
+import scala.xml.{Elem, NodeSeq, PrettyPrinter}
 
-class FileIO extends FileIOInterface{
+class FileIO extends FileIOInterface {
 
-  def load(playerName: String): PlayerInterface = {
+  def load(playerName: String): Player = {
     val file = scala.xml.XML.loadFile(playerName + ".xml")
-    val balance : Double = (file \\ "player" \ "@balance").text.toDouble
-    val injector = Guice.createInjector(new BlackjackModule)
-    val player = injector.getInstance(classOf[PlayerInterface])
-    player.setName(playerName)
-    player.setBalance(balance)
-    player
+    val balance: Int = (file \\ "player" \ "@balance").text.toInt
+    val player = Player()
+    player.copy(name = playerName, balance = balance)
   }
 
-  override def store(player: PlayerInterface): Boolean = {
+  override def store(player: Player): Boolean = {
     storeString(player)
     true
   }
 
-  def storeString(player: PlayerInterface) = {
+  def storeString(player: Player): Unit = {
     import java.io._
-    val pw = new PrintWriter(new File(player.getName + ".xml"))
+    val pw = new PrintWriter(new File(player.name + ".xml"))
     val prettyPrinter = new PrettyPrinter(120, 4)
     val xml = prettyPrinter.format(playerToXml(player, player.balance))
     pw.write(xml)
-    pw.close
+    pw.close()
   }
-  def playerToXml(player: PlayerInterface, balance:Double) = {
-    <player balance ={balance.toString}></player>
+
+  def playerToXml(player: Player, balance: Int): Elem = {
+    <player balance={balance.toString}></player>
   }
 }
