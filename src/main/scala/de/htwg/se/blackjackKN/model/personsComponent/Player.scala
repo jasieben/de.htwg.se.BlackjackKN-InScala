@@ -4,7 +4,10 @@ import de.htwg.se.blackjackKN.model.Ranks
 import de.htwg.se.blackjackKN.model.betComponent.Bet
 import de.htwg.se.blackjackKN.model.cardsComponent.CardInterface
 
-case class Player(name: String = "Test", hand: List[CardInterface] = List[CardInterface](), balance: Int = 1000, bet: Option[Bet] = Option(Bet(0))) extends PersonsInterface {
+case class Player(
+                   name: String = "Test",
+                   hand: List[CardInterface] = List[CardInterface](),
+                   balance: Int = 1000, bet: Option[Bet] = Option(Bet(0))) extends PersonsInterface {
   override def toString: String = name
 
   def addCardToHand(card: CardInterface): Player = {
@@ -19,25 +22,15 @@ case class Player(name: String = "Test", hand: List[CardInterface] = List[CardIn
     }
   }
 
-  def replaceCardInHand(index: Int, newCard: CardInterface): Player = {
-    copy(hand = hand.updated(index, newCard))
-  }
+  def replaceCardInHand(index: Int, newCard: CardInterface): Player = copy(hand = hand.updated(index, newCard))
 
-  def changeBalance(value: Int): Player = {
-    copy(balance = value)
-  }
+  def changeBalance(value: Int): Player = copy(balance = value)
 
-  def clearHand(): Player = {
-    copy(hand = List[CardInterface]())
-  }
+  def clearHand(): Player = copy(hand = List[CardInterface]())
 
-  def getCard(index: Int): CardInterface = {
-    hand(index)
-  }
+  def getCard(index: Int): CardInterface = hand(index)
 
-  def getHandSize: Int = {
-    hand.size
-  }
+  def getHandSize: Int = hand.size
 
   def getHandValue: Int = {
     var v: Int = 0
@@ -47,9 +40,7 @@ case class Player(name: String = "Test", hand: List[CardInterface] = List[CardIn
     v
   }
 
-  def getLastHandCard: CardInterface = {
-    hand.last
-  }
+  def getLastHandCard: CardInterface = hand.last
 
   def containsCardType(rank: Ranks.Value): Int = {
     for (i <- hand.indices) {
