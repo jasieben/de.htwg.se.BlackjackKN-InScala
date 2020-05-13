@@ -23,10 +23,6 @@ case class Player(name: String = "Test", hand: List[CardInterface] = List[CardIn
     copy(hand = hand.updated(index, newCard))
   }
 
-  def createNewPlayer(name: String): Player = {
-    copy(name)
-  }
-
   def changeBalance(value: Int): Player = {
     copy(balance = value)
   }
