@@ -8,15 +8,19 @@ import de.htwg.se.blackjackKN.model.fileioComponent.FileIOInterface
 import de.htwg.se.blackjackKN.model.personsComponent.Player
 
 import scala.io.Source
+import scala.util.Try
 import scala.xml.{Elem, NodeSeq, PrettyPrinter}
 
 class FileIO extends FileIOInterface {
 
-  def load(playerName: String): Player = {
-    val file = scala.xml.XML.loadFile(playerName + ".xml")
+  def load(playerName: String): Option[Player] = {
+    val fileOption = Try(scala.xml.XML.loadFile(playerName + ".xml")).toOption
+    val file = fileOption.getOrElse(
+      return None
+    )
     val balance: Int = (file \\ "player" \ "@balance").text.toInt
     val player = Player()
-    player.copy(name = playerName, balance = balance)
+    Option(player.copy(name = playerName, balance = balance))
   }
 
   override def store(player: Player): Boolean = {

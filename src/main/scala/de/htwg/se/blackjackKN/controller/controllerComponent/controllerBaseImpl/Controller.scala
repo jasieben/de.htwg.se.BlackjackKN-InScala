@@ -55,7 +55,8 @@ class Controller @Inject() extends ControllerInterface {
   }
 
   def changePlayer(name: String): Unit = {
-    this.player = fileIO.load(name)
+    val playerOption = fileIO.load(name)
+    this.player = playerOption.getOrElse(this.player)
   }
 
   def startGame(): Unit = {
