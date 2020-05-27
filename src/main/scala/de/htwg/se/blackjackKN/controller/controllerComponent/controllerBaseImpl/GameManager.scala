@@ -57,7 +57,7 @@ case class GameManager(dealerHand: List[CardInterface], playerHands: List[List[C
     -1
   }
 
-  def cleardealerHand(): GameManager = {
+  def clearDealerHand(): GameManager = {
     copy(dealerHand = List[CardInterface]())
   }
 
@@ -75,7 +75,7 @@ case class GameManager(dealerHand: List[CardInterface], playerHands: List[List[C
 
   def getCardDeckSize: Int = cardDeck.size
 
-  def addCardTodealerHand(card: CardInterface): GameManager = {
+  def addCardToDealerHand(card: CardInterface): GameManager = {
     copy(dealerHand = dealerHand :+ card)
   }
 
@@ -83,11 +83,11 @@ case class GameManager(dealerHand: List[CardInterface], playerHands: List[List[C
     dealerHand(index)
   }
 
-  def getdealerHandSize: Int = {
+  def getDealerHandSize: Int = {
     dealerHand.size
   }
 
-  def getdealerHandValue: Int = {
+  def getDealerHandValue: Int = {
     var v: Int = 0
     for {
       i <- dealerHand.indices
@@ -95,7 +95,7 @@ case class GameManager(dealerHand: List[CardInterface], playerHands: List[List[C
     v
   }
 
-  def getLastdealerHandCard: CardInterface = {
+  def getLastDealerHandCard: CardInterface = {
     dealerHand.last
   }
 
