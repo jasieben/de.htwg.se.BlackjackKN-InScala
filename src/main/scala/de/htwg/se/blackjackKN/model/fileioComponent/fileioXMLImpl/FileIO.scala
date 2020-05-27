@@ -5,7 +5,6 @@ import com.google.inject.name.Names
 import de.htwg.se.blackjackKN.BlackjackModule
 import net.codingwell.scalaguice.InjectorExtensions._
 import de.htwg.se.blackjackKN.model.fileioComponent.FileIOInterface
-import de.htwg.se.blackjackKN.model.personsComponent.Player
 
 import scala.io.Source
 import scala.util.Try

@@ -6,7 +6,6 @@ import java.io._
 
 import com.google.inject.Guice
 import de.htwg.se.blackjackKN.BlackjackModule
-import de.htwg.se.blackjackKN.model.personsComponent.Player
 
 import scala.io.{BufferedSource, Source}
 import scala.util.Try

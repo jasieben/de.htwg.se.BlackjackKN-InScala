@@ -1,7 +1,6 @@
 package de.htwg.se.blackjackKN.model.FileIOXML
 
 import de.htwg.se.blackjackKN.model.fileioComponent.fileioXMLImpl.FileIO
-import de.htwg.se.blackjackKN.model.personsComponent.Player
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{Matchers, WordSpec}

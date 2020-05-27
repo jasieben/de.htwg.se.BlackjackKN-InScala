@@ -1,6 +1,6 @@
 package de.htwg.se.blackjackKN.controller.controllerComponent.controllerBaseImpl
 
-import de.htwg.se.blackjackKN.model.personsComponent.{Dealer, Player}
+import de.htwg.se.blackjackKN.model.Dealer
 import de.htwg.se.blackjackKN.util.Command
 
 class StandCommand(controller: Controller) extends Command {

@@ -1,7 +1,7 @@
 package de.htwg.se.blackjackKN.controller.controllerComponent
 
 import GameState.GameState
-import de.htwg.se.blackjackKN.model.personsComponent.{Dealer, Player}
+import de.htwg.se.blackjackKN.model.Dealer
 import de.htwg.se.blackjackKN.util.Observable
 
 trait ControllerInterface extends Observable {

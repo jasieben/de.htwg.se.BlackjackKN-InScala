@@ -3,12 +3,11 @@ package de.htwg.se.blackjackKN.controller.controllerComponent.controllerBaseImpl
 import com.google.inject.{Guice, Inject, Injector}
 import de.htwg.se.blackjackKN.BlackjackModule
 import de.htwg.se.blackjackKN.controller.controllerComponent.{ControllerInterface, GameState}
-import de.htwg.se.blackjackKN.model.{Ranks, Suits}
+import de.htwg.se.blackjackKN.model.{Dealer, Ranks, Suits}
 import de.htwg.se.blackjackKN.model.betComponent.Bet
 import de.htwg.se.blackjackKN.model.cardsComponent.CardInterface
 import de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl.FaceCard
 import de.htwg.se.blackjackKN.model.fileioComponent.FileIOInterface
-import de.htwg.se.blackjackKN.model.personsComponent.{Dealer, Player}
 import de.htwg.se.blackjackKN.util.UndoManager
 
 
