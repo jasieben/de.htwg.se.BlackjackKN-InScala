@@ -27,11 +27,13 @@ case class GameManager(dealerHand: List[CardInterface], playerHands: List[List[C
     copy(playerHands = playerHands.updated(playerIndex, playerHand))
   }
 
-  def changeBalance(value: Int): GameManager = copy(balance = value)
+  def clearHand(playerIndex : Int): GameManager = {
+    copy(playerHands = playerHands.updated(playerIndex, List[CardInterface] ()))
+  }
 
-  def clearHand(): GameManager = copy(hand = List[CardInterface]())
-
-  def getCard(index: Int): CardInterface = hand(index)
+  def getCard(playerIndex : Int, handIndex: Int): CardInterface = {
+    playerHands(playerIndex)(handIndex)
+  }
 
   def getHandSize(playerIndex: Int): Int = {
     playerHands(playerIndex).size
