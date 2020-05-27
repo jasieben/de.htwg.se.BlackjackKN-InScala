@@ -6,24 +6,24 @@ import de.htwg.se.blackjackKN.model.cardsComponent.cardsBaseImpl.CardDeck
 
 import scala.util.Random
 
-case class GameManager(dealerHand : List[CardInterface], playerHands: List[List[CardInterface]], cardDeck: List[CardInterface]) {
+case class GameManager(dealerHand: List[CardInterface], playerHands: List[List[CardInterface]], cardDeck: List[CardInterface]) {
 
   def generateDealerCards: GameManager = {
-    val baseCardDeck : List[CardInterface] = CardDeck().cardDeck
+    val baseCardDeck: List[CardInterface] = CardDeck().cardDeck
 
     val playCards: List[CardInterface] = baseCardDeck ::: baseCardDeck ::: baseCardDeck ::: baseCardDeck ::: baseCardDeck
 
     copy(cardDeck = Random.shuffle(playCards))
   }
 
-  def addCardToPlayerHand(playerIndex: Int,card: CardInterface): GameManager = {
-    val playerHand : List[CardInterface] = playerHands(playerIndex) :+ card
+  def addCardToPlayerHand(playerIndex: Int, card: CardInterface): GameManager = {
+    val playerHand: List[CardInterface] = playerHands(playerIndex) :+ card
 
     copy(playerHands = playerHands.updated(playerIndex, playerHand))
   }
 
-  def replaceCardInHand(playerIndex : Int,handIndex: Int, newCard: CardInterface): GameManager = {
-    val playerHand : List[CardInterface] = playerHands(playerIndex).updated(handIndex, newCard)
+  def replaceCardInHand(playerIndex: Int, handIndex: Int, newCard: CardInterface): GameManager = {
+    val playerHand: List[CardInterface] = playerHands(playerIndex).updated(handIndex, newCard)
     copy(playerHands = playerHands.updated(playerIndex, playerHand))
   }
 
@@ -33,21 +33,24 @@ case class GameManager(dealerHand : List[CardInterface], playerHands: List[List[
 
   def getCard(index: Int): CardInterface = hand(index)
 
-  def getHandSize: Int = hand.size
+  def getHandSize(playerIndex: Int): Int = {
+    playerHands(playerIndex).size
+  }
 
-  def getHandValue: Int = {
+  def getHandValue(playerIndex: Int): Int = {
     var v: Int = 0
     for {
-      i <- hand.indices
-    } v += hand(i).value
+      i <- playerHands(playerIndex).indices
+    } v += playerHands(playerIndex)(i).value
     v
   }
 
-  def getLastHandCard: CardInterface = hand.last
+  def getLastHandCard(playerIndex: Int): CardInterface = { playerHands(playerIndex).last }
 
-  def containsCardType(rank: Ranks.Value): Int = {
-    for (i <- hand.indices) {
-      if (hand(i).rank == rank) {
+  def containsCardType(playerIndex: Int, rank: Ranks.Value): Int = {
+    val playerHand: List[CardInterface] = playerHands(playerIndex);
+    for (i <- playerHand.indices) {
+      if (playerHand(i).rank == rank) {
         return i
       }
     }
