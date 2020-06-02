@@ -17,13 +17,12 @@ import scala.io.StdIn
 object PlayerManagement {
   def main(args: Array[String]) {
     implicit val actorSystem: ActorSystem = ActorSystem("actorSystem")
-    // needed for the future flatMap/onComplete in the end
     implicit val executionContext: ExecutionContextExecutor = actorSystem.dispatcher
 
     val controller: Controller = new Controller()
 
     val route = concat(
-      path("player" / IntNumber) { id =>
+      pathPrefix("player" / IntNumber) { id =>
         concat(
           get {
             complete(HttpEntity(ContentTypes.`application/json`, controller.getPlayer(id)))
@@ -31,8 +30,20 @@ object PlayerManagement {
           path("bet") {
             concat(
               post(
-                entity(as[JsValue]) { json => {
+                entity(as[String]) { jsonString => {
+                  val json = Json.parse(jsonString)
                   complete(HttpEntity(ContentTypes.`application/json`, controller.newBet(id, json)))
+                }
+                }
+              )
+            )
+          },
+          path("bet" / "resolve") {
+            concat(
+              put(
+                entity(as[String]) { jsonString => {
+                  val json = Json.parse(jsonString)
+                  complete(HttpEntity(ContentTypes.`application/json`, controller.resolveBet(id, json)))
                 }
                 }
               )
@@ -40,10 +51,11 @@ object PlayerManagement {
           }
         )
       },
-      path("player") {
+      pathPrefix("player") {
         concat(
           post(
-            entity(as[JsValue]) { json => {
+            entity(as[String]) { jsonString => {
+              val json = Json.parse(jsonString)
               complete(HttpEntity(ContentTypes.`application/json`, controller.createNewPlayer(json)))
             }
             }
@@ -52,7 +64,7 @@ object PlayerManagement {
       }
     )
 
-    val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
+    val bindingFuture = Http().bindAndHandle(route, "localhost", 1274)
 
     println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
     StdIn.readLine() // let it run until user presses return

@@ -39,3 +39,4 @@ libraryDependencies += "com.typesafe.play" %% "play-json" % "2.6.6"
 
 libraryDependencies += "com.typesafe.akka" %% "akka-http"   % "10.1.12"
 libraryDependencies += "com.typesafe.akka" %% "akka-stream" % "2.6.5"
+libraryDependencies += "de.heikoseeberger" %% "akka-http-play-json" % "1.32.0"

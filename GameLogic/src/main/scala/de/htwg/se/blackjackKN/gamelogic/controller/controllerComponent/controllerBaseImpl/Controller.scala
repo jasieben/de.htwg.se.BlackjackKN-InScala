@@ -1,81 +1,71 @@
 package de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.controllerBaseImpl
 
+import akka.actor.ActorSystem
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.model._
+import akka.http.scaladsl.unmarshalling.Unmarshal
 import com.google.inject.{Guice, Inject, Injector}
 import de.htwg.se.blackjackKN.gamelogic.BlackjackModule
+import de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.GameState.GameState
 import de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.{ControllerInterface, GameState}
-import de.htwg.se.blackjackKN.gamelogic.model.{Ranks, Suits}
-import de.htwg.se.blackjackKN.gamelogic.model.cardsComponent.CardInterface
+import de.htwg.se.blackjackKN.gamelogic.model.{GameManager, Ranks, Suits}
 import de.htwg.se.blackjackKN.gamelogic.model.cardsComponent.cardsBaseImpl.FaceCard
 import de.htwg.se.blackjackKN.gamelogic.util.UndoManager
+import play.api.libs.json.{JsValue, Json}
 
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContextExecutor, Future}
+import scala.util.{Failure, Success, Try}
 
 class Controller @Inject() extends ControllerInterface {
+  val playerManagementServiceUrl = "http://player-management:1274/";
+
   val injector: Injector = Guice.createInjector(new BlackjackModule)
-  // TODO: Replace with GameManager
-  var dealer: Dealer = Dealer()
-  var player: Player = Player()
-  // TODO: Replace with connection to PlayerManagement API
-  var fileIO: FileIOInterface = injector.getInstance(classOf[FileIOInterface])
+  var gameManager: GameManager = GameManager()
   var gameStates: List[GameState.Value] = List(GameState.IDLE)
   var revealed: Boolean = false
   var aceStrategy: AceStrategy = new AceStrategy11
   val undoManager = new UndoManager
 
-  val win = new WinningHandler(None)
-  val loose = new LoosingHandler(Option(win))
-  val blackjack = new BlackjackHandler(Option(loose))
-  val push = new PushHandler(Option(blackjack))
+  implicit val actorSystem: ActorSystem = ActorSystem("actorSystemController")
+  implicit val executionContext: ExecutionContextExecutor = actorSystem.dispatcher
 
   trait AceStrategy {
-    def execute(): Player
+    def execute(): GameManager
   }
 
   class AceStrategy1 extends AceStrategy {
-    override def execute(): Player = {
-      val i: Int = player.containsCardType(Ranks.Ace)
-      val oldCard = player.getCard(i)
+    override def execute(): GameManager = {
+      val i: Int = gameManager.containsCardTypeInPlayerHand(0, Ranks.Ace)
+      val oldCard = gameManager.getPlayerCard(0, i)
       val newValueAce = FaceCard(oldCard.suit, Ranks.Ace, isLowValueAce = true)
-      player.replaceCardInHand(i, newValueAce)
+      gameManager.replaceCardInPlayerHand(0, i, newValueAce)
     }
   }
 
   class AceStrategy11 extends AceStrategy {
-    override def execute(): Player = {
+    override def execute(): GameManager = {
       gameStates = gameStates :+ GameState.ACE
-      player
+      gameManager
     }
   }
 
-  def createNewPlayer(name: String): Unit = {
-    player = Player(name = name)
-    fileIO.store(this.player)
-    gameStates = gameStates :+ GameState.NEW_NAME
-    notifyObservers()
-  }
-
-  def changePlayer(name: String): Unit = {
-    val playerOption = fileIO.load(name)
-    this.player = playerOption.getOrElse(this.player)
-  }
-
   def startGame(): Unit = {
-    dealer = dealer.generateDealerCards
+    gameManager = gameManager.generateDealerCards.addPlayerToGame()
   }
 
   def startNewRound(): Unit = {
     revealed = false
-    player = player.clearHand()
-    dealer = dealer.clearHand()
 
-    if (dealer.getCardDeckSize <= 52) {
+    gameManager = gameManager.clearDealerHand().clearPlayerHand(0)
+
+    if (gameManager.getCardDeckSize <= 52) {
       gameStates = gameStates :+ GameState.SHUFFLING
-      dealer = dealer.renewCardDeck()
+      gameManager = gameManager.renewCardDeck()
     }
     for (_ <- 0 to 1) {
-      player = player.addCardToHand(dealer.drawCard())
-      dealer = dealer.dropCard()
-      dealer = dealer.addCardToHand(dealer.drawCard())
-      dealer = dealer.dropCard()
+      gameManager = gameManager.addCardToPlayerHand(0, gameManager.drawCard()).dropCard()
+      gameManager = gameManager.addCardToDealerHand(gameManager.drawCard()).dropCard()
     }
 
     gameStates = gameStates :+ GameState.FIRST_ROUND
@@ -85,28 +75,35 @@ class Controller @Inject() extends ControllerInterface {
   }
 
   def checkForAces(): Unit = {
-    if (player.containsCardType(Ranks.Ace) != -1) {
+    if (gameManager.containsCardTypeInPlayerHand(0, Ranks.Ace) != -1) {
       gameStates = gameStates :+ GameState.ACE
-      if (player.getCard(0).rank == Ranks.Ace && player.getCard(1).rank == Ranks.Ace) {
+      if (gameManager.getPlayerCard(0, 0).rank == Ranks.Ace && gameManager.getPlayerCard(0, 1).rank == Ranks.Ace) {
         aceStrategy = new AceStrategy1
-        player = aceStrategy.execute()
+        gameManager = aceStrategy.execute()
       }
     }
   }
 
-  def setBet(value: Int): Boolean = {
-    player = player.newBet(value)
+  def setBet(value: Int): Unit = {
+    // Todo: set bet in Player Management
 
-    player.bet match {
-      case Some(_) =>
-        clearGameStates()
-        gameStates = gameStates :+ GameState.BET_SET
-        notifyObservers()
-        true
-      case None =>
-        gameStates = gameStates :+ GameState.BET_FAILED
-        notifyObservers()
-        false
+    val playerId = 123
+    val json = Json.obj(
+      "betValue" -> value
+    ).toString()
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(HttpMethods.POST, uri = playerManagementServiceUrl + s"player/$playerId/bet", entity = HttpEntity.apply(json)))
+    val responseStringFuture = responseFuture.flatMap(r => Unmarshal(r.entity).to[String])
+    val responseString = Await.result(responseStringFuture, Duration("10s"))
+
+    val jsonResponse = Json.parse(responseString)
+    val success = (jsonResponse \ "success").as[Boolean]
+    if (success) {
+      clearGameStates()
+      gameStates = gameStates :+ GameState.BET_SET
+      notifyObservers()
+    } else {
+      gameStates = gameStates :+ GameState.BET_FAILED
+      notifyObservers()
     }
   }
 
@@ -117,7 +114,7 @@ class Controller @Inject() extends ControllerInterface {
   }
 
   def hit(): Unit = {
-    player = player.addCardToHand(dealer.drawCard())
+    gameManager = gameManager.addCardToPlayerHand(0, gameManager.drawCard()).dropCard()
     gameStates = gameStates :+ GameState.HIT
     checkForAces()
     evaluate()
@@ -147,7 +144,7 @@ class Controller @Inject() extends ControllerInterface {
 
   def revealDealer(): Unit = {
     gameStates = gameStates :+ GameState.REVEAL
-    if (dealer.getHandValue == 21 && dealer.getHandSize == 2) { //if dealer has bj as well
+    if (gameManager.getDealerHandValue == 21 && gameManager.getDealerHandSize == 2) { //if dealer has bj as well
       gameStates = gameStates :+ GameState.DEALER_BLACKJACK
     } else {
       drawDealerCards()
@@ -157,35 +154,32 @@ class Controller @Inject() extends ControllerInterface {
 
   private def drawDealerCards(): Unit = {
     gameStates = gameStates :+ GameState.DEALER_DRAWS
-    while (dealer.getHandValue < 17) {
-      dealer = dealer.addCardToHand(dealer.drawCard())
-      dealer = dealer.dropCard()
+    while (gameManager.getDealerHandValue < 17) {
+      gameManager = gameManager.addCardToDealerHand(gameManager.drawCard()).dropCard()
     }
   }
 
   def evaluate(): Unit = {
-    if (player.containsCardType(Ranks.Ace) != -1 && player.getHandValue != 21) {
-      if (player.getHandValue > 21) {
+    if (gameManager.containsCardTypeInPlayerHand(0, Ranks.Ace) != -1 && gameManager.getPlayerHandValue(0) != 21) {
+      if (gameManager.getPlayerHandValue(0) > 21) {
         aceStrategy = new AceStrategy1
       } else {
         aceStrategy = new AceStrategy11
 
       }
-      player = aceStrategy.execute()
+      gameManager = aceStrategy.execute()
     }
-    if (player.getHandValue > 21) {
+    if (gameManager.getPlayerHandValue(0) > 21) {
       gameStates = gameStates :+ GameState.PLAYER_BUST
       gameStates = gameStates :+ GameState.PLAYER_LOOSE
-      player = push.handleRequest(GameState.PLAYER_LOOSE, this.player)
-      fileIO.store(this.player)
+      evaluateBet(gameStates.last, 0)
       return
-    } else if (dealer.getHandValue > 21) {
+    } else if (gameManager.getDealerHandValue > 21) {
       gameStates = gameStates :+ GameState.DEALER_BUST
       gameStates = gameStates :+ GameState.PLAYER_WINS
-      player = push.handleRequest(GameState.PLAYER_WINS, this.player)
-      fileIO.store(this.player)
+      evaluateBet(gameStates.last, 0)
       return
-    } else if (player.getHandValue == 21 && !revealed && player.getHandSize == 2) {
+    } else if (gameManager.getPlayerHandValue(0) == 21 && !revealed && gameManager.getPlayerHandSize(0) == 2) {
       gameStates = gameStates :+ GameState.PLAYER_BLACKJACK // if player has blackjack doesn't win yet
       revealDealer()
       // if player has blackjack and dealer hasn't pay out can continue
@@ -200,25 +194,33 @@ class Controller @Inject() extends ControllerInterface {
     }
 
     //nobody busted
-    if (dealer.getHandValue < 21 && player.getHandValue == 21) {
+    if (gameManager.getDealerHandValue < 21 && gameManager.getPlayerHandValue(0) == 21) {
       gameStates = gameStates :+ GameState.PLAYER_WINS
-      player = push.handleRequest(GameState.PLAYER_BLACKJACK, this.player)
-      fileIO.store(this.player)
-    } else if (dealer.getHandValue > player.getHandValue
+      evaluateBet(gameStates.last, 0)
+    } else if (gameManager.getDealerHandValue > gameManager.getPlayerHandValue(0)
       || (gameStates.contains(GameState.DEALER_BLACKJACK) && !gameStates.contains(GameState.PLAYER_BLACKJACK))) {
       gameStates = gameStates :+ GameState.PLAYER_LOOSE
-      player = push.handleRequest(gameStates.last, this.player)
-      fileIO.store(this.player)
-    } else if (dealer.getHandValue == player.getHandValue) {
+      evaluateBet(gameStates.last, 0)
+    } else if (gameManager.getDealerHandValue == gameManager.getPlayerHandValue(0)) {
       gameStates = gameStates :+ GameState.PUSH
-      player = push.handleRequest(gameStates.last, this.player)
-      fileIO.store(this.player)
-    } else if (dealer.getHandValue < player.getHandValue) {
+      evaluateBet(gameStates.last, 0)
+    } else if (gameManager.getDealerHandValue < gameManager.getPlayerHandValue(0)) {
       gameStates = gameStates :+ GameState.PLAYER_WINS
-      player = push.handleRequest(gameStates.last, this.player)
-      fileIO.store(this.player)
+      evaluateBet(gameStates.last, 0)
     }
     gameStates = gameStates :+ GameState.IDLE
+  }
+
+  def evaluateBet(gameState: GameState, playerIndex: Int): Unit = {
+    val json = Json.obj(
+      "gameState" -> gameState.toString
+    ).toString()
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(HttpMethods.PUT, uri = playerManagementServiceUrl + s"player/$playerIndex/bet/resolve", entity = HttpEntity.apply(json)))
+    responseFuture
+      .onComplete {
+        case Success(res) => println(res)
+        case Failure(_) => sys.error("Could not resolve bet")
+      }
   }
 
   def clearGameStates(): Unit = gameStates = List()

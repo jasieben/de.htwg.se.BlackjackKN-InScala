@@ -1,43 +1,36 @@
 package de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.controllerBaseImpl
 
-import de.htwg.se.blackjackKN.util.Command
+import de.htwg.se.blackjackKN.gamelogic.model.GameManager
+import de.htwg.se.blackjackKN.gamelogic.util.Command
 
 class StandCommand(controller: Controller) extends Command {
-  var dealerMemento : Dealer = controller.dealer
-  var playerMemento : Player = controller.player
+  var gameManagerMemento : GameManager = controller.gameManager
   var revealedMemento : Boolean = controller.revealed
   override def doStep(): Unit = {
-    dealerMemento = controller.dealer.copy()
-    playerMemento = controller.player.copy()
+    gameManagerMemento = controller.gameManager.copy()
     revealedMemento = controller.revealed
     controller.stand()
   }
 
   override def redoStep(): Unit = {
-    val newDealerMemento = controller.dealer.copy()
-    val newPlayerMemento = controller.player.copy()
+    val newGameManagerMemento = controller.gameManager.copy()
     val newRevealedMemento : Boolean = controller.revealed
 
-    controller.dealer = dealerMemento
-    controller.player = playerMemento
+    controller.gameManager = gameManagerMemento
     controller.revealed = revealedMemento
 
-    dealerMemento = newDealerMemento
-    playerMemento = newPlayerMemento
+    gameManagerMemento = newGameManagerMemento
     revealedMemento = newRevealedMemento
   }
 
   override def undoStep(): Unit = {
-    val newDealerMemento = controller.dealer.copy()
-    val newPlayerMemento = controller.player.copy()
+    val newDealerMemento = controller.gameManager.copy()
     val newRevealedMemento : Boolean = controller.revealed
 
-    controller.dealer = dealerMemento
-    controller.player = playerMemento
+    controller.gameManager = gameManagerMemento
     controller.revealed = revealedMemento
 
-    dealerMemento = newDealerMemento
-    playerMemento = newPlayerMemento
+    gameManagerMemento = newDealerMemento
     revealedMemento = newRevealedMemento
     controller.evaluate()
   }

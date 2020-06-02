@@ -14,10 +14,10 @@ object BlackjackKN {
     val tui = new Tui(controller)
 
     if (args.length < 2 && !args.contains("test")) {
-      val gui = new Gui(controller)
-      new Thread(() => {
-        gui.main(Array())
-      }).start()
+      //val gui = new Gui(controller)
+      //new Thread(() => {
+      //  gui.main(Array())
+      //}).start()
     }
 
     controller.startGame()

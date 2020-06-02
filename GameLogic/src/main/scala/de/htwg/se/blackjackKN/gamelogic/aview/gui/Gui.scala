@@ -30,41 +30,45 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
   controller.add(this)
 
   val backSideImagePattern = new ImagePattern(new Image("de/htwg/se/blackjackKN/res/blue_back.png"))
-  var gamestatesPointer : Int = 0
+  var gamestatesPointer: Int = 0
+  val playerName = "Test";
 
   val menuText: Text = new Text {
     textAlignment = TextAlignment.Center
-    text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
+    // TODO: get via Balance variable
+    //text = "Hello " + playerName + "!\nYour balance is " + controller.player.balance + "$"
   }
   val settingsText: Text = new Text {
     textAlignment = TextAlignment.Center
-    text = "Hello " + controller.player.name + "!\nChoose your settings. "
+    text = "Hello " + playerName + "!\nChoose your settings. "
   }
 
-  val balanceText : Text = new Text {
+  val balanceText: Text = new Text {
     textAlignment = TextAlignment.Center
-    text = "Balance: " + controller.player.balance + "$"
+    // TODO: Replace with latest balance variable
+    //text = "Balance: " + controller.player.balance + "$"
     fill = Black
   }
-  val currentBetText : Text = new Text {
+  val currentBetText: Text = new Text {
     textAlignment = TextAlignment.Center
-    text = "Current Bet: " + controller.player.bet.get.value + "$"
-    fill = Black
-  }
-
-  val statusText : Text = new Text {
-    textAlignment = TextAlignment.Center
-    text = ""
+    // TODO: Get frontend latest bet logic going
+    //text = "Current Bet: " + controller.player.bet.get.value + "$"
     fill = Black
   }
 
-  val playerHandValueText : Text = new Text {
+  val statusText: Text = new Text {
     textAlignment = TextAlignment.Center
     text = ""
     fill = Black
   }
 
-  val dealerHandValueText : Text = new Text {
+  val playerHandValueText: Text = new Text {
+    textAlignment = TextAlignment.Center
+    text = ""
+    fill = Black
+  }
+
+  val dealerHandValueText: Text = new Text {
     textAlignment = TextAlignment.Center
     text = ""
     fill = Black
@@ -113,22 +117,28 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
       x = posStackCardx
     }
 
-    val dealerCards : List[CardGraphic] = List(dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5, dealerCard6)
-    val playerCards : List[CardGraphic] = List(playerCard1, playerCard2, playerCard3, playerCard4, playerCard5, playerCard6)
+    val dealerCards: List[CardGraphic] = List(dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5, dealerCard6)
+    val playerCards: List[CardGraphic] = List(playerCard1, playerCard2, playerCard3, playerCard4, playerCard5, playerCard6)
   }
 
   object Controls {
     val hitButton: Button = new Button {
       text = "Hit"
-      onAction = handle {controller.hitCommand()}
+      onAction = handle {
+        controller.hitCommand()
+      }
     }
     val standButton: Button = new Button {
       text = "Stand"
-      onAction = handle {controller.standCommand()}
+      onAction = handle {
+        controller.standCommand()
+      }
     }
-    val newRoundButton : Button = new Button {
+    val newRoundButton: Button = new Button {
       text = "Start new round"
-      onAction = handle {startNewRound()}
+      onAction = handle {
+        startNewRound()
+      }
       disable = true
     }
   }
@@ -152,19 +162,22 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
 
   def startNewRound(): Unit = {
 
+    // TODO: Get latest player balance
+    /*
     val dialog = new TextInputDialog(defaultValue = (controller.player.balance / 10).toInt.toString) {
       initOwner(stage)
       title = "Bet amount"
-      headerText = "What amount of your " + controller.player.balance + "$ would you like to bet, " + controller.player.name + "?"
+      headerText = "What amount of your " + controller.player.balance + "$ would you like to bet, " + playerName + "?"
       contentText = "Enter the amount here:"
     }
+
 
     val result = dialog.showAndWait()
     result match {
       case Some(value) =>
         val int: Option[Int] = Try(value.toInt).toOption
         int match {
-          case Some(_:Int) =>
+          case Some(_: Int) =>
           case None =>
             new Alert(AlertType.Error) {
               initOwner(stage)
@@ -188,6 +201,7 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
         }
       case None =>
     }
+    */
 
   }
 
@@ -199,50 +213,54 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
 
   val posStackCardx: Int = (stage.width - stage.width / 8).toInt
 
-  val posDealerCard1x : Int = (stage.width / 2 - Cards.dealerCard1.width + Cards.dealerCard1.width / 4).toInt
-  val posDealerCard2x : Int = ((stage.width / 2) - Cards.dealerCard2.width / 4).toInt
-  val posDealerCard3x : Int = ((stage.width / 2) - (Cards.stackCards.width / 4) + (Cards.stackCards.width / 2)).toInt
-  val posDealerCard4x : Int = ((stage.width / 2) - Cards.stackCards.width / 4 + Cards.stackCards.width).toInt
-  val posDealerCard5x : Int = ((stage.width / 2) - Cards.stackCards.width / 4 + Cards.stackCards.width * 1.5).toInt
-  val posDealerCard6x : Int = ((stage.width / 2) - Cards.stackCards.width / 4 + Cards.stackCards.width * 2).toInt
+  val posDealerCard1x: Int = (stage.width / 2 - Cards.dealerCard1.width + Cards.dealerCard1.width / 4).toInt
+  val posDealerCard2x: Int = ((stage.width / 2) - Cards.dealerCard2.width / 4).toInt
+  val posDealerCard3x: Int = ((stage.width / 2) - (Cards.stackCards.width / 4) + (Cards.stackCards.width / 2)).toInt
+  val posDealerCard4x: Int = ((stage.width / 2) - Cards.stackCards.width / 4 + Cards.stackCards.width).toInt
+  val posDealerCard5x: Int = ((stage.width / 2) - Cards.stackCards.width / 4 + Cards.stackCards.width * 1.5).toInt
+  val posDealerCard6x: Int = ((stage.width / 2) - Cards.stackCards.width / 4 + Cards.stackCards.width * 2).toInt
 
-  val posPlayerCard1x : Int = (stage.width / 2 - Cards.playerCard1.width / 2).toInt
-  val posPlayerCard1y : Int = (stage.height / 2.5).toInt
+  val posPlayerCard1x: Int = (stage.width / 2 - Cards.playerCard1.width / 2).toInt
+  val posPlayerCard1y: Int = (stage.height / 2.5).toInt
 
-  val posPlayerCard2x : Int = posPlayerCard1x + (Cards.playerCard1.width - Cards.playerCard1.width / 2).toInt
-  val posPlayerCard2y : Int = posPlayerCard1y - (Cards.playerCard2.height / 6).toInt
+  val posPlayerCard2x: Int = posPlayerCard1x + (Cards.playerCard1.width - Cards.playerCard1.width / 2).toInt
+  val posPlayerCard2y: Int = posPlayerCard1y - (Cards.playerCard2.height / 6).toInt
 
-  val posPlayerCard3x : Int = (posPlayerCard2x + Cards.stackCards.width.toInt) - Cards.stackCards.width.toInt / 2
-  val posPlayerCard3y : Int = posPlayerCard2y - Cards.playerCard3.height.toInt / 6
+  val posPlayerCard3x: Int = (posPlayerCard2x + Cards.stackCards.width.toInt) - Cards.stackCards.width.toInt / 2
+  val posPlayerCard3y: Int = posPlayerCard2y - Cards.playerCard3.height.toInt / 6
 
-  val posPlayerCard4x : Int = (posPlayerCard3x + Cards.stackCards.width.toInt) - Cards.stackCards.width.toInt / 2
-  val posPlayerCard4y : Int = posPlayerCard3y - Cards.playerCard4.height.toInt / 6
+  val posPlayerCard4x: Int = (posPlayerCard3x + Cards.stackCards.width.toInt) - Cards.stackCards.width.toInt / 2
+  val posPlayerCard4y: Int = posPlayerCard3y - Cards.playerCard4.height.toInt / 6
 
-  val posPlayerCard5x : Int = (posPlayerCard4x + Cards.stackCards.width.toInt) - Cards.stackCards.width.toInt / 2
-  val posPlayerCard5y : Int = posPlayerCard4y - Cards.playerCard5.height.toInt / 6
+  val posPlayerCard5x: Int = (posPlayerCard4x + Cards.stackCards.width.toInt) - Cards.stackCards.width.toInt / 2
+  val posPlayerCard5y: Int = posPlayerCard4y - Cards.playerCard5.height.toInt / 6
 
 
-  val posPlayerCard6x : Int = (posPlayerCard5x + Cards.stackCards.width.toInt) - Cards.stackCards.width.toInt / 2
-  val posPlayerCard6y : Int = posPlayerCard5y - Cards.playerCard6.height.toInt / 6
+  val posPlayerCard6x: Int = (posPlayerCard5x + Cards.stackCards.width.toInt) - Cards.stackCards.width.toInt / 2
+  val posPlayerCard6y: Int = posPlayerCard5y - Cards.playerCard6.height.toInt / 6
 
-  val posDealerCardsX : List[Int] = List(posDealerCard1x,posDealerCard2x,posDealerCard3x,
-    posDealerCard4x,posDealerCard5x,posDealerCard6x)
+  val posDealerCardsX: List[Int] = List(posDealerCard1x, posDealerCard2x, posDealerCard3x,
+    posDealerCard4x, posDealerCard5x, posDealerCard6x)
 
-  val posPlayerCardsX : List[Int] = List(posPlayerCard1x, posPlayerCard2x, posPlayerCard3x, posPlayerCard4x,
+  val posPlayerCardsX: List[Int] = List(posPlayerCard1x, posPlayerCard2x, posPlayerCard3x, posPlayerCard4x,
     posPlayerCard5x, posPlayerCard6x)
 
-  val posPlayerCardsY : List[Int] = List(posPlayerCard1y, posPlayerCard2y, posPlayerCard3y, posPlayerCard4y,
+  val posPlayerCardsY: List[Int] = List(posPlayerCard1y, posPlayerCard2y, posPlayerCard3y, posPlayerCard4y,
     posPlayerCard5y, posPlayerCard6y)
 
 
-  def buildTimeline(card : CardGraphic, toX : Int, toY : Int) : Timeline = {
+  def buildTimeline(card: CardGraphic, toX: Int, toY: Int): Timeline = {
 
     new Timeline {
       cycleCount = 1
       autoReverse = false
       keyFrames = Seq(
-        at (1.0 s) {card.x -> toX tween Interpolator.EaseBoth},
-        at (1.0 s) {card.y -> toY tween Interpolator.EaseBoth})
+        at(1.0 s) {
+          card.x -> toX tween Interpolator.EaseBoth
+        },
+        at(1.0 s) {
+          card.y -> toY tween Interpolator.EaseBoth
+        })
     }
   }
 
@@ -263,19 +281,19 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
         bottom = new GridPane {
           style = "-fx-font-size: 14pt"
           margin = Insets(20, 0, 30, 0)
-          columnConstraints = Seq(new ColumnConstraints{
+          columnConstraints = Seq(new ColumnConstraints {
             halignment = HPos.Left
-            percentWidth = 100/3
-          },new ColumnConstraints{
+            percentWidth = 100 / 3
+          }, new ColumnConstraints {
             halignment = HPos.Center
-            percentWidth = 100/3
-          },new ColumnConstraints{
+            percentWidth = 100 / 3
+          }, new ColumnConstraints {
             halignment = HPos.Right
-            percentWidth = 100/3
+            percentWidth = 100 / 3
           })
           add(new VBox {
             alignment = Pos.CenterLeft
-            margin = Insets(0,0,0,20)
+            margin = Insets(0, 0, 0, 20)
             spacing = 20
             children = Seq(
               new Button {
@@ -288,7 +306,7 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
               dealerHandValueText,
               Controls.newRoundButton
             )
-          },0,0)
+          }, 0, 0)
           add(new VBox {
             alignment = Pos.Center
             spacing = 20
@@ -305,30 +323,31 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
                 children = List(Controls.hitButton,
                   Controls.standButton)
               })
-          },1,0)
-          }
-          center = new Pane {
-            margin = Insets(60, 0, 0, 0)
-            children = List(Cards.dealerCard1, Cards.dealerCard2,
-              Cards.dealerCard3, Cards.dealerCard4, Cards.dealerCard5, Cards.dealerCard6,
-              Cards.stackCards,
-              Cards.playerCard1,
-              Cards.playerCard2,
-              Cards.playerCard3,
-              Cards.playerCard4,
-              Cards.playerCard5,
-              Cards.playerCard6)
-          }
+          }, 1, 0)
+        }
+        center = new Pane {
+          margin = Insets(60, 0, 0, 0)
+          children = List(Cards.dealerCard1, Cards.dealerCard2,
+            Cards.dealerCard3, Cards.dealerCard4, Cards.dealerCard5, Cards.dealerCard6,
+            Cards.stackCards,
+            Cards.playerCard1,
+            Cards.playerCard2,
+            Cards.playerCard3,
+            Cards.playerCard4,
+            Cards.playerCard5,
+            Cards.playerCard6)
         }
       }
     }
+  }
 
-  def setMenuScene() : Unit = {
-    menuText.text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
+  def setMenuScene(): Unit = {
+    // TODO: Get via player management
+    //menuText.text = "Hello " + playerName + "!\nYour balance is " + controller.player.balance + "$"
     stage.scene = getMenuScene
   }
 
-  def getMenuScene : Scene = {
+  def getMenuScene: Scene = {
     new Scene {
       fill = new LinearGradient(
         endX = 0,
@@ -362,7 +381,9 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
             },
             new Button {
               text = "Create new player"
-              onAction = handle { createPlayer() }
+              onAction = handle {
+                createPlayer()
+              }
             },
             new Button {
               text = "Settings"
@@ -391,12 +412,13 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
       }
     }
   }
-  def setSettingsScene() : Unit = {
-    settingsText.text = "Hello " + controller.player.name + "!\nChoose your Settings. "
+
+  def setSettingsScene(): Unit = {
+    settingsText.text = "Hello " + playerName + "!\nChoose your Settings. "
     stage.scene = getSettingsScene
   }
 
-  def getSettingsScene : Scene = {
+  def getSettingsScene: Scene = {
     new Scene {
       fill = new LinearGradient(
         endX = 0,
@@ -444,12 +466,12 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
     }
   }
 
-  def getBackgroundImagePattern(card : CardInterface): ImagePattern = {
+  def getBackgroundImagePattern(card: CardInterface): ImagePattern = {
     new ImagePattern(new Image("de/htwg/se/blackjackKN/res/" + card.getBackgroundImageFileName))
   }
 
   def changePlayer(): Unit = {
-    val dialog = new TextInputDialog(controller.player.name) {
+    val dialog = new TextInputDialog(playerName) {
       initOwner(stage)
       title = "Change the player"
       headerText = "What name would you like to have?"
@@ -460,14 +482,15 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
 
     result match {
       case Some(value) =>
-        controller.changePlayer(value)
-        menuText.text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
+        //controller.changePlayer(value)
+        // TODO:
+        //menuText.text = "Hello " + playerName + "!\nYour balance is " + controller.player.balance + "$"
       case None =>
     }
   }
 
   def createPlayer(): Unit = {
-    val dialog = new TextInputDialog(controller.player.name) {
+    val dialog = new TextInputDialog(playerName) {
       initOwner(stage)
       title = "Create new player"
       headerText = "What name would you like to have?"
@@ -478,14 +501,15 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
 
     result match {
       case Some(value) =>
-        controller.createNewPlayer(value)
-        menuText.text = "Hello " + controller.player.name + "!\nYour balance is " + controller.player.balance + "$"
+        // TODO
+        //controller.createNewPlayer(value)
+        //menuText.text = "Hello " + playerName + "!\nYour balance is " + controller.player.balance + "$"
       case None =>
     }
   }
 
   override def update: Boolean = {
-    var counter : Int = 0
+    var counter: Int = 0
     for (i <- gamestatesPointer until controller.gameStates.length) {
       controller.gameStates(i) match {
         case GameState.IDLE =>
@@ -495,8 +519,9 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
         case GameState.FIRST_ROUND =>
           Controls.standButton.setDisable(true)
           Controls.hitButton.setDisable(true)
-          currentBetText.text = "Current Bet: " + controller.player.bet.get.value + "$"
-          balanceText.text = "Balance: " + controller.player.balance + "$"
+          // TODO: get from earlier bet setting
+          //currentBetText.text = "Current Bet: " + controller.player.bet.get.value + "$"
+          //balanceText.text = "Balance: " + controller.player.balance + "$"
           Cards.stackCards.setFill(backSideImagePattern)
           Cards.dealerCard2.setFill(backSideImagePattern)
           Cards.playerCard1.setFill(backSideImagePattern)
@@ -509,75 +534,77 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
           val tlD2 = buildTimeline(Cards.dealerCards(1), posDealerCardsX(1), Cards.dealerCards(1).y.toInt)
           tlP1.play()
           tlP1.onFinished = handle {
-            Cards.playerCard1.setFill(getBackgroundImagePattern(controller.player.getCard(0)))
+            Cards.playerCard1.setFill(getBackgroundImagePattern(controller.gameManager.getPlayerCard(0, 0)))
             tlD1.play()
           }
 
           tlD1.onFinished = handle {
-            Cards.dealerCard1.setFill(getBackgroundImagePattern(controller.dealer.getCard(0)))
+            Cards.dealerCard1.setFill(getBackgroundImagePattern(controller.gameManager.getDealerCard(0)))
             tlP2.play()
           }
 
           tlP2.onFinished = handle {
-            playerHandValueText.text = controller.player.name + "'s hand value: " + controller.player.getHandValue
-            Cards.playerCard2.setFill(getBackgroundImagePattern(controller.player.getCard(1)))
+            playerHandValueText.text = playerName + "'s hand value: " + controller.gameManager.getPlayerHandValue(0)
+            Cards.playerCard2.setFill(getBackgroundImagePattern(controller.gameManager.getPlayerCard(0, 1)))
             tlD2.play()
           }
           tlD2.onFinished = handle {
-            dealerHandValueText.text = "Dealer's hand value: " + controller.dealer.getCard(0).value
+            dealerHandValueText.text = "Dealer's hand value: " + controller.gameManager.getDealerCard(0).value
           }
         case GameState.STAND =>
-          statusText.text = controller.player.name + " stands"
+          statusText.text = playerName + " stands"
         case GameState.HIT =>
-          val c = Cards.playerCards(controller.player.getHandSize - 1)
+          val c = Cards.playerCards(controller.gameManager.getPlayerHandSize(0) - 1)
           c.setFill(backSideImagePattern)
-          val tl = buildTimeline(c, posPlayerCardsX(controller.player.getHandSize - 1), posPlayerCardsY(controller.player.getHandSize - 1))
+          val tl = buildTimeline(c, posPlayerCardsX(controller.gameManager.getPlayerHandSize(0) - 1), posPlayerCardsY(controller.gameManager.getPlayerHandSize(0) - 1))
           tl.play()
           tl.onFinished = handle {
-            c.setFill(getBackgroundImagePattern(controller.player.getLastHandCard))
-            playerHandValueText.text = controller.player.name + "'s hand value: " + controller.player.getHandValue
+            c.setFill(getBackgroundImagePattern(controller.gameManager.getLastPlayerHandCard(0)))
+            playerHandValueText.text = playerName + "'s hand value: " + controller.gameManager.getPlayerHandValue(0)
           }
         case GameState.REVEAL =>
-          Cards.dealerCard2.setFill(getBackgroundImagePattern(controller.dealer.getCard(1)))
-          dealerHandValueText.text = "Dealer's hand value: " + controller.dealer.getHandValue
+          Cards.dealerCard2.setFill(getBackgroundImagePattern(controller.gameManager.getDealerCard(1)))
+          dealerHandValueText.text = "Dealer's hand value: " + controller.gameManager.getDealerHandValue
         case GameState.DEALER_DRAWS =>
-          for (i <- 2 until controller.dealer.getHandSize) {
+          for (i <- 2 until controller.gameManager.getDealerHandSize) {
             Cards.dealerCards(i).setFill(backSideImagePattern)
             val tl = buildTimeline(Cards.dealerCards(i), posDealerCardsX(i), Cards.dealerCards(i).y.toInt)
             tl.play()
             tl.onFinished = handle {
-              Cards.dealerCards(i).setFill(getBackgroundImagePattern(controller.dealer.getCard(i)))
-              dealerHandValueText.text = "Dealer's hand value: " + controller.dealer.getHandValue
+              Cards.dealerCards(i).setFill(getBackgroundImagePattern(controller.gameManager.getDealerCard(i)))
+              dealerHandValueText.text = "Dealer's hand value: " + controller.gameManager.getDealerHandValue
             }
           }
         case GameState.PLAYER_BUST =>
-          playerHandValueText.text = controller.player.name + " busts (value: "+ controller.player.getHandValue + ")"
+          playerHandValueText.text = playerName + " busts (value: " + controller.gameManager.getPlayerHandValue(0) + ")"
 
         case GameState.DEALER_BUST =>
-          dealerHandValueText.text = "Dealer busts (value: " + controller.dealer.getHandValue + ")"
+          dealerHandValueText.text = "Dealer busts (value: " + controller.gameManager.getDealerHandValue + ")"
         case GameState.PLAYER_BLACKJACK =>
-          playerHandValueText.text = controller.player.name + "has a Blackjack (value: 21)"
+          playerHandValueText.text = playerName + "has a Blackjack (value: 21)"
         case GameState.WAITING_FOR_INPUT =>
           statusText.text = "Would you like to hit or stand?"
           Controls.standButton.setDisable(false)
           Controls.hitButton.setDisable(false)
 
         case GameState.PLAYER_WINS =>
-          balanceText.text = "Balance: " + controller.player.balance  + "$"
+          // TODO:
+          //balanceText.text = "Balance: " + controller.player.balance  + "$"
           currentBetText.text = "Current bet: 0$"
-          statusText.text = controller.player.name + " wins!"
+          statusText.text = playerName + " wins!"
           Controls.standButton.setDisable(true)
           Controls.hitButton.setDisable(true)
           Controls.newRoundButton.setDisable(false)
         case GameState.PLAYER_LOOSE =>
-          balanceText.text = "Balance: " + controller.player.balance  + "$"
+          // TODO:
+          //balanceText.text = "Balance: " + controller.player.balance  + "$"
           currentBetText.text = "Current bet: 0$"
-          statusText.text = controller.player.name + " looses!"
+          statusText.text = playerName + " looses!"
           Controls.standButton.setDisable(true)
           Controls.hitButton.setDisable(true)
           Controls.newRoundButton.setDisable(false)
         case GameState.PUSH =>
-          statusText.text = "Push! " + controller.player.name + " and the Dealer's hand value the same "
+          statusText.text = "Push! " + playerName + " and the Dealer's hand value the same "
           Controls.standButton.setDisable(true)
           Controls.hitButton.setDisable(true)
           Controls.newRoundButton.setDisable(false)

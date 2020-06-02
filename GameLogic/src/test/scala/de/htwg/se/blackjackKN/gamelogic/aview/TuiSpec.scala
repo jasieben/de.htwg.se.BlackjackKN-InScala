@@ -1,12 +1,11 @@
 package de.htwg.se.blackjackKN.gamelogic.aview
 
-import de.htwg.se.blackjackKN.controller.controllerComponent.controllerBaseImpl.Controller
-import de.htwg.se.blackjackKN.controller.controllerComponent.GameState
-import de.htwg.se.blackjackKN.controller.controllerComponent.GameState.GameState
+import de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.GameState
+import de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.controllerBaseImpl.Controller
+import de.htwg.se.blackjackKN.gamelogic.model.cardsComponent.CardInterface
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{Matchers, WordSpec}
-import de.htwg.se.blackjackKN.model.cardsComponent.CardInterface
 
 @RunWith(classOf[JUnitRunner])
 class TuiSpec extends WordSpec with Matchers{
@@ -16,7 +15,7 @@ class TuiSpec extends WordSpec with Matchers{
     controller.startGame()
     "process n" in {
       tui.processInput("n")
-      controller.dealer.drawCard() should be(a [CardInterface])
+      controller.gameManager.drawCard() should be(a [CardInterface])
     }
     "process h" in {
       controller.startNewRound()
@@ -69,8 +68,8 @@ class TuiSpec extends WordSpec with Matchers{
     }
     "display when Dealer draws cards" in {
       controller.startNewRound()
-      controller.dealer = controller.dealer.addCardToHand(controller.dealer.drawCard())
-      controller.dealer = controller.dealer.addCardToHand(controller.dealer.drawCard())
+      controller.gameManager = controller.gameManager.addCardToDealerHand(controller.gameManager.drawCard()).dropCard()
+      controller.gameManager = controller.gameManager.addCardToDealerHand(controller.gameManager.drawCard()).dropCard()
       controller.gameStates = controller.gameStates :+ GameState.DEALER_DRAWS
       controller.notifyObservers()
       tui.output.contains("dealer draws") should be(true)

@@ -1,15 +1,26 @@
 package de.htwg.se.blackjackKN.gamelogic.aview
 
-import de.htwg.se.blackjackKN.controller.controllerComponent.{ControllerInterface, GameState}
-import de.htwg.se.blackjackKN.util.Observer
+import akka.actor.ActorSystem
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.{HttpEntity, HttpMethods, HttpRequest, HttpResponse}
+import de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.{ControllerInterface, GameState}
+import de.htwg.se.blackjackKN.gamelogic.util.Observer
+import play.api.libs.json.Json
+
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContextExecutor, Future}
+import scala.util.{Failure, Success}
 
 
-class Tui (controller : ControllerInterface) extends Observer {
+class Tui(controller: ControllerInterface) extends Observer {
 
   controller.add(this)
-  var gamestatePointer : Int = 0
-  var output : String = ""
+  var gamestatePointer: Int = 0
+  var output: String = ""
   var firstAceMessage = false
+
+  implicit val actorSystem: ActorSystem = ActorSystem("actorSystemTui")
+  implicit val executionContext: ExecutionContextExecutor = actorSystem.dispatcher
 
   //Show Splashscreen
   output = "\n.------..------..------..------..------..------..------..------..------.\n|B.--. ||L.--. ||A.--. |" +
@@ -19,12 +30,11 @@ class Tui (controller : ControllerInterface) extends Observer {
     "---'`------'`------'`------'`------'\n"
   output += "Create a new Player by entering \"create (Your Name)\"\n"
   output += "Enter n *dollars* to set a bet and start a new game!\n"
-  output += "Your current balance is " + controller.player.balance + "$"
   print()
 
-  override def update : Boolean = {
+  override def update: Boolean = {
     output = ""
-    var counter : Int = 0
+    var counter: Int = 0
     for (i <- gamestatePointer until controller.gameStates.length) {
       controller.gameStates(i) match {
         case GameState.IDLE =>
@@ -32,53 +42,54 @@ class Tui (controller : ControllerInterface) extends Observer {
         case GameState.SHUFFLING =>
           output += "Card Deck is being changed and shuffled" + "\n"
         case GameState.FIRST_ROUND =>
-          output += controller.player.name + " has a " + controller.player.getCard(0) + "\n"
-          output += "The dealer has a " + controller.dealer.getCard(0) + "\n"
-          output += controller.player.name + " also has a " + controller.player.getCard(1) + "\n"
-          output += "The combined value of your cards is " + controller.player.getHandValue +"\n"
+          output += "Player" + " has a " + controller.gameManager.getPlayerCard(0, 0) + "\n"
+          output += "The dealer has a " + controller.gameManager.getDealerCard(0) + "\n"
+          output += "Player" + " also has a " + controller.gameManager.getPlayerCard(0, 1) + "\n"
+          output += "The combined value of your cards is " + controller.gameManager.getPlayerHandValue(0) + "\n"
         case GameState.STAND =>
-          output += controller.player.name + " stands\n"
+          output += "Player" + " stands\n"
         case GameState.HIT =>
-          output += controller.player.name + " hits and draws a " +  controller.player.getLastHandCard + "\n"
-          output += "The combined value of " + controller.player.name +"s cards are " + controller.player.getHandValue + "\n"
+          output += "Player" + " hits and draws a " + controller.gameManager.getLastPlayerHandCard(0) + "\n"
+          output += "The combined value of " + "Player" + "s cards are " + controller.gameManager.getPlayerHandValue(0) + "\n"
         case GameState.REVEAL =>
-          output += "The dealer has a " + controller.dealer.getCard(1) + "\n"
+          output += "The dealer has a " + controller.gameManager.getDealerCard(1) + "\n"
         case GameState.DEALER_DRAWS =>
-          for (i <- 2 until controller.dealer.getHandSize) {
-            output += "The dealer draws a " + controller.dealer.getCard(i) + "\n"
+          for (i <- 2 until controller.gameManager.getDealerHandSize) {
+            output += "The dealer draws a " + controller.gameManager.getDealerCard(i) + "\n"
           }
-          output += "The dealers combined value of cards is " + controller.dealer.getHandValue + "\n"
+          output += "The dealers combined value of cards is " + controller.gameManager.getDealerHandValue + "\n"
         case GameState.PLAYER_BUST =>
-          output += controller.player.name + " busts!\n"
+          output += "Player" + " busts!\n"
         case GameState.DEALER_BUST =>
-          output += "The dealer busts, " + controller.player.name + " wins!\n"
+          output += "The dealer busts, " + "Player" + " wins!\n"
         case GameState.PLAYER_BLACKJACK =>
-          output += controller.player.name + " has a blackjack!\n"
+          output += "Player" + " has a blackjack!\n"
         case GameState.WAITING_FOR_INPUT =>
           output += "Would you like to hit(h) or stand(s)?"
         case GameState.PLAYER_WINS =>
-          output += controller.player.name + " wins!\n" + controller.player.name + " won " + controller.player.bet.get.value + "$!\n"
-          output += controller.player.name + "s new balance is " + controller.player.balance + "$\n"
+        // TODO:
+        //output += "Player" + " wins!\n" + "Player" + " won " + controller.player.bet.get.value + "$!\n"
+        //output += "Player" + "s new balance is " + controller.player.balance + "$\n"
         case GameState.PLAYER_LOOSE =>
-          output += controller.player.name + " looses!\n"
-          output += controller.player.name + "s current balance is " + controller.player.balance + "$\n"
+          // TODO:
+          output += "Player" + " looses!\n"
+        //output += "Player" + "s current balance is " + controller.player.balance + "$\n"
         case GameState.PUSH =>
-          output += "Push! " + controller.player.name + " and the dealer have a combined card value of " + controller.dealer.getHandValue + "\n"
-          output += controller.player.name + "s balance stays at " + controller.player.balance + "$\n"
+          // TODO:
+          output += "Push! " + "Player" + " and the dealer have a combined card value of " + controller.gameManager.getDealerHandValue + "\n"
+        //output += "Player" + "s balance stays at " + controller.player.balance + "$\n"
         case GameState.ACE =>
           if (!firstAceMessage && !controller.gameStates.contains(GameState.PLAYER_BLACKJACK))
-            output += "or your cards can value " + (controller.player.getHandValue - 10) + "\n"
-            firstAceMessage = true
+            output += "or your cards can value " + (controller.gameManager.getPlayerHandValue(0) - 10) + "\n"
+          firstAceMessage = true
         case GameState.BET_FAILED =>
           output += "Bet failed. Not enough money or no bet set"
         case GameState.BET_SET =>
-          output += "Bet of " + controller.player.bet.get.value + "$ set"
+          output += "Bet set"
         case GameState.UNDO =>
           output += "Undo last input operation\n"
         case GameState.REDO =>
           output += "Redo last input operation\n"
-        case GameState.NEW_NAME =>
-          output += "Player name is set to " + controller.player.name + "\n"
         case GameState.DEALER_BLACKJACK =>
           output += "The dealer has a Blackjack!\n"
       }
@@ -104,11 +115,23 @@ class Tui (controller : ControllerInterface) extends Observer {
       case "y" =>
         controller.redo()
       case "b" =>
-        output = "Your current balance is " + controller.player.balance + "$"
+        // TODO: Make request to player management
+        //output = "Your current balance is " + controller.player.balance + "$"
         print()
       case createNameRegEx(_*) =>
         val name = input.replaceAll("create ", "")
-        controller.createNewPlayer(name)
+        val json = Json.obj(
+          "name" -> name
+        ).toString()
+        val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(HttpMethods.POST, uri = controller.playerManagementServiceUrl + "player", entity = HttpEntity.apply(json)))
+        Await.result(responseFuture, Duration("5s"))
+        responseFuture.onComplete {
+          case Success(res) => {
+            output = "Player name is set to " + name + "\n"
+            print()
+          }
+          case Failure(_) => sys.error("Could not resolve bet")
+        }
       case betRegEx(_*) =>
         val number = input.replaceAll("n ", "")
         controller.setBet(number.toInt)
@@ -120,7 +143,8 @@ class Tui (controller : ControllerInterface) extends Observer {
         println("Input not recognized!")
     }
   }
-  def print() : Unit = {
+
+  def print(): Unit = {
     println(output)
 
   }

@@ -1,0 +1,14 @@
+version: '3'
+services:
+  game-logic:
+    build: "GameLogic/."
+    ports:
+      - "5000:5000"
+    stdin_open: true
+    hostname: "game-logic"
+  player-management:
+    build: "PlayerManagement/."
+    ports:
+      - "1274:1274"
+    stdin_open: true
+    hostname: "player-management"

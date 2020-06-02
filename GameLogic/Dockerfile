@@ -1,7 +1,7 @@
-FROM hseeberger/scala-sbt
+FROM hseeberger/scala-sbt:8u212_1.2.8_2.13.0
 RUN apt-get update && apt-get install -y --no-install-recommends openjfx && rm -rf /var/lib/apt/lists/*
-WORKDIR /blackjack
-ADD . /blackjack
+WORKDIR /GameLogic
+ADD . /GameLogic
 CMD sbt run
 
 # sudo docker build -t blackjack:v1
