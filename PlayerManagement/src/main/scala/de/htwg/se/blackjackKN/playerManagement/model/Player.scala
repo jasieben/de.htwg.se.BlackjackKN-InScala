@@ -1,8 +1,8 @@
 package de.htwg.se.blackjackKN.playerManagement.model
 
-case class Player(
-                   name: String = "Test",
-                   balance: Int = 1000, bet: Option[Bet] = Option(Bet(0))) {
+case class Player(id: Int = 5,
+                  name: String = "Test",
+                  balance: Int = 1000, bet: Option[Bet] = Option(Bet(0))) {
 
   def changeBalance(newBalance: Int): Player = {
     copy(balance = newBalance)

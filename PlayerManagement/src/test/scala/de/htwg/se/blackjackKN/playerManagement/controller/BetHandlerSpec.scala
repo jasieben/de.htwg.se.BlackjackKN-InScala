@@ -1,7 +1,6 @@
 package de.htwg.se.blackjackKN.playerManagement.controller
 
 import de.htwg.se.blackjackKN.playerManagement.model.{Bet, EndState, Player}
-import de.htwg.se.playerManagement.model.EndState
 import org.junit.runner.RunWith
 import org.scalatest._
 import org.scalatest.junit.JUnitRunner

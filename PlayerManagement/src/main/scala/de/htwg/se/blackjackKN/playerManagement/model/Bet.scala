@@ -1,3 +1,5 @@
 package de.htwg.se.blackjackKN.playerManagement.model
 
-case class Bet(value: Int = 100) {}
+import de.htwg.se.blackjackKN.playerManagement.model.EndState.EndState
+
+case class Bet(value: Int, status: EndState = EndState.ONGOING) {}

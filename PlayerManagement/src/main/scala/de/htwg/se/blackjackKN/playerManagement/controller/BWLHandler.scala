@@ -2,7 +2,6 @@ package de.htwg.se.blackjackKN.playerManagement.controller
 
 import de.htwg.se.blackjackKN.playerManagement.model.{EndState, Player}
 import de.htwg.se.blackjackKN.playerManagement.model.EndState.EndState
-import de.htwg.se.playerManagement.model.EndState
 
 class WinningHandler(val successor: Option[BetHandler]) extends BetHandler {
   override def handleRequest(gameState: EndState, player: Player): Player = {
