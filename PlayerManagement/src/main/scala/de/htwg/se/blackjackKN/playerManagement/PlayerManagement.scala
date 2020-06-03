@@ -15,7 +15,7 @@ import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
 
 object PlayerManagement {
-  val connectionInterface = "localhost"
+  val connectionInterface = "0.0.0.0"
   val connectionPort = 1274
 
   def main(args: Array[String]) {
