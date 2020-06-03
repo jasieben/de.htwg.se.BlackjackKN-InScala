@@ -18,7 +18,7 @@ import scala.concurrent.{Await, ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success, Try}
 
 class Controller @Inject() extends ControllerInterface {
-  val playerManagementServiceUrl = "http://player-management:1274/";
+  val playerManagementServiceUrl = "http://localhost:1274/"
 
   val injector: Injector = Guice.createInjector(new BlackjackModule)
   var gameManager: GameManager = GameManager()

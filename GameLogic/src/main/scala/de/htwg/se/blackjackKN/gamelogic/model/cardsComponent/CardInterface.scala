@@ -8,4 +8,5 @@ trait CardInterface {
   val value : Int
   def suits: List[Suits.Value]
   def getBackgroundImageFileName : String
+  def getCardId: String
 }

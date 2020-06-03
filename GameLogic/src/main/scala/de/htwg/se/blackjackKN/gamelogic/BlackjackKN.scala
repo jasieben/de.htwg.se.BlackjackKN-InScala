@@ -1,7 +1,7 @@
 package de.htwg.se.blackjackKN.gamelogic
 
 import com.google.inject.Guice
-import de.htwg.se.blackjackKN.gamelogic.aview.Tui
+import de.htwg.se.blackjackKN.gamelogic.aview.{RestApi, Tui}
 import de.htwg.se.blackjackKN.gamelogic.aview.gui.Gui
 import de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.ControllerInterface
 
@@ -12,6 +12,7 @@ object BlackjackKN {
     val injector = Guice.createInjector(new BlackjackModule)
     val controller = injector.getInstance(classOf[ControllerInterface])
     val tui = new Tui(controller)
+    val restApi = new RestApi(controller)
 
     if (args.length < 2 && !args.contains("test")) {
       //val gui = new Gui(controller)
@@ -19,6 +20,10 @@ object BlackjackKN {
       //  gui.main(Array())
       //}).start()
     }
+
+    new Thread(() => {
+      restApi.run()
+    }).start()
 
     controller.startGame()
     var input: String = ""

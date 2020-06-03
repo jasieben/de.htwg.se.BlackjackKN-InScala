@@ -12,31 +12,34 @@ abstract class Card extends CardInterface{
 
   val suits: List[Suits.Value] = List(Suits.Hearts, Suits.Clubs, Suits.Diamonds, Suits.Spades)
 
-  def getBackgroundImageFileName : String = {
-    var fileName : String = ""
+  def getCardId: String = {
+    var id = ""
     rank match {
       case Ranks.Ace =>
-        fileName += "A"
+        id += "A"
       case Ranks.Jack =>
-        fileName += "J"
+        id += "J"
       case Ranks.King =>
-        fileName += "K"
+        id += "K"
       case Ranks.Queen =>
-        fileName += "Q"
+        id += "Q"
       case _: Int =>
-        fileName += rank.toString
+        id += rank.toString
     }
     suit match {
       case Suits.Hearts =>
-        fileName += "H"
+        id += "H"
       case Suits.Spades =>
-        fileName += "S"
+        id += "S"
       case Suits.Diamonds =>
-        fileName += "D"
+        id += "D"
       case Suits.Clubs =>
-        fileName += "C"
+        id += "C"
     }
-    fileName += ".png"
-    fileName
+    id
+  }
+
+  def getBackgroundImageFileName : String = {
+    s"$getCardId.png"
   }
 }

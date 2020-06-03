@@ -15,6 +15,9 @@ import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
 
 object PlayerManagement {
+  val connectionInterface = "localhost"
+  val connectionPort = 1274
+
   def main(args: Array[String]) {
     implicit val actorSystem: ActorSystem = ActorSystem("actorSystem")
     implicit val executionContext: ExecutionContextExecutor = actorSystem.dispatcher
@@ -64,9 +67,9 @@ object PlayerManagement {
       }
     )
 
-    val bindingFuture = Http().bindAndHandle(route, "localhost", 1274)
+    val bindingFuture = Http().bindAndHandle(route, connectionInterface, connectionPort)
 
-    println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
+    println(s"Server online at http://$connectionInterface:$connectionPort/\nPress RETURN to stop...")
     StdIn.readLine() // let it run until user presses return
     bindingFuture
       .flatMap(_.unbind()) // trigger unbinding from the port
