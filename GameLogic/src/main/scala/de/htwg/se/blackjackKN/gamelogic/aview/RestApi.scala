@@ -135,7 +135,7 @@ class RestApi(controller: ControllerInterface) {
 
   private def getAllPlayerCards(): JsArray = {
     var jsArray: JsArray = JsArray()
-    for (i <- 0 until controller.gameManager.getPlayerHandSize(0) - 1) {
+    for (i <- 0 until controller.gameManager.getPlayerHandSize(0)) {
       jsArray = jsArray.append(Json.obj("card" -> controller.gameManager.getPlayerCard(0, i).getCardId))
     }
     jsArray
@@ -143,7 +143,7 @@ class RestApi(controller: ControllerInterface) {
 
   private def getAllDealerCards(): JsArray = {
     var jsArray: JsArray = JsArray()
-    for (i <- 0 until controller.gameManager.getPlayerHandSize(0) - 1) {
+    for (i <- 0 until controller.gameManager.getDealerHandSize) {
       jsArray = jsArray.append(Json.obj("card" -> controller.gameManager.getDealerCard(i).getCardId))
     }
     jsArray
