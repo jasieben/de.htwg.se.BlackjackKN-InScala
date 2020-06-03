@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
 
 class RestApi(controller: ControllerInterface) {
-  val connectionInterface = "localhost"
+  val connectionInterface = "0.0.0.0"
   val connectionPort = 9001
 
   def run() {
