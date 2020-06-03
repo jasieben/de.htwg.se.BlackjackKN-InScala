@@ -16,7 +16,7 @@ import scala.io.StdIn
 
 object PlayerManagement {
   val connectionInterface = "0.0.0.0"
-  val connectionPort = 1274
+  val connectionPort = 9002
 
   def main(args: Array[String]) {
     implicit val actorSystem: ActorSystem = ActorSystem("actorSystem")

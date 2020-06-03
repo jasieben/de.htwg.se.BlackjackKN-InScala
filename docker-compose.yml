@@ -3,12 +3,21 @@ services:
   game-logic:
     build: "GameLogic/."
     ports:
-      - "5000:5000"
+      - "9001:9001"
     stdin_open: true
-    hostname: "game-logic"
+    environment:
+      - PLAYER_MANAGEMENT_HOST=player:9002
+    networks:
+      default:
+        aliases:
+          - game
   player-management:
     build: "PlayerManagement/."
     ports:
-      - "1274:1274"
+      - "9002:9002"
     stdin_open: true
+    networks:
+      default:
+        aliases:
+          - player
     hostname: "player-management"

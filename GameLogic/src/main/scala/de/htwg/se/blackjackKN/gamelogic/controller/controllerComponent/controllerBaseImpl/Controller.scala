@@ -18,7 +18,8 @@ import scala.concurrent.{Await, ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success, Try}
 
 class Controller @Inject() extends ControllerInterface {
-  val playerManagementServiceUrl = "http://localhost:1274/"
+  private val environmentPlayerManagementHost = sys.env.getOrElse("PLAYER_MANAGEMENT_HOST", "localhost:9002")
+  val playerManagementServiceUrl = s"http://$environmentPlayerManagementHost/"
 
   val injector: Injector = Guice.createInjector(new BlackjackModule)
   var gameManager: GameManager = GameManager()
@@ -85,8 +86,6 @@ class Controller @Inject() extends ControllerInterface {
   }
 
   def setBet(value: Int): Unit = {
-    // Todo: set bet in Player Management
-
     val playerId = 123
     val json = Json.obj(
       "betValue" -> value

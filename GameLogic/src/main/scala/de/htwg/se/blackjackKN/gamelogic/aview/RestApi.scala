@@ -12,7 +12,7 @@ import scala.io.StdIn
 
 class RestApi(controller: ControllerInterface) {
   val connectionInterface = "localhost"
-  val connectionPort = 5000
+  val connectionPort = 9001
 
   def run() {
     implicit val actorSystem: ActorSystem = ActorSystem("actorSystem")
