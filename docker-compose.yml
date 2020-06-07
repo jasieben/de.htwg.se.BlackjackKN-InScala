@@ -1,0 +1,25 @@
+version: '3'
+services:
+  game-logic:
+    build: "GameLogic/."
+    ports:
+      - "9001:9001"
+    stdin_open: true
+    container_name: "game-logic"
+    environment:
+      - PLAYER_MANAGEMENT_HOST=player:9002
+    networks:
+      default:
+        aliases:
+          - game
+  player-management:
+    build: "PlayerManagement/."
+    ports:
+      - "9002:9002"
+    stdin_open: true
+    container_name: "player-management"
+    networks:
+      default:
+        aliases:
+          - player
+    hostname: "player-management"
