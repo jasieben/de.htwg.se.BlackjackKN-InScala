@@ -4,9 +4,10 @@ scala:
   - 2.12.7
 
 script:
-  - sbt clean coverage test coverageReport
+  - sbt clean coverage test coverageReport coverageAggregate
 
 after_success:
-  - sbt coverageReport coveralls
+  - sbt coverageReport coverageAggregate coveralls
+
 notifications:
-  - email: false
+  email: false
