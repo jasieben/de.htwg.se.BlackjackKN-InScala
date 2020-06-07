@@ -6,6 +6,8 @@ scalaVersion  := "2.12.4"
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.5"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 
+coverageExcludedPackages := ".*gui.*"
+
 libraryDependencies += "org.scalafx" %% "scalafx" % "12.0.2-R18"
 lazy val osName = System.getProperty("os.name") match {
   case n if n.startsWith("Linux")   => "linux"
