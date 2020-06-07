@@ -67,8 +67,8 @@ class Tui(controller: ControllerInterface) extends Observer {
         case GameState.WAITING_FOR_INPUT =>
           output += "Would you like to hit(h) or stand(s)?"
         case GameState.PLAYER_WINS =>
-        // TODO:
-        //output += "Player" + " wins!\n" + "Player" + " won " + controller.player.bet.get.value + "$!\n"
+          // TODO:
+          output += "Player" + " wins!\n" + "Player" + " won!\n"
         //output += "Player" + "s new balance is " + controller.player.balance + "$\n"
         case GameState.PLAYER_LOOSE =>
           // TODO:

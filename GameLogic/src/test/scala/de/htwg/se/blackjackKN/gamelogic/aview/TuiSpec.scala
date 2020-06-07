@@ -20,12 +20,12 @@ class TuiSpec extends WordSpec with Matchers{
     "process h" in {
       controller.startNewRound()
       tui.processInput("h")
-      tui.output.contains("Test hits") should be(true)
+      tui.output.contains("Player hits") should be(true)
     }
     "process s" in {
       controller.startNewRound()
       tui.processInput("s")
-      tui.output.contains("Test stands") should be(true)
+      tui.output.contains("Player stands") should be(true)
     }
     "process Scala ist toll!" in {
       tui.processInput("Scala ist toll!")
@@ -39,21 +39,6 @@ class TuiSpec extends WordSpec with Matchers{
       controller.startNewRound()
       tui.processInput("y")
       tui.output.contains("Redo") should be(true)
-    }
-    "process b" in {
-      controller.startNewRound()
-      tui.processInput("b")
-      tui.output.contains("balance") should be(true)
-    }
-    "process create test" in {
-      controller.startNewRound()
-      tui.processInput("create test")
-      tui.output.contains("name") should be(true)
-    }
-    "process n 100" in {
-      controller.startNewRound()
-      tui.processInput("n 100")
-      tui.output.contains("The dealer") should be(true)
     }
     "process exit" in {
       tui.processInput("exit")
@@ -147,12 +132,6 @@ class TuiSpec extends WordSpec with Matchers{
       controller.gameStates = controller.gameStates :+ GameState.REDO
       controller.notifyObservers()
       tui.output.contains("Redo") should be(true)
-    }
-    "display when setting name" in {
-      controller.startNewRound()
-      controller.gameStates = controller.gameStates :+ GameState.NEW_NAME
-      controller.notifyObservers()
-      tui.output.contains("name") should be(true)
     }
     "display when DealerBlackjack" in {
       controller.startNewRound()

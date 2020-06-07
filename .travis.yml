@@ -4,7 +4,6 @@ scala:
   - 2.12.7
 
 script:
-  - cd GameLogic
   - sbt clean coverage test coverageReport
 
 after_success:

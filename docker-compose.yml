@@ -5,6 +5,7 @@ services:
     ports:
       - "9001:9001"
     stdin_open: true
+    container_name: "game-logic"
     environment:
       - PLAYER_MANAGEMENT_HOST=player:9002
     networks:
@@ -16,6 +17,7 @@ services:
     ports:
       - "9002:9002"
     stdin_open: true
+    container_name: "player-management"
     networks:
       default:
         aliases:
