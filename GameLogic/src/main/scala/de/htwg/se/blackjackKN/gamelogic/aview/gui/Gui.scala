@@ -510,8 +510,8 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
 
   override def update: Boolean = {
     var counter: Int = 0
-    for (i <- gamestatesPointer until controller.gameStates.length) {
-      controller.gameStates(i) match {
+    for (i <- gamestatesPointer until controller.gameManager.gameStates.length) {
+      controller.gameManager.gameStates(i) match {
         case GameState.IDLE =>
 
         case GameState.SHUFFLING =>

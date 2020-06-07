@@ -1,11 +1,19 @@
 package de.htwg.se.blackjackKN.gamelogic.model
 
+import de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.GameState
+import de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.GameState.GameState
 import de.htwg.se.blackjackKN.gamelogic.model.cardsComponent.CardInterface
 import de.htwg.se.blackjackKN.gamelogic.model.cardsComponent.cardsBaseImpl.CardDeck
 
 import scala.util.Random
 
-case class GameManager(dealerHand: List[CardInterface] = List[CardInterface](), playerHands: List[List[CardInterface]] = List[List[CardInterface]](), cardDeck: List[CardInterface] = List[CardInterface]()) {
+case class GameManager(
+                        dealerHand: List[CardInterface] = List[CardInterface](),
+                        playerHands: List[List[CardInterface]] = List[List[CardInterface]](),
+                        cardDeck: List[CardInterface] = List[CardInterface](),
+                        gameStates: List[GameState.Value] = List(GameState.IDLE),
+                        revealed: Boolean = false,
+                        currentPlayerInRound: String = "") {
 
   def generateDealerCards: GameManager = {
     val baseCardDeck: List[CardInterface] = CardDeck().cardDeck
@@ -26,11 +34,11 @@ case class GameManager(dealerHand: List[CardInterface] = List[CardInterface](), 
     copy(playerHands = playerHands.updated(playerIndex, playerHand))
   }
 
-  def clearPlayerHand(playerIndex : Int): GameManager = {
-    copy(playerHands = playerHands.updated(playerIndex, List[CardInterface] ()))
+  def clearPlayerHand(playerIndex: Int): GameManager = {
+    copy(playerHands = playerHands.updated(playerIndex, List[CardInterface]()))
   }
 
-  def getPlayerCard(playerIndex : Int, handIndex: Int): CardInterface = {
+  def getPlayerCard(playerIndex: Int, handIndex: Int): CardInterface = {
     playerHands(playerIndex)(handIndex)
   }
 
@@ -46,7 +54,9 @@ case class GameManager(dealerHand: List[CardInterface] = List[CardInterface](), 
     v
   }
 
-  def getLastPlayerHandCard(playerIndex: Int): CardInterface = { playerHands(playerIndex).last }
+  def getLastPlayerHandCard(playerIndex: Int): CardInterface = {
+    playerHands(playerIndex).last
+  }
 
   def clearDealerHand(): GameManager = {
     copy(dealerHand = List[CardInterface]())
@@ -99,7 +109,7 @@ case class GameManager(dealerHand: List[CardInterface] = List[CardInterface](), 
     -1
   }
 
-  def containsCardTypeInPlayerHand(playerIndex: Int,rank: Ranks.Value): Int = {
+  def containsCardTypeInPlayerHand(playerIndex: Int, rank: Ranks.Value): Int = {
     for (i <- playerHands(playerIndex).indices) {
       if (playerHands(playerIndex)(i).rank == rank) {
         return i
@@ -108,9 +118,17 @@ case class GameManager(dealerHand: List[CardInterface] = List[CardInterface](), 
     -1
   }
 
-  def addPlayerToGame(): GameManager = {
+  def addPlayerToGame(playerId: String): GameManager = {
     val newList = playerHands :+ List[CardInterface]()
 
-    copy(playerHands = newList)
+    copy(playerHands = newList, currentPlayerInRound = playerId)
+  }
+
+  def removePlayerFromGame(playerId: String): GameManager = {
+    copy(currentPlayerInRound = "")
+  }
+
+  def pushGameState(gameState: GameState): GameManager = {
+    copy(gameStates = gameStates :+ gameState)
   }
 }

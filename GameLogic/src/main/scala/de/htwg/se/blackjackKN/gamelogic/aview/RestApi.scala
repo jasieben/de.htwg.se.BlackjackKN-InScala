@@ -70,14 +70,14 @@ class RestApi(controller: ControllerInterface) {
   private def newGameRoute(json: JsValue): String = {
     val playerId = (json \ "playerId").as[Int]
     val betValue = (json \ "betValue").as[Int]
-    val currentGamestate = controller.gameStates.size
+    val currentGamestate = controller.gameManager.gameStates.size
     controller.setBet(betValue)
     controller.startNewRound()
 
     val dealerCardsArray = Json.arr(Json.obj("card" -> controller.gameManager.getDealerCard(0).getCardId))
     var revealed = false
 
-    if (controller.gameStates.exists(p => p.equals(GameState.REVEAL))) {
+    if (controller.gameManager.gameStates.exists(p => p.equals(GameState.REVEAL))) {
       revealed = true
     }
 
@@ -93,13 +93,13 @@ class RestApi(controller: ControllerInterface) {
   def hitRoute(json: JsValue): String = {
     val playerId = (json \ "playerId").as[Int]
 
-    val currentGamestate = controller.gameStates.size
+    val currentGamestate = controller.gameManager.gameStates.size
     controller.hitCommand()
 
     val dealerCardsArray = Json.arr(Json.obj("card" -> controller.gameManager.getDealerCard(0).getCardId))
     var revealed = false
 
-    if (controller.gameStates.exists(p => p.equals(GameState.REVEAL))) {
+    if (controller.gameManager.gameStates.exists(p => p.equals(GameState.REVEAL))) {
       revealed = true
     }
 
@@ -115,12 +115,12 @@ class RestApi(controller: ControllerInterface) {
   def standRoute(json: JsValue) : String = {
     val playerId = (json \ "playerId").as[Int]
 
-    val currentGamestate = controller.gameStates.size
+    val currentGamestate = controller.gameManager.gameStates.size
     controller.standCommand()
 
     var revealed = false
 
-    if (controller.gameStates.exists(p => p.equals(GameState.REVEAL))) {
+    if (controller.gameManager.gameStates.exists(p => p.equals(GameState.REVEAL))) {
       revealed = true
     }
 
@@ -151,8 +151,8 @@ class RestApi(controller: ControllerInterface) {
 
   private def gameStatesToJsonArray(startIndex: Int): JsArray = {
     var jsArray: JsArray = JsArray()
-    for (i <- startIndex until controller.gameStates.size - 1) {
-      jsArray = jsArray.append(Json.obj("gameState" -> controller.gameStates(i).toString))
+    for (i <- startIndex until controller.gameManager.gameStates.size - 1) {
+      jsArray = jsArray.append(Json.obj("gameState" -> controller.gameManager.gameStates(i).toString))
     }
     jsArray
   }
