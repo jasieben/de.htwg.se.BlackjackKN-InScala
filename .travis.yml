@@ -7,7 +7,7 @@ script:
   - sbt clean coverage test coverageReport coverageAggregate
 
 after_success:
-  - sbt coverageReport coverageAggregate coveralls
+  - sbt coveralls
 
 notifications:
   email: false
