@@ -22,4 +22,17 @@ services:
       default:
         aliases:
           - player
-    hostname: "player-management"
+  database:
+    image: "postgres"
+    container_name: "database"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_MULTIPLE_DATABASES=playermanagement,gamelogic
+    volumes:
+      - ./scripts/create-multiple-databases.sh:/docker-entrypoint-initdb.d/initdb.sh
+      - db-data:/var/lib/postgresql/data
+volumes:
+  db-data:
