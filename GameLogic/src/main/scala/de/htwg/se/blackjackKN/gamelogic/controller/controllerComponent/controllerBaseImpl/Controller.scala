@@ -55,7 +55,7 @@ class Controller @Inject() extends ControllerInterface {
 
   def startNewRound(): Unit = {
     clearGameStates()
-    gameManager = gameManager.copy(revealed = false).addPlayerToGame("Test")
+    gameManager = gameManager.copy(revealed = false).addPlayerToGame(123)
 
     gameManager = gameManager.clearDealerHand().clearPlayerHand(0)
 

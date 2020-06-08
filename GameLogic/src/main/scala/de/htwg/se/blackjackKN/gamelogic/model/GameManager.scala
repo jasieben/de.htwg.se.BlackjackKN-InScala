@@ -7,13 +7,13 @@ import de.htwg.se.blackjackKN.gamelogic.model.cardsComponent.cardsBaseImpl.CardD
 
 import scala.util.Random
 
-case class GameManager(
+case class GameManager( id: Int,
                         dealerHand: List[CardInterface] = List[CardInterface](),
                         playerHands: List[List[CardInterface]] = List[List[CardInterface]](),
                         cardDeck: List[CardInterface] = List[CardInterface](),
                         gameStates: List[GameState.Value] = List(GameState.IDLE),
                         revealed: Boolean = false,
-                        currentPlayerInRound: String = "") {
+                        currentPlayerInRound: Int = -1) {
 
   def generateDealerCards: GameManager = {
     val baseCardDeck: List[CardInterface] = CardDeck().cardDeck
@@ -118,14 +118,14 @@ case class GameManager(
     -1
   }
 
-  def addPlayerToGame(playerId: String): GameManager = {
+  def addPlayerToGame(playerId: Int): GameManager = {
     val newList = playerHands :+ List[CardInterface]()
 
     copy(playerHands = newList, currentPlayerInRound = playerId)
   }
 
-  def removePlayerFromGame(playerId: String): GameManager = {
-    copy(currentPlayerInRound = "")
+  def removePlayerFromGame(playerId: Int): GameManager = {
+    copy(currentPlayerInRound = -1)
   }
 
   def pushGameState(gameState: GameState): GameManager = {
