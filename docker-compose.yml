@@ -25,6 +25,10 @@ services:
   database:
     image: "postgres"
     container_name: "database"
+    networks:
+      default:
+        aliases:
+          - database
     ports:
       - "5432:5432"
     environment:

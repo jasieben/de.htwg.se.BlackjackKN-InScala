@@ -70,11 +70,18 @@ class RestApi(controller: ControllerInterface) {
   private def newGameRoute(json: JsValue): String = {
     val playerId = (json \ "playerId").as[Int]
     val betValue = (json \ "betValue").as[Int]
+    controller.loadNewGameManager(playerId: Int)
     val currentGamestate = controller.gameManager.gameStates.size
-    controller.setBet(betValue)
-    controller.startNewRound()
+    controller.setBet(playerId, betValue)
+    if (controller.gameManager.gameStates.isEmpty || controller.gameManager.gameStates.last == GameState.BET_FAILED) {
+      return Json.obj(
+        "success" -> false,
+        "msg" -> "Failed to set bet.",
+        "gameStates" -> gameStatesToJsonArray(currentGamestate)
+      ).toString()
+    }
 
-    val dealerCardsArray = Json.arr(Json.obj("card" -> controller.gameManager.getDealerCard(0).getCardId))
+    val dealerCardsArray = Json.arr(Json.obj("card" -> controller.gameManager.getDealerCard(0).toString))
     var revealed = false
 
     if (controller.gameManager.gameStates.exists(p => p.equals(GameState.REVEAL))) {
@@ -93,10 +100,17 @@ class RestApi(controller: ControllerInterface) {
   def hitRoute(json: JsValue): String = {
     val playerId = (json \ "playerId").as[Int]
 
-    val currentGamestate = controller.gameManager.gameStates.size
-    controller.hitCommand()
+    if (!controller.loadGameManager(playerId)) {
+      return Json.obj(
+        "success" -> false,
+        "msg" -> "No game available"
+      ).toString()
+    }
 
-    val dealerCardsArray = Json.arr(Json.obj("card" -> controller.gameManager.getDealerCard(0).getCardId))
+    val currentGamestate = controller.gameManager.gameStates.size
+    controller.hitCommand(playerId)
+
+    val dealerCardsArray = Json.arr(Json.obj("card" -> controller.gameManager.getDealerCard(0).toString))
     var revealed = false
 
     if (controller.gameManager.gameStates.exists(p => p.equals(GameState.REVEAL))) {
@@ -104,7 +118,8 @@ class RestApi(controller: ControllerInterface) {
     }
 
     Json.obj(
-      "hitCard" -> controller.gameManager.getPlayerCard(0, controller.gameManager.getPlayerHandSize(0) - 1).getCardId,
+      "success" -> true,
+      "hitCard" -> controller.gameManager.getPlayerCard(0, controller.gameManager.getPlayerHandSize(0) - 1).toString,
       "dealerCards" -> (if (revealed) getAllDealerCards() else dealerCardsArray),
       "playerCardsValue" -> controller.gameManager.getPlayerHandValue(0),
       "dealerCardsValue" -> controller.gameManager.getDealerHandValue,
@@ -112,11 +127,17 @@ class RestApi(controller: ControllerInterface) {
     ).toString()
   }
 
-  def standRoute(json: JsValue) : String = {
+  def standRoute(json: JsValue): String = {
     val playerId = (json \ "playerId").as[Int]
 
+    if (!controller.loadGameManager(playerId)) {
+      return Json.obj(
+        "success" -> false,
+        "msg" -> "No game available"
+      ).toString()
+    }
     val currentGamestate = controller.gameManager.gameStates.size
-    controller.standCommand()
+    controller.standCommand(playerId)
 
     var revealed = false
 
@@ -125,6 +146,7 @@ class RestApi(controller: ControllerInterface) {
     }
 
     Json.obj(
+      "success" -> true,
       "playerCards" -> getAllPlayerCards(),
       "dealerCards" -> getAllDealerCards(),
       "playerCardsValue" -> controller.gameManager.getPlayerHandValue(0),
@@ -136,7 +158,7 @@ class RestApi(controller: ControllerInterface) {
   private def getAllPlayerCards(): JsArray = {
     var jsArray: JsArray = JsArray()
     for (i <- 0 until controller.gameManager.getPlayerHandSize(0)) {
-      jsArray = jsArray.append(Json.obj("card" -> controller.gameManager.getPlayerCard(0, i).getCardId))
+      jsArray = jsArray.append(Json.obj("card" -> controller.gameManager.getPlayerCard(0, i).toString))
     }
     jsArray
   }
@@ -144,14 +166,14 @@ class RestApi(controller: ControllerInterface) {
   private def getAllDealerCards(): JsArray = {
     var jsArray: JsArray = JsArray()
     for (i <- 0 until controller.gameManager.getDealerHandSize) {
-      jsArray = jsArray.append(Json.obj("card" -> controller.gameManager.getDealerCard(i).getCardId))
+      jsArray = jsArray.append(Json.obj("card" -> controller.gameManager.getDealerCard(i).toString))
     }
     jsArray
   }
 
   private def gameStatesToJsonArray(startIndex: Int): JsArray = {
     var jsArray: JsArray = JsArray()
-    for (i <- startIndex until controller.gameManager.gameStates.size - 1) {
+    for (i <- startIndex until controller.gameManager.gameStates.size) {
       jsArray = jsArray.append(Json.obj("gameState" -> controller.gameManager.gameStates(i).toString))
     }
     jsArray

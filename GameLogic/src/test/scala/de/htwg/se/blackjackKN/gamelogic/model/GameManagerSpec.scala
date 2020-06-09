@@ -8,7 +8,7 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class GameManagerSpec extends WordSpec with Matchers {
   "A Dealer" when {
-    var gameManager = GameManager()
+    var gameManager = GameManager(None)
     "generating Cards" should {
       "give the right amount of cards" in {
         gameManager = gameManager.generateDealerCards

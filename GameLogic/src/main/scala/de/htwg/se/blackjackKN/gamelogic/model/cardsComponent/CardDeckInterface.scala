@@ -1,6 +1,6 @@
 package de.htwg.se.blackjackKN.gamelogic.model.cardsComponent
 
-trait CardDeckInterface {
+trait CardDeckInterface extends Serializable {
   val cardDeck: List[CardInterface]
 
   def generateNumberCards: List[CardInterface]

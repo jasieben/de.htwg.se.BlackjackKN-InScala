@@ -7,7 +7,7 @@ import de.htwg.se.blackjackKN.gamelogic.model.cardsComponent.cardsBaseImpl.CardD
 
 import scala.util.Random
 
-case class GameManager( id: Int,
+case class GameManager( id: Option[Int] = None,
                         dealerHand: List[CardInterface] = List[CardInterface](),
                         playerHands: List[List[CardInterface]] = List[List[CardInterface]](),
                         cardDeck: List[CardInterface] = List[CardInterface](),

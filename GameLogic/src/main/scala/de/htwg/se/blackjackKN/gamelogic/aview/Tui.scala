@@ -107,9 +107,9 @@ class Tui(controller: ControllerInterface) extends Observer {
       case "Scala ist toll!" =>
         println("Sag mir was neues\n (☞ﾟヮﾟ)☞ ")
       case "h" =>
-        controller.hitCommand()
+        controller.hitCommand(123)
       case "s" =>
-        controller.standCommand()
+        controller.standCommand(123)
       case "z" =>
         controller.undo()
       case "y" =>
@@ -134,8 +134,7 @@ class Tui(controller: ControllerInterface) extends Observer {
         }
       case betRegEx(_*) =>
         val number = input.replaceAll("n ", "")
-        controller.setBet(number.toInt)
-        controller.startNewRound()
+        controller.setBet(123 ,number.toInt)
       case "exit" =>
         output = "Exiting game..."
         print()

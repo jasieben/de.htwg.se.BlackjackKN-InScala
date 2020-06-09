@@ -10,6 +10,7 @@ import de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.GameState
 import de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.{ControllerInterface, GameState}
 import de.htwg.se.blackjackKN.gamelogic.model.{GameManager, Ranks, Suits}
 import de.htwg.se.blackjackKN.gamelogic.model.cardsComponent.cardsBaseImpl.FaceCard
+import de.htwg.se.blackjackKN.gamelogic.model.persistenceManagerComponent.GameManagerPersistenceInterface
 import de.htwg.se.blackjackKN.gamelogic.util.UndoManager
 import play.api.libs.json.{JsValue, Json}
 
@@ -22,7 +23,8 @@ class Controller @Inject() extends ControllerInterface {
   val playerManagementServiceUrl = s"http://$environmentPlayerManagementHost/"
 
   val injector: Injector = Guice.createInjector(new BlackjackModule)
-  var gameManager: GameManager = GameManager()
+  val gameManagerPersistence: GameManagerPersistenceInterface = injector.getInstance(classOf[GameManagerPersistenceInterface])
+  var gameManager: GameManager = GameManager(None)
   var aceStrategy: AceStrategy = new AceStrategy11
   val undoManager = new UndoManager
 
@@ -49,16 +51,34 @@ class Controller @Inject() extends ControllerInterface {
     }
   }
 
+  def loadGameManager(playerId: Int): Boolean = {
+    val gameManagerOption = gameManagerPersistence.load(playerId)
+    if (gameManagerOption.nonEmpty) {
+      gameManager = gameManagerOption.get
+      true
+    } else {
+      false
+    }
+  }
+
+  def loadNewGameManager(playerId: Int): Unit = {
+    // Load a new Session
+    // TODO: Check if player already has a game
+    val gameManagerOption = gameManagerPersistence.loadEmptySession()
+    if (gameManagerOption.nonEmpty) {
+      gameManager = gameManagerOption.get.addPlayerToGame(playerId)
+      gameManagerPersistence.update(gameManager)
+    } else {
+      val newGameManager = GameManager().generateDealerCards.addPlayerToGame(playerId)
+      gameManager = gameManagerPersistence.create(newGameManager)
+    }
+  }
+
   def startGame(): Unit = {
     gameManager = gameManager.generateDealerCards
   }
 
-  def startNewRound(): Unit = {
-    clearGameStates()
-    gameManager = gameManager.copy(revealed = false).addPlayerToGame(123)
-
-    gameManager = gameManager.clearDealerHand().clearPlayerHand(0)
-
+  def startNewRound(playerId: Int, gameId: Option[Int] = None): Unit = {
     if (gameManager.getCardDeckSize <= 52) {
       gameManager = gameManager.pushGameState(GameState.SHUFFLING)
       gameManager = gameManager.renewCardDeck()
@@ -71,6 +91,7 @@ class Controller @Inject() extends ControllerInterface {
     gameManager = gameManager.pushGameState(GameState.FIRST_ROUND)
     checkForAces()
     evaluate()
+    gameManagerPersistence.update(gameManager)
     notifyObservers()
   }
 
@@ -84,8 +105,7 @@ class Controller @Inject() extends ControllerInterface {
     }
   }
 
-  def setBet(value: Int): Unit = {
-    val playerId = 123
+  def setBet(playerId: Int, value: Int): Unit = {
     val json = Json.obj(
       "betValue" -> value
     ).toString()
@@ -98,6 +118,7 @@ class Controller @Inject() extends ControllerInterface {
     if (success) {
       gameManager = gameManager.pushGameState(GameState.BET_SET)
       notifyObservers()
+      startNewRound(playerId)
     } else {
       gameManager = gameManager.pushGameState(GameState.BET_FAILED)
       notifyObservers()
@@ -117,14 +138,18 @@ class Controller @Inject() extends ControllerInterface {
     evaluate()
   }
 
-  def hitCommand(): Unit = {
+  def hitCommand(playerId: Int): Boolean = {
     undoManager.doStep(new HitCommand(this))
+    this.gameManagerPersistence.update(gameManager)
     notifyObservers()
+    true
   }
 
-  def standCommand(): Unit = {
+  def standCommand(playerId: Int): Boolean = {
     undoManager.doStep(new StandCommand(this))
+    this.gameManagerPersistence.update(gameManager)
     notifyObservers()
+    true
   }
 
   def undo(): Unit = {
@@ -215,10 +240,13 @@ class Controller @Inject() extends ControllerInterface {
       .onComplete {
         case Success(res) =>
           println(res.entity)
-          gameManager = gameManager.removePlayerFromGame(gameManager.currentPlayerInRound)
+          var finishedGameManager = clearGameStates().removePlayerFromGame(gameManager.currentPlayerInRound)
+            .copy(revealed = false).clearDealerHand().clearPlayerHand(0)
+
+          gameManagerPersistence.update(finishedGameManager)
         case Failure(_) => sys.error("Could not resolve bet")
       }
   }
 
-  def clearGameStates(): Unit = gameManager = gameManager.copy(gameStates = List[GameState]())
+  def clearGameStates(): GameManager = gameManager.copy(gameStates = List[GameState]())
 }
