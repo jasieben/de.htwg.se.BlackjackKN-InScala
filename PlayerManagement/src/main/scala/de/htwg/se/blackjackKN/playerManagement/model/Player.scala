@@ -1,8 +1,8 @@
 package de.htwg.se.blackjackKN.playerManagement.model
 
-case class Player(id: Int = 5,
+case class Player(id: Option[Int] = None,
                   name: String = "Test",
-                  balance: Int = 1000, bet: Option[Bet] = Option(Bet(0))) {
+                  balance: Int = 1000, bet: Option[Bet] = None) {
 
   def changeBalance(newBalance: Int): Player = {
     copy(balance = newBalance)
@@ -12,7 +12,7 @@ case class Player(id: Int = 5,
 
   def newBet(value: Int): Player = {
     if (value <= balance) {
-      copy(balance = balance - value, bet = Option(Bet(value)))
+      copy(balance = balance - value, bet = Option(Bet(value = value)))
     } else {
       copy(bet = None)
     }
