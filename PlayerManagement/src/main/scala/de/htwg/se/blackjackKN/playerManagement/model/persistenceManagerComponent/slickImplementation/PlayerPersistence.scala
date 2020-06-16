@@ -29,7 +29,7 @@ class PlayerPersistence extends PlayerPersistenceInterface {
   override def create(player: Player): Player = {
     val gameIdQuery = (players returning players.map(_.id)) += (None, player.name, player.balance, Some(0))
     val gameId = Await.result(db.run(gameIdQuery), Duration("10s"))
-    player.copy(id = Some(gameId))
+    player.copy(id = Some(gameId.toString))
   }
 
   override def update(player: Player): Unit = {
@@ -47,14 +47,14 @@ class PlayerPersistence extends PlayerPersistenceInterface {
         db.run(updateBetQ)
       }
     }
-    val q = players.filter(_.id === player.id)
-    val updateAction = q.update((Some(player.id.get), player.name, player.balance, if (betId == -1) None else Some(betId)))
+    val q = players.filter(_.id === player.id.get.toInt)
+    val updateAction = q.update((Some(player.id.get.toInt), player.name, player.balance, if (betId == -1) None else Some(betId)))
     db.run(updateAction)
   }
 
   override def load(playerId: String): Option[Player] = {
     var bet: Option[Bet] = None
-    val query = players.filter(_.id === playerId)
+    val query = players.filter(_.id === playerId.toInt)
     val playerTuple = Await.result(db.run(query.result.headOption), Duration("10s"))
     if (playerTuple.isEmpty) {
       return None
@@ -67,11 +67,11 @@ class PlayerPersistence extends PlayerPersistenceInterface {
         bet = Some(betOption.get)
       }
     }
-    Some(Player(playerTuple.get._1, playerTuple.get._2, playerTuple.get._3, bet))
+    Some(Player(Some(playerTuple.get._1.get.toString), playerTuple.get._2, playerTuple.get._3, bet))
   }
 
   override def delete(player: Player): Unit = {
-    val q = players.filter(_.id === player.id).delete
+    val q = players.filter(_.id === player.id.get.toInt).delete
     db.run(q)
   }
 }

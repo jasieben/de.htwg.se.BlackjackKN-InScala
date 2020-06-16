@@ -231,11 +231,11 @@ class Controller @Inject() extends ControllerInterface {
     gameManager = gameManager.pushGameState(GameState.IDLE)
   }
 
-  def evaluateBet(gameState: GameState, playerIndex: Int): Unit = {
+  def evaluateBet(gameState: GameState, playerId: Int): Unit = {
     val json = Json.obj(
       "gameState" -> gameState.toString
     ).toString()
-    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(HttpMethods.PUT, uri = playerManagementServiceUrl + s"player/$playerIndex/bet/resolve", entity = HttpEntity.apply(json)))
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(HttpMethods.PUT, uri = playerManagementServiceUrl + s"player/${gameManager.currentPlayerInRound}/bet/resolve", entity = HttpEntity.apply(json)))
     responseFuture
       .onComplete {
         case Success(res) =>
