@@ -33,7 +33,6 @@ class GameManagerPersistence extends GameManagerPersistenceInterface {
   override def create(gameManager: GameManager): GameManager = {
 
     val newGameManager = gameManager.copy(id = Some(ObjectId.get().toString))
-    println(newGameManager.id)
     sessions.insertOne(newGameManager).toFuture()
     newGameManager
   }

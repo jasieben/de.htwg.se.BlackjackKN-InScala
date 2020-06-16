@@ -1,6 +1,8 @@
 package de.htwg.se.blackjackKN.playerManagement.model
 
-case class Player(id: Option[String] = None,
+import org.mongodb.scala.bson.annotations.BsonProperty
+
+case class Player(@BsonProperty("_id") id: Option[String] = None,
                   name: String = "Test",
                   balance: Int = 1000, bet: Option[Bet] = None) {
 

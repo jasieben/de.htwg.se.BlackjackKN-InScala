@@ -5,7 +5,7 @@ import de.htwg.se.blackjackKN.playerManagement.model.fileioComponent.FileIOInter
 import de.htwg.se.blackjackKN.playerManagement.model.fileioComponent.fileioJSONImpl.FileIO
 import de.htwg.se.blackjackKN.playerManagement.model.fileioComponent._
 import de.htwg.se.blackjackKN.playerManagement.model.persistenceManagerComponent.PlayerPersistenceInterface
-import de.htwg.se.blackjackKN.playerManagement.model.persistenceManagerComponent.slickImplementation.PlayerPersistence
+import de.htwg.se.blackjackKN.playerManagement.model.persistenceManagerComponent.mongodbImplementation.PlayerPersistence
 import net.codingwell.scalaguice.ScalaModule
 
 class PlayerManagmentModule extends AbstractModule with ScalaModule {
