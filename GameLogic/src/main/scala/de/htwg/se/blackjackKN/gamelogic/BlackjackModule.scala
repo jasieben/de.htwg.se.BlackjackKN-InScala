@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule
 import de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.ControllerInterface
 import de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.controllerBaseImpl.Controller
 import de.htwg.se.blackjackKN.gamelogic.model.persistenceManagerComponent.GameManagerPersistenceInterface
-import de.htwg.se.blackjackKN.gamelogic.model.persistenceManagerComponent.slickImplementation.GameManagerPersistence
+import de.htwg.se.blackjackKN.gamelogic.model.persistenceManagerComponent.mongodbImplementation.GameManagerPersistence
 import net.codingwell.scalaguice.ScalaModule
 
 class BlackjackModule extends AbstractModule with ScalaModule {

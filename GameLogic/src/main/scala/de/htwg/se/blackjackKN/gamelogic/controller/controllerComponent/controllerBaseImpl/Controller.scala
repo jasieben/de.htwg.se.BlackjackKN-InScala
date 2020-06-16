@@ -51,7 +51,7 @@ class Controller @Inject() extends ControllerInterface {
     }
   }
 
-  def loadGameManager(playerId: Int): Boolean = {
+  def loadGameManager(playerId: String): Boolean = {
     val gameManagerOption = gameManagerPersistence.load(playerId)
     if (gameManagerOption.nonEmpty) {
       gameManager = gameManagerOption.get
@@ -61,7 +61,7 @@ class Controller @Inject() extends ControllerInterface {
     }
   }
 
-  def loadNewGameManager(playerId: Int): Unit = {
+  def loadNewGameManager(playerId: String): Unit = {
     // Load a new Session
     // TODO: Check if player already has a game
     val gameManagerOption = gameManagerPersistence.loadEmptySession()
@@ -78,7 +78,7 @@ class Controller @Inject() extends ControllerInterface {
     gameManager = gameManager.generateDealerCards
   }
 
-  def startNewRound(playerId: Int, gameId: Option[Int] = None): Unit = {
+  def startNewRound(playerId: String, gameId: Option[String] = None): Unit = {
     if (gameManager.getCardDeckSize <= 52) {
       gameManager = gameManager.pushGameState(GameState.SHUFFLING)
       gameManager = gameManager.renewCardDeck()
@@ -105,7 +105,7 @@ class Controller @Inject() extends ControllerInterface {
     }
   }
 
-  def setBet(playerId: Int, value: Int): Unit = {
+  def setBet(playerId: String, value: Int): Unit = {
     val json = Json.obj(
       "betValue" -> value
     ).toString()
@@ -138,14 +138,14 @@ class Controller @Inject() extends ControllerInterface {
     evaluate()
   }
 
-  def hitCommand(playerId: Int): Boolean = {
+  def hitCommand(playerId: String): Boolean = {
     undoManager.doStep(new HitCommand(this))
     this.gameManagerPersistence.update(gameManager)
     notifyObservers()
     true
   }
 
-  def standCommand(playerId: Int): Boolean = {
+  def standCommand(playerId: String): Boolean = {
     undoManager.doStep(new StandCommand(this))
     this.gameManagerPersistence.update(gameManager)
     notifyObservers()

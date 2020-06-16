@@ -6,10 +6,10 @@ import slick.jdbc.JdbcType
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.ProvenShape
 
-class Players(tag: Tag) extends Table[(Option[Int], String, Int, Option[Int])](tag, "players") {
+class Players(tag: Tag) extends Table[(Option[String], String, Int, Option[Int])](tag, "players") {
   val bets = TableQuery[Bets]
 
-  def id = column[Int]("id", O.PrimaryKey, O.AutoInc, O.SqlType("BIGSERIAL"))
+  def id = column[String]("id", O.PrimaryKey, O.AutoInc, O.SqlType("BIGSERIAL"))
 
   def name = column[String]("name")
 

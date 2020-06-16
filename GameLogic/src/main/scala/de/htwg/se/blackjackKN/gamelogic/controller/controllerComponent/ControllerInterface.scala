@@ -14,16 +14,16 @@ trait ControllerInterface extends Observable {
 
   def redo(): Unit
 
-  def hitCommand(playerId:Int): Boolean
+  def hitCommand(playerId: String): Boolean
 
-  def loadGameManager(playerId: Int): Boolean
+  def loadGameManager(playerId: String): Boolean
 
-  def loadNewGameManager(playerId: Int): Unit
+  def loadNewGameManager(playerId: String): Unit
 
-  def standCommand(playerId:Int): Boolean
+  def standCommand(playerId: String): Boolean
 
-  def setBet(playerId:Int, value: Int): Unit
+  def setBet(playerId: String, value: Int): Unit
 
-  def startNewRound(playerId: Int, gameId: Option[Int] = None): Unit
+  def startNewRound(playerId: String, gameId: Option[String] = None): Unit
 
 }

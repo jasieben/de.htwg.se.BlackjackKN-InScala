@@ -7,9 +7,7 @@ trait GameManagerPersistenceInterface {
 
   def update(gameManager: GameManager): Unit
 
-  def load(gameManagerId: Int, playerId: Option[Int] = None): Option[GameManager]
-
-  def load(playerId: Int): Option[GameManager]
+  def load(playerId: String): Option[GameManager]
 
   def loadEmptySession(): Option[GameManager]
 

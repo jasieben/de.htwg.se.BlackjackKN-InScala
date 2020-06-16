@@ -125,13 +125,13 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
     val hitButton: Button = new Button {
       text = "Hit"
       onAction = handle {
-        controller.hitCommand(123)
+        controller.hitCommand("123")
       }
     }
     val standButton: Button = new Button {
       text = "Stand"
       onAction = handle {
-        controller.standCommand(123)
+        controller.standCommand("123")
       }
     }
     val newRoundButton: Button = new Button {

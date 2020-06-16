@@ -50,3 +50,5 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies += "org.postgresql" % "postgresql" % "42.2.13"
+
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.9.0"

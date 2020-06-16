@@ -1,6 +1,6 @@
 package de.htwg.se.blackjackKN.playerManagement.model
 
-case class Player(id: Option[Int] = None,
+case class Player(id: Option[String] = None,
                   name: String = "Test",
                   balance: Int = 1000, bet: Option[Bet] = None) {
 

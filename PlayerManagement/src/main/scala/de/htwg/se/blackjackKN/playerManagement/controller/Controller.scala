@@ -19,7 +19,7 @@ class Controller {
 
   var player: Player = Player()
 
-  def loadPlayer(playerId: Int): Option[Player] = {
+  def loadPlayer(playerId: String): Option[Player] = {
     playerPersistence.load(playerId)
   }
 
@@ -35,7 +35,7 @@ class Controller {
     ).toString()
   }
 
-  def getPlayer(id: Int): String = {
+  def getPlayer(id: String): String = {
     val playerOption = loadPlayer(id)
     if (playerOption.isEmpty) {
       return Json.obj(
@@ -52,7 +52,7 @@ class Controller {
     ).toString()
   }
 
-  def newBet(playerId: Int, data: JsValue): String = {
+  def newBet(playerId: String, data: JsValue): String = {
     val betValue: Int = (data \ "betValue").as[Int]
     val playerOption = loadPlayer(playerId)
     if (playerOption.isEmpty) {
@@ -80,7 +80,7 @@ class Controller {
     }
   }
 
-  def resolveBet(playerId: Int, data: JsValue): String = {
+  def resolveBet(playerId: String, data: JsValue): String = {
     val gameState: String = (data \ "gameState").as[String]
     val playerOption = loadPlayer(playerId)
     if (playerOption.isEmpty) {
@@ -91,7 +91,7 @@ class Controller {
     }
     player = playerOption.get
     val endState = EndState.withName(gameState)
-    this.push.handleRequest(endState, player)
+    player = this.push.handleRequest(endState, player)
     playerPersistence.update(player)
     Json.obj(
       "success" -> true,

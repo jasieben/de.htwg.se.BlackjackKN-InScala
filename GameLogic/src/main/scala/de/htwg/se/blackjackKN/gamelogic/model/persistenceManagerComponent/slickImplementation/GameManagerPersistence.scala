@@ -34,21 +34,13 @@ class GameManagerPersistence extends GameManagerPersistenceInterface {
     db.run(updateAction)
   }
 
-  override def load(gameManagerId: Int, playerId: Option[Int] = None): Option[GameManager] = {
-    val query = sessions.filter(_.id === gameManagerId)
-    if (playerId.nonEmpty) {
-      query.filter(_.currentPlayerInRound === playerId.get)
-    }
-    Await.result(db.run(query.result.headOption), Duration("10s"))
-  }
-
-  override def load(playerId: Int): Option[GameManager] = {
+  override def load(playerId: String): Option[GameManager] = {
     val query = sessions.filter(_.currentPlayerInRound === playerId)
     Await.result(db.run(query.result.headOption), Duration("10s"))
   }
 
   override def loadEmptySession(): Option[GameManager] = {
-    val query = sessions.filter(_.currentPlayerInRound === -1)
+    val query = sessions.filter(_.currentPlayerInRound === "")
     Await.result(db.run(query.result.headOption), Duration("10s"))
   }
 

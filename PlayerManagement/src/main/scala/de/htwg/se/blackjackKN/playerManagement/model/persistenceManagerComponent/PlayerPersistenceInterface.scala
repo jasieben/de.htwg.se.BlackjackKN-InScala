@@ -7,7 +7,7 @@ trait PlayerPersistenceInterface {
 
   def update(player: Player): Unit
 
-  def load(playerId: Int): Option[Player]
+  def load(playerId: String): Option[Player]
 
   def delete(player: Player)
 }

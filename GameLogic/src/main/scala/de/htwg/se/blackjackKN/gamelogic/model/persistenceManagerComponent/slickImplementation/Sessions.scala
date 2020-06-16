@@ -10,7 +10,7 @@ import slick.jdbc.JdbcType
 import slick.lifted.ProvenShape
 
 class Sessions(tag: Tag) extends Table[GameManager](tag, "sessions") {
-  def id = column[Int]("id", O.PrimaryKey, O.AutoInc, O.SqlType("BIGSERIAL"))
+  def id = column[String]("id", O.PrimaryKey, O.AutoInc, O.SqlType("BIGSERIAL"))
 
   def dealerHand = column[List[CardInterface]]("dealerhand")
 
@@ -22,7 +22,7 @@ class Sessions(tag: Tag) extends Table[GameManager](tag, "sessions") {
 
   def revealed = column[Boolean]("revealed")
 
-  def currentPlayerInRound = column[Int]("currentplayerinroud")
+  def currentPlayerInRound = column[String]("currentplayerinroud")
 
   // Every table needs a * projection with the same type as the table's type parameter
   def * : ProvenShape[GameManager] = (id.?, dealerHand, playerHands, cardDeck, gameStates, revealed, currentPlayerInRound).mapTo[GameManager]

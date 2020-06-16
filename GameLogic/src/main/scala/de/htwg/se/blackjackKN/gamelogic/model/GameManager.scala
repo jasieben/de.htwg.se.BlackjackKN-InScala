@@ -4,16 +4,18 @@ import de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.GameState
 import de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.GameState.GameState
 import de.htwg.se.blackjackKN.gamelogic.model.cardsComponent.CardInterface
 import de.htwg.se.blackjackKN.gamelogic.model.cardsComponent.cardsBaseImpl.CardDeck
+import org.bson.types.ObjectId
+import org.mongodb.scala.bson.annotations.BsonProperty
 
 import scala.util.Random
 
-case class GameManager( id: Option[Int] = None,
-                        dealerHand: List[CardInterface] = List[CardInterface](),
-                        playerHands: List[List[CardInterface]] = List[List[CardInterface]](),
-                        cardDeck: List[CardInterface] = List[CardInterface](),
-                        gameStates: List[GameState.Value] = List(GameState.IDLE),
-                        revealed: Boolean = false,
-                        currentPlayerInRound: Int = -1) {
+case class GameManager(@BsonProperty("_id") id: Option[String] = None,
+                       dealerHand: List[CardInterface] = List[CardInterface](),
+                       playerHands: List[List[CardInterface]] = List[List[CardInterface]](),
+                       cardDeck: List[CardInterface] = List[CardInterface](),
+                       gameStates: List[GameState.Value] = List(GameState.IDLE),
+                       revealed: Boolean = false,
+                       currentPlayerInRound: String = "") {
 
   def generateDealerCards: GameManager = {
     val baseCardDeck: List[CardInterface] = CardDeck().cardDeck
@@ -118,14 +120,14 @@ case class GameManager( id: Option[Int] = None,
     -1
   }
 
-  def addPlayerToGame(playerId: Int): GameManager = {
+  def addPlayerToGame(playerId: String): GameManager = {
     val newList = playerHands :+ List[CardInterface]()
 
     copy(playerHands = newList, currentPlayerInRound = playerId)
   }
 
-  def removePlayerFromGame(playerId: Int): GameManager = {
-    copy(currentPlayerInRound = -1)
+  def removePlayerFromGame(playerId: String): GameManager = {
+    copy(currentPlayerInRound = "")
   }
 
   def pushGameState(gameState: GameState): GameManager = {

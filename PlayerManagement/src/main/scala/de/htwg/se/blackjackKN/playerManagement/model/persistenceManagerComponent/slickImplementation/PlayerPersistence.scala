@@ -52,7 +52,7 @@ class PlayerPersistence extends PlayerPersistenceInterface {
     db.run(updateAction)
   }
 
-  override def load(playerId: Int): Option[Player] = {
+  override def load(playerId: String): Option[Player] = {
     var bet: Option[Bet] = None
     val query = players.filter(_.id === playerId)
     val playerTuple = Await.result(db.run(query.result.headOption), Duration("10s"))

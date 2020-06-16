@@ -68,9 +68,9 @@ class RestApi(controller: ControllerInterface) {
   }
 
   private def newGameRoute(json: JsValue): String = {
-    val playerId = (json \ "playerId").as[Int]
+    val playerId = (json \ "playerId").as[String]
     val betValue = (json \ "betValue").as[Int]
-    controller.loadNewGameManager(playerId: Int)
+    controller.loadNewGameManager(playerId)
     val currentGamestate = controller.gameManager.gameStates.size
     controller.setBet(playerId, betValue)
     if (controller.gameManager.gameStates.isEmpty || controller.gameManager.gameStates.last == GameState.BET_FAILED) {
@@ -98,7 +98,7 @@ class RestApi(controller: ControllerInterface) {
   }
 
   def hitRoute(json: JsValue): String = {
-    val playerId = (json \ "playerId").as[Int]
+    val playerId = (json \ "playerId").as[String]
 
     if (!controller.loadGameManager(playerId)) {
       return Json.obj(
@@ -128,7 +128,7 @@ class RestApi(controller: ControllerInterface) {
   }
 
   def standRoute(json: JsValue): String = {
-    val playerId = (json \ "playerId").as[Int]
+    val playerId = (json \ "playerId").as[String]
 
     if (!controller.loadGameManager(playerId)) {
       return Json.obj(
