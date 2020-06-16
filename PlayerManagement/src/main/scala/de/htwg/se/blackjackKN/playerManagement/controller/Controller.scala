@@ -89,11 +89,9 @@ class Controller {
         "msg" -> s"Player with $playerId could not be found"
       ).toString()
     }
-    println(playerOption.get.balance)
     player = playerOption.get
     val endState = EndState.withName(gameState)
     player = this.push.handleRequest(endState, player)
-    println(player.balance)
     playerPersistence.update(player)
     Json.obj(
       "success" -> true,

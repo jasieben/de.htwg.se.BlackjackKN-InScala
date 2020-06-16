@@ -33,14 +33,11 @@ class PlayerPersistence extends PlayerPersistenceInterface {
   }
 
   override def update(player: Player): Unit = {
-    val future = players.updateOne(equal("_id", player.id.getOrElse(throw new RuntimeException("Can't update element without Id"))), Seq(
+    players.updateOne(equal("_id", player.id.getOrElse(throw new RuntimeException("Can't update element without Id"))), Seq(
       set("name", player.name),
       set("balance", player.balance),
       set("bet", player.bet.get)))
       .toFuture()
-    val result = Await.result(future, Duration("10s"))
-    println(result.toString)
-
   }
 
   override def load(playerId: String): Option[Player] = {
