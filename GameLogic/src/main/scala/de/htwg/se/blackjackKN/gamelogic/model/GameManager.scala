@@ -127,7 +127,8 @@ case class GameManager(@BsonProperty("_id") id: Option[String] = None,
   }
 
   def removePlayerFromGame(playerId: String): GameManager = {
-    copy(currentPlayerInRound = "")
+    val newList = playerHands.drop(0)
+    copy(currentPlayerInRound = "", playerHands = newList)
   }
 
   def pushGameState(gameState: GameState): GameManager = {

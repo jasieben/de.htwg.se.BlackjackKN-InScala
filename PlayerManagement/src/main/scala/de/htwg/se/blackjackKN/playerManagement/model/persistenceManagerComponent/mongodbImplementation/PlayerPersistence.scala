@@ -33,10 +33,15 @@ class PlayerPersistence extends PlayerPersistenceInterface {
   }
 
   override def update(player: Player): Unit = {
-    players.updateOne(equal("_id", player.id.getOrElse(throw new RuntimeException("Can't update element without Id"))), Seq(
+    var seq = Seq(
       set("name", player.name),
-      set("balance", player.balance),
-      set("bet", player.bet.get)))
+      set("balance", player.balance))
+
+    if (player.bet.nonEmpty) {
+      seq = seq :+ set("bet", player.bet.get)
+    }
+
+    players.updateOne(equal("_id", player.id.getOrElse(throw new RuntimeException("Can't update element without Id"))), seq)
       .toFuture()
   }
 

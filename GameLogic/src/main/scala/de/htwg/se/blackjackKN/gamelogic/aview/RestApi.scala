@@ -70,6 +70,13 @@ class RestApi(controller: ControllerInterface) {
   private def newGameRoute(json: JsValue): String = {
     val playerId = (json \ "playerId").as[String]
     val betValue = (json \ "betValue").as[Int]
+    if (controller.loadGameManager(playerId)) {
+      return Json.obj(
+        "success" -> false,
+        "msg" -> "Player already has a game in progress.",
+        "sessionId" -> controller.gameManager.id
+      ).toString()
+    }
     controller.loadNewGameManager(playerId)
     val currentGamestate = controller.gameManager.gameStates.size
     controller.setBet(playerId, betValue)

@@ -63,7 +63,6 @@ class Controller @Inject() extends ControllerInterface {
 
   def loadNewGameManager(playerId: String): Unit = {
     // Load a new Session
-    // TODO: Check if player already has a game
     val gameManagerOption = gameManagerPersistence.loadEmptySession()
     if (gameManagerOption.nonEmpty) {
       gameManager = gameManagerOption.get.addPlayerToGame(playerId)
@@ -240,8 +239,8 @@ class Controller @Inject() extends ControllerInterface {
       .onComplete {
         case Success(res) =>
           println(res.entity)
-          var finishedGameManager = clearGameStates().removePlayerFromGame(gameManager.currentPlayerInRound)
-            .copy(revealed = false).clearDealerHand().clearPlayerHand(0)
+          var finishedGameManager = clearGameStates().copy(revealed = false).clearDealerHand()
+            .clearPlayerHand(0).removePlayerFromGame(gameManager.currentPlayerInRound)
 
           gameManagerPersistence.update(finishedGameManager)
         case Failure(_) => sys.error("Could not resolve bet")
