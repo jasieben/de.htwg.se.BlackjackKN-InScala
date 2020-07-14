@@ -125,13 +125,13 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
     val hitButton: Button = new Button {
       text = "Hit"
       onAction = handle {
-        controller.hitCommand()
+        controller.hitCommand("123")
       }
     }
     val standButton: Button = new Button {
       text = "Stand"
       onAction = handle {
-        controller.standCommand()
+        controller.standCommand("123")
       }
     }
     val newRoundButton: Button = new Button {
@@ -510,8 +510,8 @@ class Gui(controller: ControllerInterface) extends JFXApp with Observer {
 
   override def update: Boolean = {
     var counter: Int = 0
-    for (i <- gamestatesPointer until controller.gameStates.length) {
-      controller.gameStates(i) match {
+    for (i <- gamestatesPointer until controller.gameManager.gameStates.length) {
+      controller.gameManager.gameStates(i) match {
         case GameState.IDLE =>
 
         case GameState.SHUFFLING =>

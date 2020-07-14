@@ -14,7 +14,7 @@ class BetHandlerSpec extends WordSpec with Matchers{
     val blackjack = new BlackjackHandler(Option(loose))
     val push = new PushHandler(Option(blackjack))
   "handle Winning Request" in {
-    val player = Player(bet = Option(Bet(100)))
+    val player = Player(bet = Option(Bet(None, 100)))
 
     push.handleRequest(EndState.PLAYER_WINS, player).balance should be (1200)
   }

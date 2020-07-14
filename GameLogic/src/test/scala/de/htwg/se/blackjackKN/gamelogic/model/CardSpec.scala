@@ -20,7 +20,7 @@ class CardSpec extends WordSpec with Matchers {
         testCard.rank should be(Ranks.King)
       }
       "have a nice String representation" in {
-        testCard.toString should be("King of Diamonds")
+        testCard.toString should be("KD")
       }
     }
   }

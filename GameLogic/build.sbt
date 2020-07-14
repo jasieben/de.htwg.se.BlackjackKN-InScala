@@ -6,6 +6,8 @@ scalaVersion  := "2.12.4"
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.5"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 
+coverageExcludedPackages := ".*gui.*"
+
 libraryDependencies += "org.scalafx" %% "scalafx" % "12.0.2-R18"
 lazy val osName = System.getProperty("os.name") match {
   case n if n.startsWith("Linux")   => "linux"
@@ -40,3 +42,13 @@ libraryDependencies += "com.typesafe.play" %% "play-json" % "2.6.6"
 libraryDependencies += "com.typesafe.akka" %% "akka-http"   % "10.1.12"
 libraryDependencies += "com.typesafe.akka" %% "akka-stream" % "2.6.5"
 libraryDependencies += "de.heikoseeberger" %% "akka-http-play-json" % "1.32.0"
+
+libraryDependencies ++= Seq(
+  "com.typesafe.slick" %% "slick" % "3.3.1",
+  "org.slf4j" % "slf4j-nop" % "1.7.26",
+  "com.typesafe.slick" %% "slick-hikaricp" % "3.3.1"
+)
+
+libraryDependencies += "org.postgresql" % "postgresql" % "42.2.13"
+
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.9.0"

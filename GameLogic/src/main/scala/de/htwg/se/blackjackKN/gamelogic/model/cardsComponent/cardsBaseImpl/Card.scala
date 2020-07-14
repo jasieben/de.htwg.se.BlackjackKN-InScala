@@ -3,16 +3,14 @@ package de.htwg.se.blackjackKN.gamelogic.model.cardsComponent.cardsBaseImpl
 import de.htwg.se.blackjackKN.gamelogic.model.{Ranks, Suits}
 import de.htwg.se.blackjackKN.gamelogic.model.cardsComponent.CardInterface
 
-abstract class Card extends CardInterface{
+abstract class Card extends CardInterface with Serializable {
   val suit : Suits.Value
   val rank: Any
   val value : Int
 
-  override def toString: String = {rank + " of " + suit}
-
   val suits: List[Suits.Value] = List(Suits.Hearts, Suits.Clubs, Suits.Diamonds, Suits.Spades)
 
-  def getCardId: String = {
+  override def toString: String = {
     var id = ""
     rank match {
       case Ranks.Ace =>
@@ -40,6 +38,6 @@ abstract class Card extends CardInterface{
   }
 
   def getBackgroundImageFileName : String = {
-    s"$getCardId.png"
+    s"$toString.png"
   }
 }

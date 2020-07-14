@@ -1,6 +1,6 @@
 package de.htwg.se.blackjackKN.gamelogic.model.cardsComponent.cardsBaseImpl
 
-import de.htwg.se.blackjackKN.gamelogic.model.Suits
+import de.htwg.se.blackjackKN.gamelogic.model.{Ranks, Suits}
 
 case class NumberCard(suit: Suits.Value = Suits.Spades, rank: Int = 10) extends Card {
 

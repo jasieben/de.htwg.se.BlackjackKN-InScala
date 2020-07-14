@@ -35,8 +35,8 @@ class Tui(controller: ControllerInterface) extends Observer {
   override def update: Boolean = {
     output = ""
     var counter: Int = 0
-    for (i <- gamestatePointer until controller.gameStates.length) {
-      controller.gameStates(i) match {
+    for (i <- gamestatePointer until controller.gameManager.gameStates.length) {
+      controller.gameManager.gameStates(i) match {
         case GameState.IDLE =>
           output += "Press n to start a new game!\n"
         case GameState.SHUFFLING =>
@@ -79,7 +79,7 @@ class Tui(controller: ControllerInterface) extends Observer {
           output += "Push! " + "Player" + " and the dealer have a combined card value of " + controller.gameManager.getDealerHandValue + "\n"
         //output += "Player" + "s balance stays at " + controller.player.balance + "$\n"
         case GameState.ACE =>
-          if (!firstAceMessage && !controller.gameStates.contains(GameState.PLAYER_BLACKJACK))
+          if (!firstAceMessage && !controller.gameManager.gameStates.contains(GameState.PLAYER_BLACKJACK))
             output += "or your cards can value " + (controller.gameManager.getPlayerHandValue(0) - 10) + "\n"
           firstAceMessage = true
         case GameState.BET_FAILED =>
@@ -107,9 +107,9 @@ class Tui(controller: ControllerInterface) extends Observer {
       case "Scala ist toll!" =>
         println("Sag mir was neues\n (☞ﾟヮﾟ)☞ ")
       case "h" =>
-        controller.hitCommand()
+        controller.hitCommand("123")
       case "s" =>
-        controller.standCommand()
+        controller.standCommand("123")
       case "z" =>
         controller.undo()
       case "y" =>
@@ -134,8 +134,7 @@ class Tui(controller: ControllerInterface) extends Observer {
         }
       case betRegEx(_*) =>
         val number = input.replaceAll("n ", "")
-        controller.setBet(number.toInt)
-        controller.startNewRound()
+        controller.setBet("123" ,number.toInt)
       case "exit" =>
         output = "Exiting game..."
         print()

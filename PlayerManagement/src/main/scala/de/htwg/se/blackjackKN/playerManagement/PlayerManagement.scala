@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.PathMatchers
 import akka.stream
 import akka.stream.{ActorMaterializer, Materializer}
 import de.htwg.se.blackjackKN.playerManagement.controller.Controller
@@ -25,7 +26,7 @@ object PlayerManagement {
     val controller: Controller = new Controller()
 
     val route = concat(
-      pathPrefix("player" / IntNumber) { id =>
+      pathPrefix("player" / PathMatchers.Segment) { id =>
         concat(
           get {
             complete(HttpEntity(ContentTypes.`application/json`, controller.getPlayer(id)))
