@@ -239,7 +239,7 @@ class Controller @Inject() extends ControllerInterface {
       .onComplete {
         case Success(res) =>
           println(res.entity)
-          var finishedGameManager = clearGameStates().copy(revealed = false).clearDealerHand()
+          val finishedGameManager = clearGameStates().copy(revealed = false).clearDealerHand()
             .clearPlayerHand(0).removePlayerFromGame(gameManager.currentPlayerInRound)
 
           gameManagerPersistence.update(finishedGameManager)
