@@ -18,6 +18,8 @@ services:
       - "9002:9002"
     stdin_open: true
     container_name: "player-management"
+    environment:
+      - GAME_LOGIC_HOST=game:9001
     networks:
       default:
         aliases:
