@@ -1,0 +1,61 @@
+version: '3'
+services:
+  game-logic:
+    build: "GameLogic/."
+    ports:
+      - "9001:9001"
+    stdin_open: true
+    container_name: "game-logic"
+    environment:
+      - PLAYER_MANAGEMENT_HOST=player:9002
+    networks:
+      default:
+        aliases:
+          - game
+  player-management:
+    build: "PlayerManagement/."
+    ports:
+      - "9002:9002"
+    stdin_open: true
+    container_name: "player-management"
+    environment:
+      - GAME_LOGIC_HOST=game:9001
+    networks:
+      default:
+        aliases:
+          - player
+  database:
+    image: "postgres"
+    container_name: "database"
+    networks:
+      default:
+        aliases:
+          - database
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_MULTIPLE_DATABASES=playermanagement,gamelogic
+    volumes:
+      - ./scripts/create-multiple-databases.sh:/docker-entrypoint-initdb.d/initdb.sh
+      - db-data:/var/lib/postgresql/data
+  mongodb:
+    image: "mongo:latest"
+    container_name: "mongodb"
+    networks:
+      default:
+        aliases:
+          - mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=blackjack
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=123
+    volumes:
+      - mongodb:/data/db
+      - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+volumes:
+  db-data:
+  mongodb:
