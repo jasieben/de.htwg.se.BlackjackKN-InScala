@@ -81,6 +81,7 @@ class RestApi(controller: ControllerInterface) {
     val currentGamestate = controller.gameManager.gameStates.size
     controller.setBet(playerId, betValue)
     if (controller.gameManager.gameStates.isEmpty || controller.gameManager.gameStates.last == GameState.BET_FAILED) {
+      controller.gameManager.removePlayerFromGame(playerId)
       return Json.obj(
         "success" -> false,
         "msg" -> "Failed to set bet.",
