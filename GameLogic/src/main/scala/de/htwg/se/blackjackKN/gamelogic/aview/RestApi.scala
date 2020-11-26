@@ -81,7 +81,7 @@ class RestApi(controller: ControllerInterface) {
     val currentGamestate = controller.gameManager.gameStates.size
     controller.setBet(playerId, betValue)
     if (controller.gameManager.gameStates.isEmpty || controller.gameManager.gameStates.last == GameState.BET_FAILED) {
-      controller.gameManager.removePlayerFromGame(playerId)
+
       return Json.obj(
         "success" -> false,
         "msg" -> "Failed to set bet.",
@@ -89,18 +89,17 @@ class RestApi(controller: ControllerInterface) {
       ).toString()
     }
 
-    val dealerCardsArray = Json.arr(Json.obj("card" -> controller.gameManager.getDealerCard(0).toString))
     var revealed = false
 
-    if (controller.gameManager.gameStates.exists(p => p.equals(GameState.REVEAL))) {
+    if (controller.gameManager.gameStates.exists(p => p.equals(GameState.REVEAL) || p.equals(GameState.PLAYER_BUST) || p.equals(GameState.DEALER_BUST))) {
       revealed = true
     }
 
     Json.obj(
       "playerCards" -> getAllPlayerCards(),
-      "dealerCards" -> (if (revealed) getAllDealerCards() else dealerCardsArray),
+      "dealerCards" -> (if (revealed) getAllDealerCards() else Json.arr()),
       "playerCardsValue" -> controller.gameManager.getPlayerHandValue(0),
-      "dealerCardsValue" -> controller.gameManager.getDealerHandValue,
+      "dealerCardsValue" -> (if (revealed) controller.gameManager.getDealerHandValue else "-"),
       "gameStates" -> gameStatesToJsonArray(currentGamestate)
     ).toString()
   }
@@ -118,19 +117,18 @@ class RestApi(controller: ControllerInterface) {
     val currentGamestate = controller.gameManager.gameStates.size
     controller.hitCommand(playerId)
 
-    val dealerCardsArray = Json.arr(Json.obj("card" -> controller.gameManager.getDealerCard(0).toString))
     var revealed = false
 
-    if (controller.gameManager.gameStates.exists(p => p.equals(GameState.REVEAL))) {
+    if (controller.gameManager.gameStates.exists(p => p.equals(GameState.REVEAL) || p.equals(GameState.PLAYER_BUST) || p.equals(GameState.DEALER_BUST))) {
       revealed = true
     }
 
     Json.obj(
       "success" -> true,
       "hitCard" -> controller.gameManager.getPlayerCard(0, controller.gameManager.getPlayerHandSize(0) - 1).toString,
-      "dealerCards" -> (if (revealed) getAllDealerCards() else dealerCardsArray),
+      "dealerCards" -> (if (revealed) getAllDealerCards() else Json.arr()),
       "playerCardsValue" -> controller.gameManager.getPlayerHandValue(0),
-      "dealerCardsValue" -> controller.gameManager.getDealerHandValue,
+      "dealerCardsValue" -> (if (revealed) controller.gameManager.getDealerHandValue else ""),
       "gameStates" -> gameStatesToJsonArray(currentGamestate)
     ).toString()
   }
@@ -146,12 +144,6 @@ class RestApi(controller: ControllerInterface) {
     }
     val currentGamestate = controller.gameManager.gameStates.size
     controller.standCommand(playerId)
-
-    var revealed = false
-
-    if (controller.gameManager.gameStates.exists(p => p.equals(GameState.REVEAL))) {
-      revealed = true
-    }
 
     Json.obj(
       "success" -> true,

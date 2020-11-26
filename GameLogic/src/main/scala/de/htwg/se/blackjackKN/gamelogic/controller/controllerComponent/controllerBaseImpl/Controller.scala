@@ -61,6 +61,11 @@ class Controller @Inject() extends ControllerInterface {
     }
   }
 
+  def removePlayerFromGame(playerId: String): Unit = {
+    this.gameManager.removePlayerFromGame(playerId)
+    this.gameManagerPersistence.update(this.gameManager)
+  }
+
   def loadNewGameManager(playerId: String): Unit = {
     // Load a new Session
     val gameManagerOption = gameManagerPersistence.loadEmptySession()
