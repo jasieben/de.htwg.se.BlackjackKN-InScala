@@ -45,6 +45,10 @@ class PlayerPersistence extends PlayerPersistenceInterface {
       .toFuture()
   }
 
+  override def findByName(name: String): Option[Player] = {
+    Await.result(players.find(equal("name", name)).first().toFutureOption(), Duration("10s"))
+  }
+
   override def load(playerId: String): Option[Player] = {
     Await.result(players.find(equal("_id", playerId)).first().toFutureOption(), Duration("10s"))
   }

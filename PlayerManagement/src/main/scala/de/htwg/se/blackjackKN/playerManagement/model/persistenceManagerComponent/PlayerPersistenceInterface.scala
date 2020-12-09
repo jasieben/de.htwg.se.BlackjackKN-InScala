@@ -9,5 +9,7 @@ trait PlayerPersistenceInterface {
 
   def load(playerId: String): Option[Player]
 
+  def findByName(name: String): Option[Player]
+
   def delete(player: Player)
 }

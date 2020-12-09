@@ -26,7 +26,11 @@ class Controller {
   def createNewPlayer(data: JsValue): String = {
     val name: String = (data \ "name").as[String]
     player = Player(None, name)
-    player = playerPersistence.create(player)
+
+    player = playerPersistence.findByName(name).getOrElse(
+      playerPersistence.create(player)
+    )
+
     Json.obj(
       "success" -> true,
       "id" -> player.id,
