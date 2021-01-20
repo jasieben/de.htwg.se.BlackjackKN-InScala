@@ -189,12 +189,11 @@ class Controller @Inject() extends ControllerInterface {
   }
 
   private def drawDealerCards(): Unit = {
-    val shouldDraw = gameManager.getDealerHandValue < 17
-    if (shouldDraw) {
+    if (gameManager.getDealerHandValue < 17) {
       gameManager = gameManager.pushGameState(GameState.DEALER_DRAWS, currentPlayerIndex)
     }
 
-    while (shouldDraw) {
+    while (gameManager.getDealerHandValue < 17) {
       gameManager = gameManager.addCardToDealerHand(gameManager.drawCard()).dropCard()
     }
   }
@@ -214,33 +213,33 @@ class Controller @Inject() extends ControllerInterface {
       gameManager = gameManager.pushGameState(GameState.PLAYER_LOOSE, playerIndex)
       evaluateBet(gameManager.gameStates(playerIndex).last, playerIndex)
       true
-    } else if (gameManager.getDealerHandValue > 21) {
-      gameManager = gameManager.pushGameState(GameState.DONE, playerIndex)
-      gameManager = gameManager.pushGameState(GameState.DEALER_BUST, playerIndex)
-      gameManager = gameManager.pushGameState(GameState.PLAYER_WINS, playerIndex)
-      evaluateBet(gameManager.gameStates(playerIndex).last, playerIndex)
-      true
-    } else if (gameManager.getPlayerHandValue(playerIndex) == 21 && !gameManager.revealed && gameManager.getPlayerHandSize(playerIndex) == 2) {
+    } else if (gameManager.getPlayerHandValue(playerIndex) == 21 && !gameManager.revealed) {
       gameManager = gameManager.pushGameState(GameState.DONE, playerIndex)
       gameManager = gameManager.pushGameState(GameState.PLAYER_BLACKJACK, playerIndex) // if player has blackjack doesn't win yet
       // if player has blackjack and dealer hasn't pay out can continue
       if (gameManager.gameStates(playerIndex).contains(GameState.PLAYER_BLACKJACK) && !gameManager.gameStates(playerIndex).contains(GameState.DEALER_BLACKJACK)) {
-        false
+
       }
       // if not continue for push handling
+    }
+    if (!gameManager.revealed) {
+      //when not revealed yet
+      gameManager = gameManager.pushGameState(GameState.WAITING_FOR_INPUT, playerIndex)
     }
     false
   }
 
   def evaluate(playerIndex: Int): Unit = {
-    if (!gameManager.revealed) {
-      //when not revealed yet
-      gameManager = gameManager.pushGameState(GameState.WAITING_FOR_INPUT, playerIndex)
+    if (gameManager.gameStates(playerIndex).contains(GameState.PLAYER_LOOSE) ||
+      gameManager.gameStates(playerIndex).contains(GameState.PLAYER_WINS)) {
       return
     }
 
-    if (gameManager.gameStates(playerIndex).contains(GameState.PLAYER_LOOSE) ||
-      gameManager.gameStates(playerIndex).contains(GameState.PLAYER_WINS)) {
+    if (gameManager.getDealerHandValue > 21) {
+      gameManager = gameManager.pushGameState(GameState.DONE, playerIndex)
+      gameManager = gameManager.pushGameState(GameState.DEALER_BUST, playerIndex)
+      gameManager = gameManager.pushGameState(GameState.PLAYER_WINS, playerIndex)
+      evaluateBet(gameManager.gameStates(playerIndex).last, playerIndex)
       return
     }
 

@@ -113,22 +113,19 @@ class RestApi(controller: ControllerInterface) {
         "msg" -> "Player doesn't have a game in progress."
       ).toString()
     }
-    var revealed = false
 
     val currentGamestate = controller.gameManager.gameStates(controller.currentPlayerIndex).size
 
     controller.startNewRound(playerId, controller.gameManager.id)
-
-    if (controller.gameManager.gameStates(controller.currentPlayerIndex).exists(p => p.equals(GameState.REVEAL) || p.equals(GameState.PLAYER_BUST) || p.equals(GameState.DEALER_BUST))) {
-      revealed = true
-    }
+    val revealed = controller.gameManager.revealed
 
     Json.obj(
       "playerCards" -> getAllPlayerCards(),
       "dealerCards" -> (if (revealed) getAllDealerCards() else Json.arr()),
       "playerCardsValue" -> controller.gameManager.getPlayerHandValue(controller.currentPlayerIndex),
       "dealerCardsValue" -> (if (revealed) controller.gameManager.getDealerHandValue else "-"),
-      "gameStates" -> gameStatesToJsonArray(currentGamestate)
+      "gameStates" -> gameStatesToJsonArray(currentGamestate),
+      "revealed" -> revealed
     ).toString()
   }
 
@@ -145,11 +142,7 @@ class RestApi(controller: ControllerInterface) {
     val currentGamestate = controller.gameManager.gameStates(controller.currentPlayerIndex).size
     controller.hitCommand(playerId)
 
-    var revealed = false
-
-    if (controller.gameManager.gameStates(controller.currentPlayerIndex).exists(p => p.equals(GameState.REVEAL) || p.equals(GameState.PLAYER_BUST) || p.equals(GameState.DEALER_BUST))) {
-      revealed = true
-    }
+    val revealed = controller.gameManager.revealed
 
     Json.obj(
       "success" -> true,
@@ -157,7 +150,8 @@ class RestApi(controller: ControllerInterface) {
       "dealerCards" -> (if (revealed) getAllDealerCards() else Json.arr()),
       "playerCardsValue" -> controller.gameManager.getPlayerHandValue(controller.currentPlayerIndex),
       "dealerCardsValue" -> (if (revealed) controller.gameManager.getDealerHandValue else ""),
-      "gameStates" -> gameStatesToJsonArray(currentGamestate)
+      "gameStates" -> gameStatesToJsonArray(currentGamestate),
+      "revealed" -> revealed
     ).toString()
   }
 
@@ -179,7 +173,8 @@ class RestApi(controller: ControllerInterface) {
       "dealerCards" -> getAllDealerCards(),
       "playerCardsValue" -> controller.gameManager.getPlayerHandValue(controller.currentPlayerIndex),
       "dealerCardsValue" -> controller.gameManager.getDealerHandValue,
-      "gameStates" -> gameStatesToJsonArray(currentGamestate)
+      "gameStates" -> gameStatesToJsonArray(currentGamestate),
+      "revealed" -> controller.gameManager.revealed
     ).toString()
   }
 
