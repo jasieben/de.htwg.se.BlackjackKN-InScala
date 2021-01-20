@@ -13,9 +13,9 @@ case class GameManager(@BsonProperty("_id") id: Option[String] = None,
                        dealerHand: List[CardInterface] = List[CardInterface](),
                        playerHands: List[List[CardInterface]] = List[List[CardInterface]](),
                        cardDeck: List[CardInterface] = List[CardInterface](),
-                       gameStates: List[GameState.Value] = List(GameState.IDLE),
+                       gameStates: List[List[GameState.Value]] = List(),
                        revealed: Boolean = false,
-                       currentPlayerInRound: String = "") {
+                       currentPlayerInRound: List[String] = List[String]()) {
 
   def generateDealerCards: GameManager = {
     val baseCardDeck: List[CardInterface] = CardDeck().cardDeck
@@ -122,16 +122,25 @@ case class GameManager(@BsonProperty("_id") id: Option[String] = None,
 
   def addPlayerToGame(playerId: String): GameManager = {
     val newList = playerHands :+ List[CardInterface]()
+    val playerList = currentPlayerInRound :+ playerId
 
-    copy(playerHands = newList, currentPlayerInRound = playerId)
+    copy(playerHands = newList, currentPlayerInRound = playerList, gameStates = gameStates :+ List[GameState.Value]())
+  }
+
+  def clearPlayers(): GameManager = {
+    copy(playerHands = List(), currentPlayerInRound = List(), gameStates = List())
   }
 
   def removePlayerFromGame(playerId: String): GameManager = {
-    val newList = playerHands.drop(0)
-    copy(currentPlayerInRound = "", playerHands = newList)
+    val playerIndex = currentPlayerInRound.indexOf(playerId)
+    val newList = playerHands.drop(playerIndex)
+    val playerList = currentPlayerInRound.filterNot(elm => elm == playerId)
+    copy(playerHands = newList, currentPlayerInRound = playerList)
   }
 
-  def pushGameState(gameState: GameState): GameManager = {
-    copy(gameStates = gameStates :+ gameState)
+  def pushGameState(gameState: GameState, playerIndex: Int): GameManager = {
+    val playerGamestate = gameStates(playerIndex) :+ gameState
+
+    copy(gameStates = gameStates.updated(playerIndex, playerGamestate))
   }
 }

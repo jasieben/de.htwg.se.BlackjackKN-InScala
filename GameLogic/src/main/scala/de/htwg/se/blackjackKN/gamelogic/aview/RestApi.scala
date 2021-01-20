@@ -21,12 +21,23 @@ class RestApi(controller: ControllerInterface) {
     val route = concat(
       pathPrefix("game") {
         concat(
+          path("matchmaking") {
+            concat(
+              put(
+                entity(as[String]) { jsonString => {
+                  val json = Json.parse(jsonString)
+                  complete(HttpEntity(ContentTypes.`application/json`, matchmake(json)))
+                }
+                }
+              )
+            )
+          },
           path("start") {
             concat(
               put(
                 entity(as[String]) { jsonString => {
                   val json = Json.parse(jsonString)
-                  complete(HttpEntity(ContentTypes.`application/json`, newGameRoute(json)))
+                  complete(HttpEntity(ContentTypes.`application/json`, startGameRoute(json)))
                 }
                 }
               )
@@ -67,7 +78,7 @@ class RestApi(controller: ControllerInterface) {
       .onComplete(_ => actorSystem.terminate()) // and shutdown when done
   }
 
-  private def newGameRoute(json: JsValue): String = {
+  private def matchmake(json: JsValue): String = {
     val playerId = (json \ "playerId").as[String]
     val betValue = (json \ "betValue").as[Int]
     if (controller.loadGameManager(playerId)) {
@@ -78,27 +89,44 @@ class RestApi(controller: ControllerInterface) {
       ).toString()
     }
     controller.loadNewGameManager(playerId)
-    val currentGamestate = controller.gameManager.gameStates.size
     controller.setBet(playerId, betValue)
-    if (controller.gameManager.gameStates.isEmpty || controller.gameManager.gameStates.last == GameState.BET_FAILED) {
-
+    if (controller.gameManager.gameStates(controller.currentPlayerIndex).isEmpty || controller.gameManager.gameStates(controller.currentPlayerIndex).last == GameState.BET_FAILED) {
       return Json.obj(
         "success" -> false,
         "msg" -> "Failed to set bet.",
-        "gameStates" -> gameStatesToJsonArray(currentGamestate)
+        "gameStates" -> gameStatesToJsonArray(0)
       ).toString()
     }
+    Json.obj(
+      "success" -> true,
+      "gameStates" -> gameStatesToJsonArray(0),
+      "players" -> controller.gameManager.currentPlayerInRound,
+      "playerIndex" -> controller.currentPlayerIndex
+    ).toString()
+  }
 
+  def startGameRoute(json: JsValue): String = {
+    val playerId = (json \ "playerId").as[String]
+    if (!controller.loadGameManager(playerId)) {
+      return Json.obj(
+        "success" -> false,
+        "msg" -> "Player doesn't have a game in progress."
+      ).toString()
+    }
     var revealed = false
 
-    if (controller.gameManager.gameStates.exists(p => p.equals(GameState.REVEAL) || p.equals(GameState.PLAYER_BUST) || p.equals(GameState.DEALER_BUST))) {
+    val currentGamestate = controller.gameManager.gameStates(controller.currentPlayerIndex).size
+
+    controller.startNewRound(playerId, controller.gameManager.id)
+
+    if (controller.gameManager.gameStates(controller.currentPlayerIndex).exists(p => p.equals(GameState.REVEAL) || p.equals(GameState.PLAYER_BUST) || p.equals(GameState.DEALER_BUST))) {
       revealed = true
     }
 
     Json.obj(
       "playerCards" -> getAllPlayerCards(),
       "dealerCards" -> (if (revealed) getAllDealerCards() else Json.arr()),
-      "playerCardsValue" -> controller.gameManager.getPlayerHandValue(0),
+      "playerCardsValue" -> controller.gameManager.getPlayerHandValue(controller.currentPlayerIndex),
       "dealerCardsValue" -> (if (revealed) controller.gameManager.getDealerHandValue else "-"),
       "gameStates" -> gameStatesToJsonArray(currentGamestate)
     ).toString()
@@ -114,20 +142,20 @@ class RestApi(controller: ControllerInterface) {
       ).toString()
     }
 
-    val currentGamestate = controller.gameManager.gameStates.size
+    val currentGamestate = controller.gameManager.gameStates(controller.currentPlayerIndex).size
     controller.hitCommand(playerId)
 
     var revealed = false
 
-    if (controller.gameManager.gameStates.exists(p => p.equals(GameState.REVEAL) || p.equals(GameState.PLAYER_BUST) || p.equals(GameState.DEALER_BUST))) {
+    if (controller.gameManager.gameStates(controller.currentPlayerIndex).exists(p => p.equals(GameState.REVEAL) || p.equals(GameState.PLAYER_BUST) || p.equals(GameState.DEALER_BUST))) {
       revealed = true
     }
 
     Json.obj(
       "success" -> true,
-      "hitCard" -> controller.gameManager.getPlayerCard(0, controller.gameManager.getPlayerHandSize(0) - 1).toString,
+      "hitCard" -> controller.gameManager.getPlayerCard(controller.currentPlayerIndex, controller.gameManager.getPlayerHandSize(controller.currentPlayerIndex) - 1).toString,
       "dealerCards" -> (if (revealed) getAllDealerCards() else Json.arr()),
-      "playerCardsValue" -> controller.gameManager.getPlayerHandValue(0),
+      "playerCardsValue" -> controller.gameManager.getPlayerHandValue(controller.currentPlayerIndex),
       "dealerCardsValue" -> (if (revealed) controller.gameManager.getDealerHandValue else ""),
       "gameStates" -> gameStatesToJsonArray(currentGamestate)
     ).toString()
@@ -142,14 +170,14 @@ class RestApi(controller: ControllerInterface) {
         "msg" -> "No game available"
       ).toString()
     }
-    val currentGamestate = controller.gameManager.gameStates.size
+    val currentGamestate = controller.gameManager.gameStates(controller.currentPlayerIndex).size
     controller.standCommand(playerId)
 
     Json.obj(
       "success" -> true,
       "playerCards" -> getAllPlayerCards(),
       "dealerCards" -> getAllDealerCards(),
-      "playerCardsValue" -> controller.gameManager.getPlayerHandValue(0),
+      "playerCardsValue" -> controller.gameManager.getPlayerHandValue(controller.currentPlayerIndex),
       "dealerCardsValue" -> controller.gameManager.getDealerHandValue,
       "gameStates" -> gameStatesToJsonArray(currentGamestate)
     ).toString()
@@ -157,8 +185,8 @@ class RestApi(controller: ControllerInterface) {
 
   private def getAllPlayerCards(): JsArray = {
     var jsArray: JsArray = JsArray()
-    for (i <- 0 until controller.gameManager.getPlayerHandSize(0)) {
-      jsArray = jsArray.append(Json.obj("card" -> controller.gameManager.getPlayerCard(0, i).toString))
+    for (i <- 0 until controller.gameManager.getPlayerHandSize(controller.currentPlayerIndex)) {
+      jsArray = jsArray.append(Json.obj("card" -> controller.gameManager.getPlayerCard(controller.currentPlayerIndex, i).toString))
     }
     jsArray
   }
@@ -171,11 +199,17 @@ class RestApi(controller: ControllerInterface) {
     jsArray
   }
 
-  private def gameStatesToJsonArray(startIndex: Int): JsArray = {
-    var jsArray: JsArray = JsArray()
-    for (i <- startIndex until controller.gameManager.gameStates.size) {
-      jsArray = jsArray.append(Json.obj("gameState" -> controller.gameManager.gameStates(i).toString))
+  private def gameStatesToJsonArray(startIndex: Int) = {
+    var playerArray: JsArray = JsArray()
+
+    for (playerIndex <- controller.gameManager.currentPlayerInRound.indices) {
+      var jsArray: JsArray = JsArray()
+      for (i <- startIndex until controller.gameManager.gameStates(playerIndex).size) {
+        jsArray = jsArray.append(Json.obj("gameState" -> controller.gameManager.gameStates(playerIndex)(i).toString))
+      }
+      playerArray = playerArray.append(jsArray)
     }
-    jsArray
+
+    playerArray
   }
 }

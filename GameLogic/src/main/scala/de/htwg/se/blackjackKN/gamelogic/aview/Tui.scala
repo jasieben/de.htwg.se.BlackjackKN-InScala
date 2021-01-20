@@ -14,7 +14,7 @@ import scala.util.{Failure, Success}
 
 class Tui(controller: ControllerInterface) extends Observer {
 
-  controller.add(this)
+  //controller.add(this)
   var gamestatePointer: Int = 0
   var output: String = ""
   var firstAceMessage = false
