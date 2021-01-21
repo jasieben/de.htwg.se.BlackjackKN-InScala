@@ -4,6 +4,8 @@ import de.htwg.se.blackjackKN.gamelogic.model.GameManager
 import de.htwg.se.blackjackKN.gamelogic.util.Observable
 
 trait ControllerInterface extends Observable {
+  def currentPlayerIndex: Int
+
   def playerManagementServiceUrl: String
 
   def startGame(): Unit

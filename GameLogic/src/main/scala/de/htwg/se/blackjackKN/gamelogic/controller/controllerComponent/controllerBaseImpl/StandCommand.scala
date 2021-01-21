@@ -24,6 +24,6 @@ class StandCommand(controller: Controller) extends Command {
     controller.gameManager = gameManagerMemento
 
     gameManagerMemento = newDealerMemento
-    controller.evaluate()
+    controller.evaluate(0)
   }
 }

@@ -23,7 +23,8 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 class GameManagerPersistence extends GameManagerPersistenceInterface {
-  val uri: String = "mongodb://root:123@mongodb/gamelogic?retryWrites=true&w=majority"
+  private val databaseString = sys.env.getOrElse("DATABASE", "mongodb://root:123@localhost/gamelogic?retryWrites=true&w=majority")
+  val uri: String = databaseString
 
   val client: MongoClient = MongoClient(uri)
   val codecRegistry: CodecRegistry = fromRegistries(fromProviders(classOf[GameManager], EnumerationCodecProvider, classOf[FaceCard], classOf[NumberCard], CardInterfaceCodecProvider) , MongoClient.DEFAULT_CODEC_REGISTRY)
@@ -44,6 +45,7 @@ class GameManagerPersistence extends GameManagerPersistenceInterface {
       set("cardDeck", gameManager.cardDeck),
       set("gameStates", gameManager.gameStates),
       set("revealed", gameManager.revealed),
+      set("isRunning", gameManager.isRunning),
       set("currentPlayerInRound", gameManager.currentPlayerInRound))).toFuture()
   }
 
@@ -52,11 +54,11 @@ class GameManagerPersistence extends GameManagerPersistenceInterface {
   }
 
   override def loadEmptySession(): Option[GameManager] = {
-    Await.result(sessions.find(equal("currentPlayerInRound", "")).first().toFutureOption(), Duration("10s"))
+    Await.result(sessions.find(where("this.currentPlayerInRound.length < 3 && this.isRunning === false")).first().toFutureOption(), Duration("10s"))
   }
 
   override def deleteGameManager(gameManager: GameManager): Unit = {
-    sessions.deleteOne(equal("_id", gameManager.id)).toFuture()
+    Await.result(sessions.deleteOne(equal("_id", gameManager.id.get)).toFuture(), Duration("10s"))
   }
 }
 
