@@ -15,7 +15,8 @@ case class GameManager(@BsonProperty("_id") id: Option[String] = None,
                        cardDeck: List[CardInterface] = List[CardInterface](),
                        gameStates: List[List[GameState.Value]] = List(),
                        revealed: Boolean = false,
-                       currentPlayerInRound: List[String] = List[String]()) {
+                       currentPlayerInRound: List[String] = List[String](),
+                       isRunning: Boolean = false) {
 
   def generateDealerCards: GameManager = {
     val baseCardDeck: List[CardInterface] = CardDeck().cardDeck

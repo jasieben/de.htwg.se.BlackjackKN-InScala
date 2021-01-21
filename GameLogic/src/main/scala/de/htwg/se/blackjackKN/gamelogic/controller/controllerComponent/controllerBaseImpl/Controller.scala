@@ -102,6 +102,7 @@ class Controller @Inject() extends ControllerInterface {
     checkForAces()
     evaluateImmediately(currentPlayerIndex)
     checkEvaluation()
+    gameManager = gameManager.copy(isRunning = true)
     gameManagerPersistence.update(gameManager)
     notifyObservers()
   }
