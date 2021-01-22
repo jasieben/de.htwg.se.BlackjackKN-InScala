@@ -82,11 +82,7 @@ class RestApi(controller: ControllerInterface) {
     val playerId = (json \ "playerId").as[String]
     val betValue = (json \ "betValue").as[Int]
     if (controller.loadGameManager(playerId)) {
-      return Json.obj(
-        "success" -> false,
-        "msg" -> "Player already has a game in progress.",
-        "sessionId" -> controller.gameManager.id
-      ).toString()
+      controller.removePlayerFromGame(playerId)
     }
     controller.loadNewGameManager(playerId)
     controller.setBet(playerId, betValue)

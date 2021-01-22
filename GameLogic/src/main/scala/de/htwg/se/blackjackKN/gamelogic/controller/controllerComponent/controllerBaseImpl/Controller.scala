@@ -64,7 +64,7 @@ class Controller @Inject() extends ControllerInterface {
   }
 
   def removePlayerFromGame(playerId: String): Unit = {
-    this.gameManager.removePlayerFromGame(playerId)
+    gameManager = this.gameManager.removePlayerFromGame(playerId)
     this.gameManagerPersistence.update(this.gameManager)
   }
 

@@ -26,6 +26,8 @@ trait ControllerInterface extends Observable {
 
   def setBet(playerId: String, value: Int): Unit
 
+  def removePlayerFromGame(playerId: String): Unit
+
   def startNewRound(playerId: String, gameId: Option[String] = None): Unit
 
 }
