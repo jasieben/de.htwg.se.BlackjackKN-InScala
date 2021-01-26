@@ -23,7 +23,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 class GameManagerPersistence extends GameManagerPersistenceInterface {
-  private val databaseString = sys.env.getOrElse("DATABASE", "mongodb://root:123@localhost/gamelogic?retryWrites=true&w=majority")
+  private val databaseString = sys.env.getOrElse("DATABASE_GAME", "mongodb://root:123@localhost/gamelogic?retryWrites=true&w=majority")
   val uri: String = databaseString
 
   val client: MongoClient = MongoClient(uri)
