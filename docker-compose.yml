@@ -1,7 +1,9 @@
 version: '3'
 services:
   game-logic:
-    build: "GameLogic/."
+    build:
+      context: "GameLogic/."
+      dockerfile: "Dockerfile.game"
     ports:
       - "9001:9001"
     stdin_open: true
@@ -14,7 +16,9 @@ services:
         aliases:
           - game
   player-management:
-    build: "PlayerManagement/."
+    build:
+      context: "PlayerManagement/."
+      dockerfile: "Dockerfile.player"
     ports:
       - "9002:9002"
     stdin_open: true
