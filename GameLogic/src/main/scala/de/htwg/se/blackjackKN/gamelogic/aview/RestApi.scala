@@ -9,10 +9,11 @@ import play.api.libs.json.{JsArray, JsValue, Json}
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
+import scala.util.{Failure, Success, Try}
 
 class RestApi(controller: ControllerInterface) {
   val connectionInterface = "0.0.0.0"
-  val connectionPort: Int = sys.env.getOrElse("PORT", 9001).toString.toInt
+  val connectionPort: Int = sys.env.getOrElse("PORT", "9001").toInt
 
   def run() {
     implicit val actorSystem: ActorSystem = ActorSystem("actorSystem")
@@ -69,13 +70,9 @@ class RestApi(controller: ControllerInterface) {
       }
     )
 
-    val bindingFuture = Http().newServerAt(connectionInterface, connectionPort).bind(route)
+    Http().newServerAt(connectionInterface, connectionPort).bind(route)
 
     println(s"Server online at http://$connectionInterface:$connectionPort/\nPress RETURN to stop...")
-    StdIn.readLine() // let it run until user presses return
-    bindingFuture
-      .flatMap(_.unbind()) // trigger unbinding from the port
-      .onComplete(_ => actorSystem.terminate()) // and shutdown when done
   }
 
   private def matchmake(json: JsValue): String = {
@@ -84,7 +81,12 @@ class RestApi(controller: ControllerInterface) {
     if (controller.loadGameManager(playerId)) {
       controller.removePlayerFromGame(playerId)
     }
-    controller.loadNewGameManager(playerId)
+
+    val problem = Try(controller.loadNewGameManager(playerId))
+    problem match {
+      case Failure(e) =>
+        println("Info from the exception: " + e.getMessage)
+    }
     controller.setBet(playerId, betValue)
     if (controller.gameManager.gameStates(controller.currentPlayerIndex).isEmpty || controller.gameManager.gameStates(controller.currentPlayerIndex).last == GameState.BET_FAILED) {
       return Json.obj(

@@ -1,7 +1,8 @@
-ThisBuild / name          := "PlayerManagement"
-ThisBuild / organization  := "de.htwg.se"
-ThisBuild / version       := "0.0.1"
-ThisBuild / scalaVersion  := "2.12.4"
+ThisBuild / name := "PlayerManagement"
+ThisBuild / organization := "de.htwg.se"
+ThisBuild / version := "0.0.1"
+ThisBuild / scalaVersion := "2.12.7"
+herokuAppName in Compile := "htwg-blackjack-api-player"
 
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.5"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
@@ -27,4 +28,4 @@ libraryDependencies ++= Seq(
 
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.9.0"
 
-test in assembly := {}
+enablePlugins(JavaAppPackaging)

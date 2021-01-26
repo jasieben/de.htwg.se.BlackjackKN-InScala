@@ -19,8 +19,8 @@ import scala.concurrent.{Await, ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success, Try}
 
 class Controller @Inject() extends ControllerInterface {
-  private val environmentPlayerManagementHost = sys.env.getOrElse("PLAYER_MANAGEMENT_HOST", "localhost:9002")
-  val playerManagementServiceUrl = s"http://$environmentPlayerManagementHost/"
+  private val environmentPlayerManagementHost = sys.env.getOrElse("PLAYER_MANAGEMENT_HOST", "http://localhost:9002")
+  val playerManagementServiceUrl = s"$environmentPlayerManagementHost/"
 
   val injector: Injector = Guice.createInjector(new BlackjackModule)
   val gameManagerPersistence: GameManagerPersistenceInterface = injector.getInstance(classOf[GameManagerPersistenceInterface])
@@ -126,6 +126,10 @@ class Controller @Inject() extends ControllerInterface {
       "betValue" -> value
     ).toString()
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(HttpMethods.POST, uri = playerManagementServiceUrl + s"player/$playerId/bet", entity = HttpEntity.apply(json)))
+    responseFuture.onComplete {
+      case Failure(e)   =>
+        sys.error(e.getMessage)
+    }
     val responseStringFuture = responseFuture.flatMap(r => Unmarshal(r.entity).to[String])
     val responseString = Await.result(responseStringFuture, Duration("10s"))
 

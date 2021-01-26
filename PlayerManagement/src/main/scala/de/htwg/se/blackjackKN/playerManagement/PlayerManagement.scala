@@ -17,10 +17,10 @@ import scala.io.StdIn
 
 object PlayerManagement {
   val connectionInterface = "0.0.0.0"
-  val connectionPort: Int = sys.env.getOrElse("PORT", 9002).toString.toInt
+  val connectionPort: Int = sys.env.getOrElse("PORT", "9002").toInt
 
   def main(args: Array[String]) {
-    implicit val actorSystem: ActorSystem = ActorSystem("actorSystem")
+    implicit val actorSystem: ActorSystem = ActorSystem("api")
     implicit val executionContext: ExecutionContextExecutor = actorSystem.dispatcher
 
     val controller: Controller = new Controller()
@@ -68,12 +68,8 @@ object PlayerManagement {
       }
     )
 
-    val bindingFuture = Http().newServerAt(connectionInterface, connectionPort).bind(route)
+    Http().newServerAt(connectionInterface, connectionPort).bind(route)
 
     println(s"Server online at http://$connectionInterface:$connectionPort/\nPress RETURN to stop...")
-    StdIn.readLine() // let it run until user presses return
-    bindingFuture
-      .flatMap(_.unbind()) // trigger unbinding from the port
-      .onComplete(_ => actorSystem.terminate()) // and shutdown when done
   }
 }

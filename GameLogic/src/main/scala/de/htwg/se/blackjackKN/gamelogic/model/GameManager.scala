@@ -16,6 +16,7 @@ case class GameManager(@BsonProperty("_id") id: Option[String] = None,
                        gameStates: List[List[GameState.Value]] = List(),
                        revealed: Boolean = false,
                        currentPlayerInRound: List[String] = List[String](),
+                       currentPlayerCount: Int = 0,
                        isRunning: Boolean = false) {
 
   def generateDealerCards: GameManager = {
@@ -125,18 +126,18 @@ case class GameManager(@BsonProperty("_id") id: Option[String] = None,
     val newList = playerHands :+ List[CardInterface]()
     val playerList = currentPlayerInRound :+ playerId
 
-    copy(playerHands = newList, currentPlayerInRound = playerList, gameStates = gameStates :+ List[GameState.Value]())
+    copy(playerHands = newList, currentPlayerInRound = playerList, gameStates = gameStates :+ List[GameState.Value](), currentPlayerCount = currentPlayerCount + 1)
   }
 
   def clearPlayers(): GameManager = {
-    copy(playerHands = List(), currentPlayerInRound = List(), gameStates = List())
+    copy(playerHands = List(), currentPlayerInRound = List(), gameStates = List(), currentPlayerCount = 0)
   }
 
   def removePlayerFromGame(playerId: String): GameManager = {
     val playerIndex = currentPlayerInRound.indexOf(playerId)
     val newList = playerHands.drop(playerIndex)
     val playerList = currentPlayerInRound.filterNot(elm => elm == playerId)
-    copy(playerHands = newList, currentPlayerInRound = playerList)
+    copy(playerHands = newList, currentPlayerInRound = playerList, currentPlayerCount = currentPlayerCount - 1)
   }
 
   def pushGameState(gameState: GameState, playerIndex: Int): GameManager = {

@@ -46,7 +46,8 @@ class GameManagerPersistence extends GameManagerPersistenceInterface {
       set("gameStates", gameManager.gameStates),
       set("revealed", gameManager.revealed),
       set("isRunning", gameManager.isRunning),
-      set("currentPlayerInRound", gameManager.currentPlayerInRound))).toFuture()
+      set("currentPlayerInRound", gameManager.currentPlayerInRound),
+      set("currentPlayerCount", gameManager.currentPlayerCount))).toFuture()
   }
 
   override def load(playerId: String): Option[GameManager] = {
@@ -54,7 +55,7 @@ class GameManagerPersistence extends GameManagerPersistenceInterface {
   }
 
   override def loadEmptySession(): Option[GameManager] = {
-    Await.result(sessions.find(where("this.currentPlayerInRound.length < 3 && this.isRunning === false")).first().toFutureOption(), Duration("10s"))
+    Await.result(sessions.find(and(lt("currentPlayerCount", 3), equal("isRunning", false))).first().toFutureOption(), Duration("10s"))
   }
 
   override def deleteGameManager(gameManager: GameManager): Unit = {
