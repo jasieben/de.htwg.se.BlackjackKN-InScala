@@ -2,7 +2,6 @@ package de.htwg.se.blackjackKN.gamelogic
 
 import com.google.inject.Guice
 import de.htwg.se.blackjackKN.gamelogic.aview.{RestApi, Tui}
-import de.htwg.se.blackjackKN.gamelogic.aview.gui.Gui
 import de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.ControllerInterface
 
 import scala.io.StdIn

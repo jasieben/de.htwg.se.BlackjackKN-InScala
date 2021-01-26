@@ -3,7 +3,7 @@ services:
   game-logic:
     build:
       context: "GameLogic/."
-      dockerfile: "Dockerfile.game"
+      dockerfile: "Dockerfile.web"
     ports:
       - "9001:9001"
     stdin_open: true
@@ -19,7 +19,7 @@ services:
   player-management:
     build:
       context: "PlayerManagement/."
-      dockerfile: "Dockerfile.player"
+      dockerfile: "Dockerfile.web"
     ports:
       - "9002:9002"
     stdin_open: true

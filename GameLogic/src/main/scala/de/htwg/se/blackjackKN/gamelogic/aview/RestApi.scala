@@ -69,7 +69,7 @@ class RestApi(controller: ControllerInterface) {
       }
     )
 
-    val bindingFuture = Http().bindAndHandle(route, connectionInterface, connectionPort)
+    val bindingFuture = Http().newServerAt(connectionInterface, connectionPort).bind(route)
 
     println(s"Server online at http://$connectionInterface:$connectionPort/\nPress RETURN to stop...")
     StdIn.readLine() // let it run until user presses return

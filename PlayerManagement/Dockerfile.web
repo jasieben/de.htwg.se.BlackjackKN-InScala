@@ -1,0 +1,4 @@
+FROM java:8
+WORKDIR .
+COPY target/scala-2.12/playermanagement-assembly-0.0.1.jar /
+CMD java -Dhttp.port=$PORT -Dhttp.address=0.0.0.0 -jar playermanagement-assembly-0.0.1.jar
