@@ -5,6 +5,7 @@ import de.htwg.se.blackjackKN.gamelogic.aview.{RestApi, Tui}
 import de.htwg.se.blackjackKN.gamelogic.aview.gui.Gui
 import de.htwg.se.blackjackKN.gamelogic.controller.controllerComponent.ControllerInterface
 
+import scala.io.StdIn
 import scala.io.StdIn.readLine
 
 object BlackjackKN {
@@ -26,11 +27,6 @@ object BlackjackKN {
     }).start()
 
     controller.startGame()
-    var input: String = ""
-    if (!args.isEmpty) tui.processInput(args(0))
-    else do {
-      input = readLine()
-      tui.processInput(input)
-    } while (input != "exit")
+    StdIn.readLine()
   }
 }
