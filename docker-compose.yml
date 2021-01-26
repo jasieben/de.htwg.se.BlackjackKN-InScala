@@ -8,7 +8,7 @@ services:
     container_name: "game-logic"
     environment:
       - PLAYER_MANAGEMENT_HOST=player:9002
-      - DATABASE="mongodb://root:123@mongodb/gamelogic?retryWrites=true&w=majority"
+      - DATABASE=mongodb://root:123@mongodb/gamelogic?retryWrites=true&w=majority
     networks:
       default:
         aliases:
@@ -21,7 +21,7 @@ services:
     container_name: "player-management"
     environment:
       - GAME_LOGIC_HOST=game:9001
-      - DATABASE="mongodb://root:123@mongodb/playermanagement?retryWrites=true&w=majority"
+      - DATABASE=mongodb://root:123@mongodb/playermanagement?retryWrites=true&w=majority
     networks:
       default:
         aliases:
