@@ -12,7 +12,7 @@ import scala.io.StdIn
 
 class RestApi(controller: ControllerInterface) {
   val connectionInterface = "0.0.0.0"
-  val connectionPort: Int = sys.env.getOrElse("PORT", 9001).asInstanceOf[Int]
+  val connectionPort: Int = sys.env.getOrElse("PORT", 9001).toString.toInt
 
   def run() {
     implicit val actorSystem: ActorSystem = ActorSystem("actorSystem")

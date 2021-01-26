@@ -11,6 +11,7 @@ services:
     environment:
       - PLAYER_MANAGEMENT_HOST=player:9002
       - DATABASE_PLAYER=mongodb://root:123@mongodb/gamelogic?retryWrites=true&w=majority
+      - PORT=9001
     networks:
       default:
         aliases:
@@ -26,6 +27,7 @@ services:
     environment:
       - GAME_LOGIC_HOST=game:9001
       - DATABASE_GAME=mongodb://root:123@mongodb/playermanagement?retryWrites=true&w=majority
+      - PORT=9002
     networks:
       default:
         aliases:
