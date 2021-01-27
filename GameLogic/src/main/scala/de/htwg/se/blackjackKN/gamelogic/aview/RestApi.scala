@@ -82,11 +82,7 @@ class RestApi(controller: ControllerInterface) {
       controller.removePlayerFromGame(playerId)
     }
 
-    val problem = Try(controller.loadNewGameManager(playerId))
-    problem match {
-      case Failure(e) =>
-        println("Info from the exception: " + e.getMessage)
-    }
+    controller.loadNewGameManager(playerId)
     controller.setBet(playerId, betValue)
     if (controller.gameManager.gameStates(controller.currentPlayerIndex).isEmpty || controller.gameManager.gameStates(controller.currentPlayerIndex).last == GameState.BET_FAILED) {
       return Json.obj(

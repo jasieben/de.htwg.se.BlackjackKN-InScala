@@ -126,10 +126,7 @@ class Tui(controller: ControllerInterface) extends Observer {
         val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(HttpMethods.POST, uri = controller.playerManagementServiceUrl + "player", entity = HttpEntity.apply(json)))
         Await.result(responseFuture, Duration("5s"))
         responseFuture.onComplete {
-          case Success(res) => {
-            output = "Player name is set to " + name + "\n"
-            print()
-          }
+          case Success(_) =>
           case Failure(_) => sys.error("Could not resolve bet")
         }
       case betRegEx(_*) =>

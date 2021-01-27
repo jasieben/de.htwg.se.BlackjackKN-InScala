@@ -9,7 +9,7 @@ services:
     stdin_open: true
     container_name: "game-logic"
     environment:
-      - PLAYER_MANAGEMENT_HOST=player:9002
+      - PLAYER_MANAGEMENT_HOST=http://player:9002
       - DATABASE_GAME=mongodb://root:123@mongodb/gamelogic?retryWrites=true&w=majority
       - PORT=9001
     networks:
@@ -25,7 +25,7 @@ services:
     stdin_open: true
     container_name: "player-management"
     environment:
-      - GAME_LOGIC_HOST=game:9001
+      - GAME_LOGIC_HOST=http://game:9001
       - DATABASE_PLAYER=mongodb://root:123@mongodb/playermanagement?retryWrites=true&w=majority
       - PORT=9002
     networks:

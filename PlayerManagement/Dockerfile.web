@@ -1,4 +1,4 @@
-FROM heroku/jvm
+FROM java:8
 WORKDIR .
 COPY target /
 CMD universal/stage/bin/playermanagement

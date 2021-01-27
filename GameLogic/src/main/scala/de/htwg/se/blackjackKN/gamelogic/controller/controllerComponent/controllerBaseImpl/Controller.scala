@@ -125,11 +125,8 @@ class Controller @Inject() extends ControllerInterface {
     val json = Json.obj(
       "betValue" -> value
     ).toString()
+    println(playerManagementServiceUrl + s"player/$playerId/bet")
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(HttpMethods.POST, uri = playerManagementServiceUrl + s"player/$playerId/bet", entity = HttpEntity.apply(json)))
-    responseFuture.onComplete {
-      case Failure(e)   =>
-        sys.error(e.getMessage)
-    }
     val responseStringFuture = responseFuture.flatMap(r => Unmarshal(r.entity).to[String])
     val responseString = Await.result(responseStringFuture, Duration("10s"))
 
@@ -280,7 +277,7 @@ class Controller @Inject() extends ControllerInterface {
     responseFuture
       .onComplete {
         case Success(res) =>
-          println(res.entity)
+          println(res.status)
         case Failure(_) => sys.error("Could not resolve bet")
       }
   }
